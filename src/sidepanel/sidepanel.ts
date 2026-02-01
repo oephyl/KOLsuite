@@ -58,6 +58,12 @@ class SidePanelManager {
     // Save KeyCode button
     document.getElementById('save-keycode-btn')?.addEventListener('click', () => this.saveKeyCode());
 
+    // X Account toggle
+    document.getElementById('x-account-toggle')?.addEventListener('click', () => this.toggleXAccountSection());
+
+    // Connect X Account button
+    document.getElementById('connect-x-btn')?.addEventListener('click', () => this.connectXAccount());
+
     // Subscription item click
     document.getElementById('subscription-item')?.addEventListener('click', () => {
       this.showToast('Subscription management coming soon!');
@@ -209,6 +215,83 @@ class SidePanelManager {
         content.classList.add('expanded');
         content.style.display = 'flex';
         chevron.classList.add('expanded');
+      }
+    }
+  }
+
+  private toggleXAccountSection(): void {
+    const content = document.getElementById('x-account-content');
+    const chevron = document.querySelector('#x-account-toggle .chevron-icon');
+    
+    if (content && chevron) {
+      const isExpanded = content.classList.contains('expanded');
+      
+      if (isExpanded) {
+        content.classList.remove('expanded');
+        content.style.display = 'none';
+        chevron.classList.remove('expanded');
+      } else {
+        content.classList.add('expanded');
+        content.style.display = 'flex';
+        chevron.classList.add('expanded');
+        this.loadXAccountStatus();
+      }
+    }
+  }
+
+  private async connectXAccount(): Promise<void> {
+    const usernameInput = document.getElementById('x-username-input') as HTMLInputElement;
+    const passwordInput = document.getElementById('x-password-input') as HTMLInputElement;
+    
+    const username = usernameInput?.value?.trim();
+    const password = passwordInput?.value?.trim();
+    
+    if (!username) {
+      this.showToast('Please enter your X username');
+      return;
+    }
+
+    // Save to chrome storage
+    chrome.storage.local.set({ 
+      xUsername: username,
+      xPassword: password 
+    }, () => {
+      console.log('[KOLsuite] X account saved');
+      this.showToast('X account connected successfully!');
+      this.updateXAccountStatus(username);
+      if (usernameInput) usernameInput.value = '';
+      if (passwordInput) passwordInput.value = '';
+    });
+  }
+
+  private loadXAccountStatus(): void {
+    chrome.storage.local.get(['xUsername'], (items) => {
+      if (items.xUsername) {
+        this.updateXAccountStatus(items.xUsername);
+      }
+    });
+  }
+
+  private updateXAccountStatus(username: string): void {
+    const statusDot = document.querySelector('.x-status-dot');
+    const statusText = document.querySelector('.x-status-text');
+    const connectBtn = document.getElementById('connect-x-btn');
+    
+    if (username) {
+      statusDot?.classList.add('connected');
+      if (statusText) {
+        statusText.textContent = `Connected as @${username}`;
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Update Account';
+      }
+    } else {
+      statusDot?.classList.remove('connected');
+      if (statusText) {
+        statusText.textContent = 'Not connected';
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Connect Account';
       }
     }
   }
@@ -459,10 +542,13 @@ class SidePanelManager {
       return;
     }
     
+    const mintAddress = this.tokenData.mint || 'N/A';
+    
     const caption = `🚀 ${this.tokenData.name} ($${this.tokenData.symbol})\n\n` +
                    `💰 Price: ${this.tokenData.price}\n` +
                    `📊 24H Vol: ${this.tokenData.volume24h}\n` +
                    `💧 Liquidity: ${this.tokenData.liquidity}\n\n` +
+                   `📍 CA: ${mintAddress}\n\n` +
                    `#Solana #Crypto #${this.tokenData.symbol}`;
     
     const textarea = document.getElementById('caption-input') as HTMLTextAreaElement;

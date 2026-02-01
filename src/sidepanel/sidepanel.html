@@ -327,23 +327,6 @@
 
     <div class="settings-content">
       <div class="settings-section">
-        <h3 class="section-title">API Configuration</h3>
-        <div class="setting-item clickable" id="keycode-toggle">
-          <div class="setting-info">
-            <label class="setting-label">KeyCode</label>
-            <p class="setting-description">Enter your API key to access premium features</p>
-          </div>
-          <svg class="chevron-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-          </svg>
-        </div>
-        <div id="keycode-content" class="keycode-content" style="display: none;">
-          <input type="password" id="keycode-input" class="keycode-input" placeholder="Enter your KeyCode">
-          <button id="save-keycode-btn" class="save-btn">Save KeyCode</button>
-        </div>
-      </div>
-
-      <div class="settings-section">
         <h3 class="section-title">Account</h3>
         <div class="setting-item clickable" id="subscription-item">
           <div class="setting-info">
@@ -360,6 +343,30 @@
             <p class="setting-description">Available credits for AI generation</p>
           </div>
           <span class="credit-badge">0</span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">X Account</h3>
+        <div class="setting-item clickable" id="x-account-toggle">
+          <div class="setting-info">
+            <label class="setting-label">Sign X Account</label>
+            <p class="setting-description">Connect your X (Twitter) account</p>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div id="x-account-content" class="keycode-content" style="display: none;">
+          <input type="text" id="x-username-input" class="keycode-input" placeholder="@username">
+          <input type="password" id="x-password-input" class="keycode-input" placeholder="Password (optional)">
+          <div class="x-status-container">
+            <div class="x-status" id="x-status">
+              <span class="x-status-dot"></span>
+              <span class="x-status-text">Not connected</span>
+            </div>
+          </div>
+          <button id="connect-x-btn" class="save-btn">Connect Account</button>
         </div>
       </div>
 

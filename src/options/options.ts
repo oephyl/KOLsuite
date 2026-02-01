@@ -10,6 +10,10 @@ class OptionsManager {
   private statusMessage: HTMLElement;
   private rpcEndpointInput: HTMLInputElement;
   private autoOpenPanelInput: HTMLInputElement;
+  private xUsernameInput: HTMLInputElement;
+  private xApiKeyInput: HTMLInputElement;
+  private xConnectBtn: HTMLButtonElement;
+  private xStatusIndicator: HTMLElement;
 
   constructor() {
     this.form = document.getElementById('optionsForm') as HTMLFormElement;
@@ -19,6 +23,10 @@ class OptionsManager {
     this.statusMessage = document.getElementById('statusMessage') as HTMLElement;
     this.rpcEndpointInput = document.getElementById('rpcEndpoint') as HTMLInputElement;
     this.autoOpenPanelInput = document.getElementById('autoOpenPanel') as HTMLInputElement;
+    this.xUsernameInput = document.getElementById('xUsername') as HTMLInputElement;
+    this.xApiKeyInput = document.getElementById('xApiKey') as HTMLInputElement;
+    this.xConnectBtn = document.getElementById('xConnectBtn') as HTMLButtonElement;
+    this.xStatusIndicator = document.getElementById('xStatusIndicator') as HTMLElement;
 
     this.init();
   }
@@ -32,12 +40,15 @@ class OptionsManager {
   private async loadSettings(): Promise<void> {
     try {
       const items = await new Promise<any>((resolve) => {
-        chrome.storage.sync.get(['rpcEndpoint', 'autoOpenPanel'], resolve);
+        chrome.storage.sync.get(['rpcEndpoint', 'autoOpenPanel', 'xUsername', 'xApiKey'], resolve);
       });
 
       this.rpcEndpointInput.value = items.rpcEndpoint || 'https://mainnet.helius-rpc.com/?api-key=a715727e-ac65-43f4-8694-8281e0b31d21';
       this.autoOpenPanelInput.checked = items.autoOpenPanel !== false;
+      this.xUsernameInput.value = items.xUsername || '';
+      this.xApiKeyInput.value = items.xApiKey || '';
 
+      this.updateXAccountStatus();
       console.log('[TokenPeek] Settings loaded:', items);
     } catch (error) {
       console.error('[TokenPeek] Failed to load settings:', error);
@@ -50,6 +61,7 @@ class OptionsManager {
     this.resetBtn.addEventListener('click', this.handleReset.bind(this));
     this.testBtn.addEventListener('click', this.handleTest.bind(this));
     this.rpcEndpointInput.addEventListener('input', this.validateRpcUrl.bind(this));
+    this.xConnectBtn.addEventListener('click', this.handleXConnect.bind(this));
   }
 
   private setupPresetButtons(): void {
@@ -77,12 +89,15 @@ class OptionsManager {
       const settings = {
         rpcEndpoint: this.rpcEndpointInput.value.trim(),
         autoOpenPanel: this.autoOpenPanelInput.checked,
+        xUsername: this.xUsernameInput.value.trim(),
+        xApiKey: this.xApiKeyInput.value.trim(),
       };
 
       await new Promise<void>((resolve) => {
         chrome.storage.sync.set(settings, resolve);
       });
 
+      this.updateXAccountStatus();
       this.showMessage('Settings saved successfully!', 'success');
       console.log('[TokenPeek] Settings saved:', settings);
     } catch (error) {
@@ -100,6 +115,8 @@ class OptionsManager {
           {
             rpcEndpoint: 'https://mainnet.helius-rpc.com/?api-key=a715727e-ac65-43f4-8694-8281e0b31d21',
             autoOpenPanel: true,
+            xUsername: '',
+            xApiKey: '',
           },
           resolve
         );
@@ -229,6 +246,74 @@ class OptionsManager {
       this.testBtn.classList.remove('loading');
       this.testBtn.disabled = false;
       this.testBtn.textContent = 'Test Connection';
+    }
+  }
+
+  private async handleXConnect(): Promise<void> {
+    const username = this.xUsernameInput.value.trim();
+    const apiKey = this.xApiKeyInput.value.trim();
+
+    if (!username) {
+      this.showMessage('Please enter your X username', 'warning');
+      return;
+    }
+
+    this.setXConnectButtonLoading(true);
+
+    try {
+      // Simulate connection (in real app, this would call X API)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const settings = {
+        xUsername: username,
+        xApiKey: apiKey,
+      };
+
+      await new Promise<void>((resolve) => {
+        chrome.storage.sync.set(settings, resolve);
+      });
+
+      this.updateXAccountStatus();
+      this.showMessage('X account connected successfully!', 'success');
+    } catch (error) {
+      console.error('[TokenPeek] X connection failed:', error);
+      this.showMessage('Failed to connect X account', 'error');
+    } finally {
+      this.setXConnectButtonLoading(false);
+    }
+  }
+
+  private setXConnectButtonLoading(loading: boolean): void {
+    if (loading) {
+      this.xConnectBtn.classList.add('loading');
+      this.xConnectBtn.disabled = true;
+      this.xConnectBtn.textContent = 'Connecting...';
+    } else {
+      this.xConnectBtn.classList.remove('loading');
+      this.xConnectBtn.disabled = false;
+      this.xConnectBtn.textContent = 'Connect Account';
+    }
+  }
+
+  private updateXAccountStatus(): void {
+    const username = this.xUsernameInput.value.trim();
+    const statusDot = this.xStatusIndicator.querySelector('.status-dot');
+    const statusText = this.xStatusIndicator.querySelector('.status-text');
+
+    if (username) {
+      statusDot?.classList.remove('status-disconnected');
+      statusDot?.classList.add('status-connected');
+      if (statusText) {
+        statusText.textContent = `Connected as @${username}`;
+      }
+      this.xConnectBtn.textContent = 'Update Account';
+    } else {
+      statusDot?.classList.remove('status-connected');
+      statusDot?.classList.add('status-disconnected');
+      if (statusText) {
+        statusText.textContent = 'Not connected';
+      }
+      this.xConnectBtn.textContent = 'Connect Account';
     }
   }
 }

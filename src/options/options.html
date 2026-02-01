@@ -79,6 +79,51 @@
                 </div>
 
                 <div class="section">
+                    <h2 class="section-title">X Account Integration</h2>
+                    <p class="section-description">
+                        Sign in with your X (formerly Twitter) account to enable additional features.
+                    </p>
+                    
+                    <div class="field">
+                        <label for="xUsername" class="label">X Username</label>
+                        <input 
+                            type="text" 
+                            id="xUsername" 
+                            name="xUsername"
+                            class="input"
+                            placeholder="@username"
+                        >
+                        <p class="field-help">
+                            Enter your X (Twitter) username without the @ symbol.
+                        </p>
+                    </div>
+
+                    <div class="field">
+                        <label for="xApiKey" class="label">X API Key (Optional)</label>
+                        <input 
+                            type="password" 
+                            id="xApiKey" 
+                            name="xApiKey"
+                            class="input"
+                            placeholder="Enter your X API key"
+                        >
+                        <p class="field-help">
+                            Optional: Add your X API key for enhanced features.
+                        </p>
+                    </div>
+
+                    <div class="account-status" id="xAccountStatus">
+                        <div class="status-indicator" id="xStatusIndicator">
+                            <span class="status-dot status-disconnected"></span>
+                            <span class="status-text">Not connected</span>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" id="xConnectBtn">
+                            Connect Account
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section">
                     <h2 class="section-title">Supported Sites</h2>
                     <p class="section-description">
                         Token Peek currently supports the following terminal sites:
