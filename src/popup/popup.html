@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Peek</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Loading State -->
+    <div id="loading-state" class="state loading">
+      <div class="spinner"></div>
+      <p>Detecting token...</p>
+    </div>
+
+    <!-- Main Panel -->
+    <div id="main-panel" class="state" style="display: none;">
+      <div class="popup-header">
+        <h2>Token Peek</h2>
+        <button class="settings-btn" id="settings-btn" title="Settings">⚙️</button>
+      </div>
+
+      <div class="popup-content">
+        <!-- Token Info -->
+        <div class="info-section">
+          <div class="info-group">
+            <label>Token Mint</label>
+            <div class="info-value" id="token-mint">
+              <span class="mint-text">EPjFWaLb3hyccqJ12DDWeLMsTT9J7Z1Gmm5gGgNjKpJ</span>
+              <button class="copy-btn" id="copy-mint-btn">Copy</button>
+            </div>
+          </div>
+
+          <div class="info-group">
+            <label>Decimals</label>
+            <div class="info-value" id="token-decimals">6</div>
+          </div>
+
+          <div class="info-group">
+            <label>Total Supply</label>
+            <div class="info-value" id="token-supply">1,000,000,000,000,000</div>
+          </div>
+
+          <div class="info-group">
+            <label>Status</label>
+            <div class="info-value" id="token-status">
+              <span class="status-badge detected">✓ Detected</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          <button class="btn btn-primary" id="explorer-btn">
+            <span>🔍</span> View on Explorer
+          </button>
+          <button class="btn btn-secondary" id="refresh-btn">
+            <span>🔄</span> Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="state" style="display: none;">
+      <div class="popup-header">
+        <button class="back-btn" id="back-btn">← Back</button>
+        <h2>Settings</h2>
+      </div>
+
+      <div class="settings-content">
+        <div class="form-group">
+          <label for="rpc-url">RPC Endpoint</label>
+          <textarea id="rpc-url" class="form-input" placeholder="Enter RPC URL"></textarea>
+        </div>
+
+        <div class="preset-group">
+          <button class="preset-btn" data-rpc="https://api.mainnet-beta.solana.com">Solana Official</button>
+          <button class="preset-btn" data-rpc="https://mainnet.helius-rpc.com/?api-key=a715727e-ac65-43f4-8694-8281e0b31d21">Helius</button>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="auto-detect-checkbox" checked>
+            <span>Auto-detect on page load</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary" id="save-settings-btn" style="width: 100%; margin-top: 16px;">
+          Save Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="state error" style="display: none;">
+      <div class="error-icon">⚠️</div>
+      <p id="error-message">Failed to detect token</p>
+      <button class="btn btn-primary" id="retry-btn">Retry</button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="state" style="display: none;">
+      <div class="empty-icon">🔍</div>
+      <p>No token detected on this page</p>
+      <p class="hint">Open a token page on gmgn.ai, trojan.com, axiom.com, padre.com or trade.padre.gg</p>
+      <button class="btn btn-secondary" id="refresh-empty-btn">
+        <span>🔄</span> Refresh
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

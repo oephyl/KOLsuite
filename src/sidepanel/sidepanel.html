@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOLsuite</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body class="dark-mode">
+  <div class="side-panel-container">
+    
+    <!-- Scroll Content Area -->
+    <div class="scroll-content">
+      
+      <!-- Header -->
+      <div class="panel-header">
+        <h1 class="brand-title">KOLsuite</h1>
+        <button id="settings-btn" class="header-btn" title="Settings">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Token Identity Card -->
+      <div class="token-identity" id="token-identity">
+        <div class="token-avatar" style="width: 76px !important; height: 76px !important; border-radius: 14px !important;"></div>
+        <div class="token-info">
+          <h2 class="token-name" id="token-name-header">Token Name</h2>
+          <div class="token-symbol" id="token-symbol">$SYMBOL</div>
+          <div class="address-pill" id="address-pill" title="Click to copy">
+            <span id="token-mint-short">Loading...</span>
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Icons Bar -->
+      <div class="action-icons-bar">
+        <button class="action-icon-btn cyan" title="Users">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Search">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Edit">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Radar">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M8 13A5 5 0 1 1 8 3a5 5 0 0 1 0 10zm0 1A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"/>
+            <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+            <path d="M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn green" title="Zap">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Chart">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M1.5 14.5A.5.5 0 0 1 1 14V2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-.5zm1-.5V2h12v12H2z"/>
+            <path d="M4 12h2V8H4v4zm3 0h2V4H7v8zm3 0h2V6h-2v6z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Link">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
+            <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z"/>
+          </svg>
+        </button>
+        <button class="action-icon-btn" title="Star">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        
+        <!-- Row 1: 4 columns -->
+        <div class="stat-card">
+          <label>Price</label>
+          <span class="value" id="stat-price">$0.00</span>
+        </div>
+        <div class="stat-card">
+          <label>Fees Paid</label>
+          <span class="value green" id="stat-fees">0.0000</span>
+        </div>
+        <div class="stat-card">
+          <label>Audit</label>
+          <span class="value orange" id="stat-audit">0/10</span>
+        </div>
+        <div class="stat-card">
+          <label>MCAP</label>
+          <span class="value" id="stat-mcap">$0.00K</span>
+        </div>
+
+        <!-- Row 2: 3 columns - FDV, 24H Vol, Liquidity -->
+        <div class="stat-card row2-col">
+          <label>FDV</label>
+          <span class="value" id="stat-fdv">$0.00K</span>
+        </div>
+        <div class="stat-card row2-col">
+          <label>24H Vol</label>
+          <span class="value" id="stat-volume">$0.00K</span>
+        </div>
+        <div class="stat-card row2-col">
+          <label>Liquidity</label>
+          <span class="value" id="stat-liquidity">$0.00K</span>
+        </div>
+
+        <!-- Row 3: 4 timeframe columns -->
+        <div class="timeframe-card">
+          <label>5m</label>
+          <span class="value red" id="change-5m">-0.0%</span>
+        </div>
+        <div class="timeframe-card">
+          <label>1h</label>
+          <span class="value red" id="change-1h">-0.0%</span>
+        </div>
+        <div class="timeframe-card">
+          <label>6h</label>
+          <span class="value red" id="change-6h">-0.0%</span>
+        </div>
+        <div class="timeframe-card">
+          <label>24h</label>
+          <span class="value red" id="change-24h">-0.0%</span>
+        </div>
+
+        <!-- Row 4: 4 columns (Bundled, Remaining, Sniped, Remaining) -->
+        <div class="stat-card mini">
+          <label>Bundled</label>
+          <span class="value orange" id="metric-bundled">0.0%</span>
+        </div>
+        <div class="stat-card mini">
+          <label>Remaining</label>
+          <span class="value orange" id="metric-remaining1">100%</span>
+        </div>
+        <div class="stat-card mini">
+          <label>Sniped</label>
+          <span class="value orange" id="metric-sniped">0.0%</span>
+        </div>
+        <div class="stat-card mini">
+          <label>Remaining</label>
+          <span class="value orange" id="metric-remaining2">100%</span>
+        </div>
+
+        <!-- Row 5: 4 columns (Dev H., Insiders, Top 10 H., + 1 more) -->
+        <div class="stat-card">
+          <label>Dev H.</label>
+          <span class="value green" id="metric-dev">0%</span>
+        </div>
+        <div class="stat-card">
+          <label>Insiders</label>
+          <span class="value green" id="metric-insiders">0%</span>
+        </div>
+        <div class="stat-card">
+          <label>Top 10 H.</label>
+          <span class="value green" id="metric-top10">0.0%</span>
+        </div>
+        <div class="stat-card">
+          <label>Holders</label>
+          <span class="value green" id="metric-holders">0</span>
+        </div>
+      </div>
+
+      <!-- Rug Check Section -->
+      <div class="rug-check-section">
+        <h3 class="section-title">Rug Check</h3>
+        <div class="rug-check-grid">
+          <div class="rug-check-card">
+            <label>Risk Score</label>
+            <span class="value orange" id="rug-risk">Medium</span>
+          </div>
+          <div class="rug-check-card">
+            <label>Liquidity Lock</label>
+            <span class="value green" id="rug-liquidity">Locked</span>
+          </div>
+          <div class="rug-check-card">
+            <label>Mint Auth</label>
+            <span class="value red" id="rug-mint">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caption Composer -->
+      <div class="caption-section">
+        <div class="section-header">
+          <h3 class="section-title">Caption</h3>
+          <button class="settings-icon-btn" id="caption-settings-btn" title="Caption Settings">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="caption-card">
+          <textarea id="caption-input" placeholder="Type Here"></textarea>
+          <button class="upload-btn-float" title="Upload Media">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+              <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+            </svg>
+          </button>
+          <button class="generate-btn-float">Generate</button>
+        </div>
+
+        <!-- Caption Settings Popup -->
+        <div class="settings-popup" id="caption-settings-popup" style="display: none;">
+          <div class="settings-popup-header">
+            <span>Select Data to Include</span>
+            <button class="popup-close-btn" id="settings-close-btn" title="Close">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="settings-popup-content">
+            <label class="setting-item">
+              <input type="checkbox" id="setting-price" checked>
+              <span>Price</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-fees" checked>
+              <span>Fees Paid</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-audit" checked>
+              <span>Audit</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-mcap" checked>
+              <span>MCAP</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-fdv" checked>
+              <span>FDV</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-volume" checked>
+              <span>24H Vol</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-liquidity" checked>
+              <span>Liquidity</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-changes" checked>
+              <span>Price Changes (5m, 1h, 6h, 24h)</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-bundled" checked>
+              <span>Bundled</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-sniped" checked>
+              <span>Sniped</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-devhold" checked>
+              <span>Dev Holdings</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-insiders" checked>
+              <span>Insiders</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-top10" checked>
+              <span>Top 10 Holders</span>
+            </label>
+            <label class="setting-item">
+              <input type="checkbox" id="setting-holders" checked>
+              <span>Total Holders</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Post Preview -->
+        <div class="post-preview-card" id="post-preview-card" style="display: none;">
+          <div class="preview-header">
+            <svg width="16" height="16" fill="#1DA1F2" viewBox="0 0 24 24">
+              <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+            </svg>
+            <span class="preview-label">Preview Post</span>
+          </div>
+          <div class="preview-content" id="preview-content">
+            <p id="preview-text">Your caption will appear here...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sticky Footer CTA -->
+    <div class="sticky-footer">
+      <button class="post-btn">Post on X</button>
+    </div>
+
+  </div>
+
+  <!-- Settings View -->
+  <div id="settings-view" class="settings-view" style="display: none;">
+    <div class="settings-header">
+      <button id="back-btn" class="back-btn" title="Back">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+      </button>
+      <h1 class="settings-title">Settings</h1>
+    </div>
+
+    <div class="settings-content">
+      <div class="settings-section">
+        <h3 class="section-title">API Configuration</h3>
+        <div class="setting-item clickable" id="keycode-toggle">
+          <div class="setting-info">
+            <label class="setting-label">KeyCode</label>
+            <p class="setting-description">Enter your API key to access premium features</p>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div id="keycode-content" class="keycode-content" style="display: none;">
+          <input type="password" id="keycode-input" class="keycode-input" placeholder="Enter your KeyCode">
+          <button id="save-keycode-btn" class="save-btn">Save KeyCode</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">Account</h3>
+        <div class="setting-item clickable" id="subscription-item">
+          <div class="setting-info">
+            <label class="setting-label">Subscription Status</label>
+            <p class="setting-description subscription-status">Free Plan</p>
+          </div>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Credits</label>
+            <p class="setting-description">Available credits for AI generation</p>
+          </div>
+          <span class="credit-badge">0</span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">Preferences</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Language</label>
+            <p class="setting-description">Choose your preferred language</p>
+          </div>
+          <select id="language-select" class="setting-select">
+            <option value="en">English</option>
+            <option value="id">Bahasa Indonesia</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">General</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Auto-detect Token</label>
+            <p class="setting-description">Automatically detect tokens on supported pages</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="auto-detect" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">Legal</h3>
+        <div class="setting-item clickable" id="terms-item">
+          <div class="setting-info">
+            <label class="setting-label">Terms & Conditions</label>
+          </div>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div class="setting-item clickable" id="privacy-item">
+          <div class="setting-info">
+            <label class="setting-label">Privacy Policy</label>
+          </div>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">About</h3>
+        <div class="about-info">
+          <p><strong>Version:</strong> 1.0.0</p>
+          <p><strong>Extension:</strong> KOLsuite</p>
+          <p class="about-description">All-in-one toolkit for KOLs to analyze and promote Solana tokens</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State (hidden by default) -->
+  <div id="loading-state" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Detecting token...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty-state" class="state" style="display: none;">
+    <div class="empty-content">
+      <div class="empty-icon-container">
+        <svg class="empty-icon" width="80" height="80" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 class="empty-title">No Token Detected</h3>
+      <p class="empty-subtitle">Navigate to a token page to start analyzing</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div id="error-state" class="state" style="display: none;">
+    <div class="error-content">
+      <p id="error-message">❌ Error loading token</p>
+      <button id="retry-btn" class="retry-btn">🔄 Retry</button>
+    </div>
+  </div>
+
+  <script src="./sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{
+  "manifest_version": 3,
+  "name": "KOLsuite",
+  "version": "1.0.0",
+  "description": "All-in-one toolkit for KOLs to analyze and promote Solana tokens",
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "sidePanel",
+    "webRequest"
+  ],
+  
+  "host_permissions": [
+    "https://gmgn.ai/*",
+    "https://*.gmgn.ai/*",
+    "https://trade.padre.gg/*",
+    "https://axiom.trade/*",
+    "https://*.axiom.trade/*",
+    "https://trojan.com/*",
+    "https://*.trojan.com/*",
+    "https://api.mainnet-beta.solana.com/*",
+    "https://solana-api.projectserum.com/*",
+    "https://rpc.ankr.com/*",
+    "https://mainnet.helius-rpc.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background/serviceWorker.js"
+  },
+  
+  "action": {
+    "default_title": "KOLsuite"
+  },
+
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gmgn.ai/*",
+        "https://*.gmgn.ai/*",
+        "https://trade.padre.gg/*",
+        "https://axiom.trade/*",
+        "https://*.axiom.trade/*",
+        "https://trojan.com/*",
+        "https://*.trojan.com/*"
+      ],
+      "js": ["content/index.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  
+  "options_page": "options/options.html",
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/overlay.css"
+      ],
+      "matches": [
+        "https://gmgn.ai/*",
+        "https://*.gmgn.ai/*",
+        "https://trade.padre.gg/*",
+        "https://axiom.trade/*",
+        "https://*.axiom.trade/*",
+        "https://trojan.com/*",
+        "https://*.trojan.com/*"
+      ]
+    }
+  ],
+  
+  "author": "Token Peek Team"
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Peek - Options</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">Token Peek</h1>
+                <p class="subtitle">Configure your Solana token detection settings</p>
+            </div>
+        </header>
+
+        <main class="main">
+            <form id="optionsForm" class="form">
+                <div class="section">
+                    <h2 class="section-title">RPC Configuration</h2>
+                    <p class="section-description">
+                        Configure the Solana RPC endpoint used for fetching token information.
+                    </p>
+                    
+                    <div class="field">
+                        <label for="rpcEndpoint" class="label">RPC Endpoint URL</label>
+                        <input 
+                            type="url" 
+                            id="rpcEndpoint" 
+                            name="rpcEndpoint"
+                            class="input"
+                            placeholder="https://api.mainnet-beta.solana.com"
+                            required
+                        >
+                        <p class="field-help">
+                            Enter a valid Solana RPC endpoint URL. You can use public endpoints like Solana's official RPC or your own private endpoint.
+                        </p>
+                    </div>
+
+                    <div class="preset-buttons">
+                        <p class="preset-label">Quick presets:</p>
+                        <div class="preset-grid">
+                            <button type="button" class="preset-btn" data-url="https://api.mainnet-beta.solana.com">
+                                Official Mainnet
+                            </button>
+                            <button type="button" class="preset-btn" data-url="https://solana-api.projectserum.com">
+                                Serum
+                            </button>
+                            <button type="button" class="preset-btn" data-url="https://rpc.ankr.com/solana">
+                                Ankr
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Display Settings</h2>
+                    <p class="section-description">
+                        Control how and when the token information overlay appears.
+                    </p>
+                    
+                    <div class="field">
+                        <div class="checkbox-wrapper">
+                            <input 
+                                type="checkbox" 
+                                id="autoOpenPanel" 
+                                name="autoOpenPanel"
+                                class="checkbox"
+                            >
+                            <label for="autoOpenPanel" class="checkbox-label">
+                                <span class="checkbox-text">Auto-open panel when token detected</span>
+                                <span class="checkbox-description">
+                                    Automatically show the overlay panel when a token is detected on supported pages.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Supported Sites</h2>
+                    <p class="section-description">
+                        Token Peek currently supports the following terminal sites:
+                    </p>
+                    
+                    <div class="supported-sites">
+                        <div class="site-item">
+                            <div class="site-icon">🟢</div>
+                            <div class="site-info">
+                                <span class="site-name">GMGN.ai</span>
+                                <span class="site-url">gmgn.ai</span>
+                            </div>
+                        </div>
+                        <div class="site-item">
+                            <div class="site-icon">🟢</div>
+                            <div class="site-info">
+                                <span class="site-name">Trojan</span>
+                                <span class="site-url">trojan.*</span>
+                            </div>
+                        </div>
+                        <div class="site-item">
+                            <div class="site-icon">🟢</div>
+                            <div class="site-info">
+                                <span class="site-name">Axiom</span>
+                                <span class="site-url">axiom.*</span>
+                            </div>
+                        </div>
+                        <div class="site-item">
+                            <div class="site-icon">🟢</div>
+                            <div class="site-info">
+                                <span class="site-name">Padre</span>
+                                <span class="site-url">padre.*</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        Save Settings
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">
+                        Reset to Defaults
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="testBtn">
+                        Test Connection
+                    </button>
+                </div>
+
+                <div class="status-message" id="statusMessage" style="display: none;"></div>
+            </form>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="footer-text">
+                    Token Peek v1.0.0 &middot; 
+                    <a href="#" class="footer-link" id="aboutLink">About</a> &middot;
+                    <a href="#" class="footer-link" id="helpLink">Help</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="options.js"></script>
+</body>
+</html>
