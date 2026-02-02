@@ -1,258 +1,239 @@
-# Token Peek
+# KOLsuite
 
-A production-grade Chrome Extension (Manifest V3) that automatically detects Solana tokens on terminal pages and displays token information in a clean overlay panel.
+> All-in-one Chrome extension toolkit for Solana KOLs to analyze and promote tokens
 
-## Features
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=google-chrome)](https://chrome.google.com/webstore)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)](https://developer.chrome.com/docs/extensions/mv3/)
 
-- **🔍 Auto Detection**: Automatically detects token mint addresses from URLs and DOM on supported terminal sites
-- **📊 Token Information**: Displays token decimals, total supply, and other key metrics
-- **🎨 Clean UI**: Modern, responsive overlay panel that doesn't interfere with the underlying page
-- **⚙️ Configurable**: Customizable RPC endpoint and display settings
-- **🔄 Real-time Updates**: Monitors page changes for SPA navigation and DOM updates
-- **📋 Quick Actions**: Copy mint address, refresh data, open in Solscan explorer
+KOLsuite is a production-grade Chrome extension designed specifically for Solana Key Opinion Leaders (KOLs) to streamline their workflow when analyzing and promoting tokens across multiple platforms.
 
-## Supported Sites
+## ✨ Features
 
-- **GMGN.ai** (`gmgn.ai` and subdomains)
-- **Trojan** (`*.trojan.*`)
-- **Axiom** (`*.axiom.*`)
-- **Padre** (`*.padre.*`)
+### 🔍 Multi-Platform Token Detection
+- **Auto-detection** on GMGN.ai, NeoBull X, Trojan, Axiom, and Padre
+- Real-time token data extraction from URLs and DOM
+- Automatic token data refresh on page navigation
 
-## Installation
+### 📊 Comprehensive Token Analysis
+- **Token Identity**: Name, symbol, avatar, contract address
+- **Market Metrics**: Price, MCAP, FDV, 24H Volume, Liquidity
+- **Performance**: 5m, 1h, 6h, 24h price changes
+- **Security**: Fees paid, audit status, rug check
+- **Token Economics**: Bundled %, sniped %, dev holdings, insiders %
+- **Holders**: Top 10 holders concentration, total holders count
+- **Bonding Curve**: Visual progress bar with current/target values
 
-### Development Setup
+### 📝 Smart Caption Generator
+- **Template System**: Customizable templates with parameter placeholders
+- **Dynamic Parameters**: `{NAME}`, `{SYMBOL}`, `{PRICE}`, `{MCAP}`, etc.
+- **Emoji Picker**: Quick emoji insertion (30+ crypto-related emojis)
+- **Click-to-Insert**: Click parameters or emojis to add to template
+- **Live Preview**: See formatted caption before posting
 
-1. **Clone and install dependencies**:
+### 📢 Social Media Integration
+- **Multi-Platform Posting**: X (Twitter), Telegram, Discord
+- **One-Click Share**: Post to all platforms simultaneously
+- **Platform Authentication**: Secure API token management
+- **Test Connections**: Verify credentials before posting
+
+### 📈 Subscription Management
+- **Token Limits**: Track API usage with visual badge
+- **Tier System**: Free and Premium tier badges
+- **Usage Warnings**: Alerts at 70%, 90%, and 100% usage
+
+### 🔒 Authentication
+- **Sign in with X**: X account integration
+- **Session Management**: Persistent user profile with avatar
+
+## 🚀 Installation
+
+### For Users
+
+1. Download the latest release from [Releases](../../releases)
+2. Extract the ZIP file
+3. Open Chrome and navigate to `chrome://extensions/`
+4. Enable "Developer mode" (toggle in top right)
+5. Click "Load unpacked"
+6. Select the extracted `dist` folder
+
+### For Developers
+
 ```bash
-git clone <repository-url>
-cd token-peek
+# Clone the repository
+git clone https://github.com/yourusername/KOLsuite.git
+cd KOLsuite
+
+# Install dependencies
 npm install
-```
 
-2. **Build the extension**:
-```bash
+# Build the extension
 npm run build
+
+# The built extension will be in the dist/ folder
 ```
 
-3. **Load in Chrome**:
-   - Open Chrome and go to `chrome://extensions/`
-   - Enable "Developer mode" (toggle in top right)
-   - Click "Load unpacked"
-   - Select the `dist` folder from your project
+## 🛠️ Development
 
-### Production Build
+### Prerequisites
 
-```bash
-npm run build
-```
-
-The built extension will be in the `dist` directory.
-
-## Development
+- Node.js 16+ and npm
+- Chrome/Edge browser
 
 ### Scripts
 
-- `npm run dev` - Build in watch mode for development
-- `npm run build` - Production build
-- `npm run type-check` - TypeScript type checking
+```bash
+npm run build      # Production build
+npm run dev        # Development build with watch mode
+npm run type-check # TypeScript type checking
+```
 
 ### Project Structure
 
 ```
-src/
-├── manifest.json              # Extension manifest (MV3)
-├── background/
-│   └── serviceWorker.ts       # Background service worker
-├── content/
-│   ├── index.ts              # Content script entry point
-│   ├── detector.ts           # Token detection engine
-│   ├── overlay.ts            # UI overlay component
-│   ├── overlay.css           # Overlay styles
-│   └── adapters/             # Site-specific adapters
-│       ├── base.ts           # Base adapter interface
-│       ├── gmgn.ts           # GMGN.ai adapter
-│       ├── trojan.ts         # Trojan adapter
-│       ├── axiom.ts          # Axiom adapter
-│       └── padre.ts          # Padre adapter
-├── options/
-│   ├── options.html          # Options page
-│   ├── options.ts            # Options page logic
-│   └── options.css           # Options page styles
-└── shared/
-    ├── types.ts              # TypeScript type definitions
-    ├── storage.ts            # Chrome storage wrapper
-    ├── cache.ts              # In-memory caching
-    └── rpc.ts                # Solana RPC client
+KOLsuite/
+├── src/
+│   ├── manifest.json           # Extension manifest (MV3)
+│   ├── background/
+│   │   └── serviceWorker.ts    # Background service worker
+│   ├── content/
+│   │   ├── detector.ts         # Token detection engine
+│   │   ├── overlay.ts          # Content script overlay
+│   │   └── adapters/           # Platform-specific adapters
+│   │       ├── gmgn.ts         # GMGN.ai
+│   │       ├── neobull.ts      # NeoBull X
+│   │       ├── trojan.ts       # Trojan
+│   │       ├── axiom.ts        # Axiom
+│   │       └── padre.ts        # Padre
+│   ├── sidepanel/
+│   │   ├── sidepanel.html      # Main UI
+│   │   ├── sidepanel.ts        # UI logic
+│   │   └── sidepanel.css       # Styling
+│   ├── options/
+│   │   ├── options.html        # Settings page
+│   │   ├── options.ts          # Settings logic
+│   │   └── options.css         # Settings styles
+│   ├── shared/
+│   │   ├── types.ts            # TypeScript definitions
+│   │   ├── storage.ts          # Chrome Storage API wrapper
+│   │   ├── rpc.ts              # Solana RPC client
+│   │   └── cache.ts            # Caching utilities
+│   └── img/                    # Assets
+├── dist/                       # Built extension (generated)
+├── vite.config.ts             # Vite build configuration
+├── tsconfig.json              # TypeScript configuration
+└── package.json               # Project dependencies
 ```
 
-### Architecture
+## 📖 Usage
 
-#### Token Detection System
+### Token Analysis
 
-The extension uses an **adapter pattern** for site-specific token detection:
+1. Navigate to any supported platform (GMGN.ai, NeoBull X, etc.)
+2. Click the KOLsuite extension icon to open the side panel
+3. Token data will automatically load and display
 
-1. **URL Detection**: Extracts mint addresses from URL patterns (most reliable)
-2. **DOM Detection**: Scans page content for Solana addresses (fallback)
-3. **Generic Detection**: Uses regex to find potential base58 addresses
+### Creating Captions
 
-#### Adapters
+1. Open the side panel on a token page
+2. Scroll to the "Caption" section
+3. Click the settings icon to open template editor
+4. Click parameters or emojis to insert into template
+5. Edit the template as desired
+6. Click "Save Template"
+7. Click "Generate" to create a caption from your template
+8. Click "Post to X", "Telegram", or "Discord" to share
 
-Each supported site has its own adapter implementing:
-```typescript
-interface TokenAdapter {
-  canHandle(url: string): boolean;
-  extractMintFromUrl(url: string): string | null;
-  extractMintFromDom(document: Document): string | null;
-  getName(): string;
-}
+### Social Media Setup
+
+1. Click the settings icon in the header
+2. Configure your credentials:
+   - **X Username**: Your X handle (e.g., @yourhandle)
+   - **Telegram**: Bot Token and Chat ID
+   - **Discord**: Webhook URL
+3. Use "Test Connection" buttons to verify
+4. Save settings
+
+## 🔧 Configuration
+
+### Caption Template Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `{NAME}` | Token name |
+| `{SYMBOL}` | Token symbol |
+| `{PRICE}` | Current price |
+| `{MCAP}` | Market capitalization |
+| `{FDV}` | Fully diluted valuation |
+| `{VOLUME}` | 24-hour trading volume |
+| `{LIQUIDITY}` | Total liquidity |
+| `{FEES}` | Fees paid |
+| `{AUDIT}` | Audit status |
+| `{5M}`, `{1H}`, `{6H}`, `{24H}` | Price changes |
+| `{BUNDLED}` | Bundled percentage |
+| `{SNIPED}` | Sniped percentage |
+| `{DEVHOLD}` | Dev holdings |
+| `{INSIDERS}` | Insider holdings |
+| `{TOP10}` | Top 10 holders % |
+| `{HOLDERS}` | Total holder count |
+| `{CA}` | Contract address |
+
+### Example Template
+
+```
+🚀 {NAME} (${SYMBOL})
+
+💰 Price: {PRICE}
+📊 MCAP: {MCAP}
+💧 Liquidity: {LIQUIDITY}
+📈 24H Vol: {VOLUME}
+
+📍 CA: {CA}
+
+#Solana #Crypto #{SYMBOL}
 ```
 
-#### SPA Support
+## 🌐 Supported Platforms
 
-- **URL Monitoring**: Overrides `pushState`/`replaceState` and listens for `popstate`
-- **DOM Monitoring**: Uses `MutationObserver` to detect content changes
-- **Polling Fallback**: 5-second interval as a safety net
+- ✅ **GMGN.ai** - Full token detection and analysis
+- ✅ **NeoBull X** - Full token detection and analysis
+- ✅ **Trojan** - Full token detection and analysis
+- ✅ **Axiom** - Full token detection and analysis
+- ✅ **Padre** - Full token detection and analysis
 
-#### RPC Integration
+## 🔐 Privacy & Security
 
-Two patterns for fetching token data:
+- All API credentials stored locally in Chrome Storage
+- No data sent to external servers (except platform APIs)
+- Telegram and Discord use official APIs
+- No tracking or analytics
 
-**Pattern A (Default)**: Direct fetch from content script
-```typescript
-const tokenInfo = await fetchTokenInfoDirect(mint, rpcUrl);
-```
+## 🤝 Contributing
 
-**Pattern B (CORS Fallback)**: Via background service worker
-```typescript
-const tokenInfo = await fetchTokenInfoViaBackground(mint);
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Switch to Pattern B by modifying the RPC calls in the content script if CORS blocks direct requests.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Configuration
+## 📝 License
 
-### RPC Endpoints
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Configure custom Solana RPC endpoints in the extension options:
+## 🙏 Acknowledgments
 
-- **Default**: `https://api.mainnet-beta.solana.com`
-- **Presets**: Serum, Ankr, or custom endpoints
+- Built with [Vite](https://vitejs.dev/) and [TypeScript](https://www.typescriptlang.org/)
+- Uses [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/) for blockchain interactions
+- Icon design and UI inspired by modern Web3 aesthetics
 
-### Display Settings
+## 📞 Support
 
-- **Auto-open Panel**: Automatically show overlay when token detected
-- **Minimize/Expand**: Collapsible overlay panel
-
-## Usage
-
-1. **Navigate** to a supported terminal site (GMGN.ai, etc.)
-2. **Open a token page** - the extension will automatically detect the token mint
-3. **View information** in the overlay panel on the right side
-4. **Use quick actions**:
-   - Copy mint address to clipboard
-   - Refresh token data
-   - Open token in Solscan explorer
-
-### Manual Controls
-
-- Click the **minimize button** (−) to collapse the panel to a small pill
-- Click the **close button** (×) to hide the overlay completely
-- Use the **refresh button** to reload token data
-- Click **Explorer** to open the token page on Solscan
-
-## Technical Details
-
-### Manifest V3 Compliance
-
-- Uses **service worker** instead of background page
-- **Declarative content scripts** with proper host permissions
-- **Web accessible resources** for CSS injection
-- **Chrome.storage.sync** for settings persistence
-
-### Security & Privacy
-
-- **No data collection**: Extension only stores user settings locally
-- **Minimal permissions**: Only requests necessary permissions
-- **Secure RPC**: All API calls use HTTPS endpoints
-- **Content isolation**: Overlay uses prefixed CSS classes to avoid conflicts
-
-### Caching Strategy
-
-- **30-second TTL** for token data
-- **In-memory cache** (no persistent storage of token data)
-- **Automatic cleanup** of expired entries
-
-### Error Handling
-
-- **Graceful degradation** when RPC fails
-- **User feedback** for connection issues
-- **Fallback detection** methods when primary adapters fail
-
-## Browser Support
-
-- **Chrome 88+** (Manifest V3 requirement)
-- **Edge 88+** (Chromium-based)
-
-## Contributing
-
-### Adding New Sites
-
-1. Create a new adapter in `src/content/adapters/`
-2. Implement the `TokenAdapter` interface
-3. Add the adapter to the detector in `src/content/detector.ts`
-4. Update host permissions in `manifest.json`
-5. Add content script matches for the new domain
-
-### Development Guidelines
-
-- **TypeScript**: All code must be strongly typed
-- **Error Handling**: Wrap async operations in try-catch
-- **Logging**: Use consistent `[TokenPeek]` prefix for console logs
-- **Testing**: Test on actual target sites
-
-## Troubleshooting
-
-### Common Issues
-
-**"RPC Connection Failed"**
-- Check if custom RPC endpoint is accessible
-- Try switching to a different RPC provider
-- Verify internet connection
-
-**"No Token Detected"**
-- Ensure you're on a supported site
-- Check if the page URL contains the token mint
-- Try refreshing the page
-
-**"Overlay Not Showing"**
-- Check extension permissions
-- Verify site is in supported domains list
-- Open browser console for error messages
-
-### Debug Mode
-
-Enable debug logs by opening browser console on any supported page. Look for `[TokenPeek]` prefixed messages.
-
-### Reset Settings
-
-1. Go to `chrome://extensions/`
-2. Click on Token Peek
-3. Click "Extension options"
-4. Click "Reset to Defaults"
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Support
-
-For issues, feature requests, or questions:
-1. Check the browser console for error messages
-2. Verify you're on a supported site
-3. Check the extension's options page for configuration issues
+For issues, questions, or suggestions:
+- Open an [issue](../../issues)
+- Contact via X: [@YourHandle]
 
 ---
 
-**Version**: 1.0.0  
-**Manifest Version**: 3  
-**Compatible**: Chrome 88+, Edge 88+
+**Made with ❤️ for the Solana KOL community**

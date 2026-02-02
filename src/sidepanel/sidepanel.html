@@ -14,13 +14,37 @@
       
       <!-- Header -->
       <div class="panel-header">
-        <h1 class="brand-title">KOLsuite</h1>
-        <button id="settings-btn" class="header-btn" title="Settings">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+        <button id="sign-in-x-btn" class="sign-in-x-btn" style="display: none;">
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
+          Sign in with X
         </button>
+        <div class="brand-title" id="user-profile" style="display: none;">
+          <div class="profile-avatar" id="profile-avatar"></div>
+          <span class="username-text" id="username-text">@username</span>
+        </div>
+        <div class="header-badges">
+          <div class="subscription-badge" id="subscription-badge" title="Token Limit">
+            <svg width="8" height="8" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            <span id="token-limit-text">0/100</span>
+          </div>
+          <div class="tier-badge" id="tier-badge" title="Subscription Tier">
+            <svg width="8" height="8" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z"/>
+              <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
+            </svg>
+            <span id="tier-text">Free</span>
+          </div>
+          <button id="settings-btn" class="header-btn" title="Settings">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Token Identity Card -->
@@ -180,6 +204,27 @@
         </div>
       </div>
 
+      <!-- Bonding Curve Card -->
+      <div class="bonding-curve-card">
+        <div class="bonding-curve-header">
+          <label>Bonding Curve Progress</label>
+          <span class="bonding-value" id="bonding-percentage">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="bonding-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="bonding-stats">
+          <div class="bonding-stat">
+            <span class="bonding-label">Current</span>
+            <span class="bonding-amount" id="bonding-current">$0.00K</span>
+          </div>
+          <div class="bonding-stat">
+            <span class="bonding-label">Target</span>
+            <span class="bonding-amount" id="bonding-target">$0.00K</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Rug Check Section -->
       <div class="rug-check-section">
         <h3 class="section-title">Rug Check</h3>
@@ -199,14 +244,34 @@
         </div>
       </div>
 
+      <!-- Summary Section (Collapsible) -->
+      <div class="summary-section">
+        <div class="summary-header" id="summary-toggle">
+          <div class="summary-title">
+            <svg class="summary-icon" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+            </svg>
+            <span>Summary</span>
+          </div>
+          <svg class="chevron-icon" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div class="summary-content" id="summary-content">
+          <p class="summary-text" id="summary-text">
+            This token is currently being analyzed. Summary information will be displayed here including key metrics, risk assessment, and important details about the token's performance and characteristics.
+          </p>
+        </div>
+      </div>
+
       <!-- Caption Composer -->
       <div class="caption-section">
         <div class="section-header">
           <h3 class="section-title">Caption</h3>
           <button class="settings-icon-btn" id="caption-settings-btn" title="Caption Settings">
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+              <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
             </svg>
           </button>
         </div>
@@ -224,7 +289,7 @@
         <!-- Caption Settings Popup -->
         <div class="settings-popup" id="caption-settings-popup" style="display: none;">
           <div class="settings-popup-header">
-            <span>Select Data to Include</span>
+            <span>Caption Template</span>
             <button class="popup-close-btn" id="settings-close-btn" title="Close">
               <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
@@ -232,62 +297,77 @@
             </button>
           </div>
           <div class="settings-popup-content">
-            <label class="setting-item">
-              <input type="checkbox" id="setting-price" checked>
-              <span>Price</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-fees" checked>
-              <span>Fees Paid</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-audit" checked>
-              <span>Audit</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-mcap" checked>
-              <span>MCAP</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-fdv" checked>
-              <span>FDV</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-volume" checked>
-              <span>24H Vol</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-liquidity" checked>
-              <span>Liquidity</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-changes" checked>
-              <span>Price Changes (5m, 1h, 6h, 24h)</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-bundled" checked>
-              <span>Bundled</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-sniped" checked>
-              <span>Sniped</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-devhold" checked>
-              <span>Dev Holdings</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-insiders" checked>
-              <span>Insiders</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-top10" checked>
-              <span>Top 10 Holders</span>
-            </label>
-            <label class="setting-item">
-              <input type="checkbox" id="setting-holders" checked>
-              <span>Total Holders</span>
-            </label>
+            <div class="template-info">
+              <p class="template-label">Available Parameters:</p>
+              <div class="parameter-tags">
+                <span class="param-tag">{NAME}</span>
+                <span class="param-tag">{SYMBOL}</span>
+                <span class="param-tag">{PRICE}</span>
+                <span class="param-tag">{FEES}</span>
+                <span class="param-tag">{AUDIT}</span>
+                <span class="param-tag">{MCAP}</span>
+                <span class="param-tag">{FDV}</span>
+                <span class="param-tag">{VOLUME}</span>
+                <span class="param-tag">{LIQUIDITY}</span>
+                <span class="param-tag">{5M}</span>
+                <span class="param-tag">{1H}</span>
+                <span class="param-tag">{6H}</span>
+                <span class="param-tag">{24H}</span>
+                <span class="param-tag">{BUNDLED}</span>
+                <span class="param-tag">{SNIPED}</span>
+                <span class="param-tag">{DEVHOLD}</span>
+                <span class="param-tag">{INSIDERS}</span>
+                <span class="param-tag">{TOP10}</span>
+                <span class="param-tag">{HOLDERS}</span>
+                <span class="param-tag">{CA}</span>
+              </div>
+            </div>
+            <div class="emoji-section">
+              <p class="template-label">Emojis:</p>
+              <div class="emoji-picker">
+                <span class="emoji-item">🚀</span>
+                <span class="emoji-item">💰</span>
+                <span class="emoji-item">📊</span>
+                <span class="emoji-item">📈</span>
+                <span class="emoji-item">📉</span>
+                <span class="emoji-item">💧</span>
+                <span class="emoji-item">💎</span>
+                <span class="emoji-item">🔥</span>
+                <span class="emoji-item">⚡</span>
+                <span class="emoji-item">⭐</span>
+                <span class="emoji-item">🌟</span>
+                <span class="emoji-item">📍</span>
+                <span class="emoji-item">🎯</span>
+                <span class="emoji-item">🔒</span>
+                <span class="emoji-item">🔑</span>
+                <span class="emoji-item">🏆</span>
+                <span class="emoji-item">👥</span>
+                <span class="emoji-item">👨‍💻</span>
+                <span class="emoji-item">📦</span>
+                <span class="emoji-item">🔍</span>
+                <span class="emoji-item">✅</span>
+                <span class="emoji-item">❌</span>
+                <span class="emoji-item">⚠️</span>
+                <span class="emoji-item">🚨</span>
+                <span class="emoji-item">🔴</span>
+                <span class="emoji-item">🟢</span>
+                <span class="emoji-item">🟡</span>
+                <span class="emoji-item">👀</span>
+                <span class="emoji-item">👍</span>
+                <span class="emoji-item">👎</span>
+              </div>
+            </div>
+            <textarea id="caption-template" class="template-textarea" placeholder="Enter your caption template using parameters like {NAME}, {PRICE}, {MCAP}, etc.">🚀 {NAME} (${SYMBOL})
+
+💰 Price: {PRICE}
+📊 MCAP: {MCAP}
+💧 Liquidity: {LIQUIDITY}
+📈 24H Vol: {VOLUME}
+
+📍 CA: {CA}
+
+#Solana #Crypto #{SYMBOL}</textarea>
+            <button class="save-template-btn" id="save-template-btn">Save Template</button>
           </div>
         </div>
 
@@ -309,7 +389,21 @@
 
     <!-- Sticky Footer CTA -->
     <div class="sticky-footer">
-      <button class="post-btn">Post on X</button>
+      <button class="post-btn post-btn-x" id="post-x-btn" title="Post on X">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
+        </svg>
+      </button>
+      <button class="post-btn post-btn-telegram" id="post-telegram-btn" title="Post on Telegram">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
+        </svg>
+      </button>
+      <button class="post-btn post-btn-discord" id="post-discord-btn" title="Post on Discord">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+        </svg>
+      </button>
     </div>
 
   </div>
@@ -367,6 +461,73 @@
             </div>
           </div>
           <button id="connect-x-btn" class="save-btn">Connect Account</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">Telegram Account</h3>
+        <div class="setting-item clickable" id="telegram-account-toggle">
+          <div class="setting-info">
+            <label class="setting-label">Connect Telegram</label>
+            <p class="setting-description">Connect your Telegram account</p>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div id="telegram-account-content" class="keycode-content" style="display: none;">
+          <input type="text" id="telegram-bot-token-input" class="keycode-input" placeholder="Bot Token">
+          <input type="text" id="telegram-chat-id-input" class="keycode-input" placeholder="Chat ID (optional)">
+          <div class="connection-status-container">
+            <div class="connection-status" id="telegram-status">
+              <span class="status-dot"></span>
+              <span class="status-text">Not connected</span>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="connect-telegram-btn" class="save-btn">Connect Account</button>
+            <button id="test-telegram-btn" class="test-btn">Test Connection</button>
+          </div>
+          <p class="help-text">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+            </svg>
+            <a href="https://core.telegram.org/bots#how-do-i-create-a-bot" target="_blank">How to get Bot Token</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">Discord Account</h3>
+        <div class="setting-item clickable" id="discord-account-toggle">
+          <div class="setting-info">
+            <label class="setting-label">Connect Discord</label>
+            <p class="setting-description">Connect your Discord webhook</p>
+          </div>
+          <svg class="chevron-icon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div id="discord-account-content" class="keycode-content" style="display: none;">
+          <input type="text" id="discord-webhook-input" class="keycode-input" placeholder="Webhook URL">
+          <div class="connection-status-container">
+            <div class="connection-status" id="discord-status">
+              <span class="status-dot"></span>
+              <span class="status-text">Not connected</span>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="connect-discord-btn" class="save-btn">Connect Webhook</button>
+            <button id="test-discord-btn" class="test-btn">Test Connection</button>
+          </div>
+          <p class="help-text">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+            </svg>
+            <a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks" target="_blank">How to create Webhook</a>
+          </p>
         </div>
       </div>
 

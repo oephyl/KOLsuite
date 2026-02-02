@@ -7,6 +7,7 @@ import { GmgnAdapter } from './adapters/gmgn';
 import { TrojanAdapter } from './adapters/trojan';
 import { AxiomAdapter } from './adapters/axiom';
 import { PadreAdapter } from './adapters/padre';
+import { NeoBullAdapter } from './adapters/neobull';
 import { TokenDetectionResult } from '../shared/types';
 
 export class TokenDetector {
@@ -22,6 +23,7 @@ export class TokenDetector {
       new TrojanAdapter(),
       new AxiomAdapter(),
       new PadreAdapter(),
+      new NeoBullAdapter(),
     ];
   }
 

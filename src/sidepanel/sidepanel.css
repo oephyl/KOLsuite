@@ -101,11 +101,126 @@ body {
   z-index: -1;
 }
 
+.sign-in-x-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(29, 155, 240, 0.15);
+  border: 1px solid rgba(29, 155, 240, 0.3);
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(29, 155, 240);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.sign-in-x-btn:hover {
+  background: rgba(29, 155, 240, 0.25);
+  border-color: rgba(29, 155, 240, 0.5);
+}
+
+.sign-in-x-btn svg {
+  flex-shrink: 0;
+}
+
 .brand-title {
-  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
   font-weight: 600;
   color: rgba(229, 231, 235, 0.9);
   letter-spacing: -0.02em;
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3) 0%, rgba(16, 185, 129, 0.3) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.username-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subscription-badge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  background: rgba(79, 70, 229, 0.15);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.subscription-badge:hover {
+  background: rgba(79, 70, 229, 0.2);
+}
+
+.subscription-badge svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+#token-limit-text {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.tier-badge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.tier-badge:hover {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.tier-badge svg {
+  color: var(--text-green);
+  flex-shrink: 0;
+}
+
+.tier-badge.premium {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.tier-badge.premium:hover {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+}
+
+.tier-badge.premium svg {
+  color: var(--text-yellow);
+}
+
+#tier-text {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -384,6 +499,151 @@ body {
   font-weight: 600;
 }
 
+/* Bonding Curve Card */
+.bonding-curve-card {
+  margin: 6px 4px 8px 4px;
+  border-radius: 9px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 8px 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bonding-curve-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.bonding-curve-header label {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.bonding-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-cyan);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--text-cyan) 0%, var(--text-green) 100%);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+}
+
+.bonding-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bonding-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bonding-label {
+  font-size: 7px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.bonding-amount {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Summary Section (Collapsible) */
+.summary-section {
+  margin: 6px 4px 8px 4px;
+  border-radius: 9px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.summary-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.summary-icon {
+  color: var(--text-cyan);
+  flex-shrink: 0;
+}
+
+.chevron-icon {
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.summary-header.active .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.summary-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 12px;
+}
+
+.summary-content.expanded {
+  max-height: 300px;
+  padding: 0 12px 10px 12px;
+}
+
+.summary-text {
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: justify;
+}
+
 /* Rug Check Section */
 .rug-check-section {
   margin: 8px 4px 0 4px;
@@ -539,7 +799,7 @@ body {
 }
 
 .settings-popup-content {
-  padding: 8px;
+  padding: 12px;
   max-height: calc(80vh - 50px);
   overflow-y: auto;
   scrollbar-width: thin;
@@ -557,6 +817,113 @@ body {
 
 .settings-popup-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.template-info {
+  margin-bottom: 12px;
+}
+
+.template-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.parameter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.param-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(79, 70, 229, 0.15);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--primary);
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.param-tag:hover {
+  background: rgba(79, 70, 229, 0.25);
+  border-color: rgba(79, 70, 229, 0.5);
+  transform: translateY(-1px);
+}
+
+.emoji-section {
+  margin-bottom: 12px;
+}
+
+.emoji-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.emoji-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emoji-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.15);
+}
+
+.template-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 10px;
+  background: var(--textarea-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.template-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.save-template-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.save-template-btn:hover {
+  background: var(--primary-hover);
 }
 
 .setting-item {
@@ -709,30 +1076,55 @@ body {
   bottom: 0;
   height: 56px;
   padding: 10px;
-  background: var(--footer-bg);
+  background: var(--card-bg);
   border-top: 1px solid var(--card-border);
   display: flex;
   align-items: center;
+  gap: 6px;
   z-index: 10;
 }
 
 .post-btn {
-  width: 100%;
+  flex: 1;
   height: 36px;
   border-radius: 10px;
-  background: var(--primary);
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-btn-x {
+  background: #000000;
+}
+
+.post-btn-telegram {
+  background: #0088cc;
+}
+
+.post-btn-discord {
+  background: #5865F2;
 }
 
 .post-btn:hover {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.post-btn-x:hover {
+  background: #1a1a1a;
+}
+
+.post-btn-telegram:hover {
+  background: #0096d9;
+}
+
+.post-btn-discord:hover {
+  background: #6a74f5;
 }
 
 .post-btn:active {
@@ -1052,7 +1444,7 @@ body {
 }
 
 .save-btn {
-  width: 100%;
+  flex: 1;
   padding: 10px;
   background: var(--primary);
   border: none;
@@ -1071,6 +1463,40 @@ body {
 
 .save-btn:active {
   transform: translateY(0);
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.test-btn {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.test-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.test-btn:active {
+  transform: translateY(0);
+}
+
+.test-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Subscription Status */
@@ -1092,7 +1518,8 @@ body {
 }
 
 /* X Account Status */
-.x-status-container {
+.x-status-container,
+.connection-status-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1103,13 +1530,15 @@ body {
   margin-bottom: 8px;
 }
 
-.x-status {
+.x-status,
+.connection-status {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.x-status-dot {
+.x-status-dot,
+.status-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -1117,15 +1546,42 @@ body {
   transition: all 0.3s;
 }
 
-.x-status-dot.connected {
+.x-status-dot.connected,
+.status-dot.connected {
   background: var(--text-green);
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
-.x-status-text {
+.x-status-text,
+.status-text {
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+.help-text {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.help-text a {
+  color: var(--text-cyan);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.help-text a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.help-text svg {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 /* Loading/Empty/Error Overlays */

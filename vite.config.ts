@@ -62,6 +62,10 @@ export default defineConfig({
           src: 'src/content/overlay.css',
           dest: 'content',
         },
+        {
+          src: 'src/img/*',
+          dest: 'img',
+        },
       ],
     }),
   ],

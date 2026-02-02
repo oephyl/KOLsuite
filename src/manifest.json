@@ -20,6 +20,8 @@
     "https://*.axiom.trade/*",
     "https://trojan.com/*",
     "https://*.trojan.com/*",
+    "https://neo.bullx.io/*",
+    "https://*.bullx.io/*",
     "https://api.mainnet-beta.solana.com/*",
     "https://solana-api.projectserum.com/*",
     "https://rpc.ankr.com/*",
@@ -31,7 +33,20 @@
   },
   
   "action": {
-    "default_title": "KOLsuite"
+    "default_title": "KOLsuite",
+    "default_icon": {
+      "16": "img/kolsuite-icon.png",
+      "32": "img/kolsuite-icon.png",
+      "48": "img/kolsuite-icon.png",
+      "128": "img/kolsuite-icon.png"
+    }
+  },
+
+  "icons": {
+    "16": "img/kolsuite-icon.png",
+    "32": "img/kolsuite-icon.png",
+    "48": "img/kolsuite-icon.png",
+    "128": "img/kolsuite-icon.png"
   },
 
   "side_panel": {
@@ -47,7 +62,9 @@
         "https://axiom.trade/*",
         "https://*.axiom.trade/*",
         "https://trojan.com/*",
-        "https://*.trojan.com/*"
+        "https://*.trojan.com/*",
+        "https://neo.bullx.io/*",
+        "https://*.bullx.io/*"
       ],
       "js": ["content/index.js"],
       "run_at": "document_start",
@@ -69,7 +86,9 @@
         "https://axiom.trade/*",
         "https://*.axiom.trade/*",
         "https://trojan.com/*",
-        "https://*.trojan.com/*"
+        "https://*.trojan.com/*",
+        "https://neo.bullx.io/*",
+        "https://*.bullx.io/*"
       ]
     }
   ],

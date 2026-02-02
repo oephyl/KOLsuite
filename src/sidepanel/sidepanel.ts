@@ -22,6 +22,8 @@ class SidePanelManager {
     this.setupEventListeners();
     this.loadTokenData();
     this.setupTabListeners();
+    this.loadSubscriptionLimit();
+    this.loadXUsername();
   }
 
   private setupTabListeners(): void {
@@ -46,8 +48,19 @@ class SidePanelManager {
   }
 
   private setupEventListeners(): void {
+    // Sign in with X button
+    const signInBtn = document.getElementById('sign-in-x-btn');
+    if (signInBtn) {
+      signInBtn.addEventListener('click', () => {
+        chrome.runtime.openOptionsPage();
+      });
+    }
+
     // Settings button
     document.getElementById('settings-btn')?.addEventListener('click', () => this.openSettings());
+
+    // Summary toggle
+    document.getElementById('summary-toggle')?.addEventListener('click', () => this.toggleSummary());
 
     // Back button in settings
     document.getElementById('back-btn')?.addEventListener('click', () => this.closeSettings());
@@ -63,6 +76,24 @@ class SidePanelManager {
 
     // Connect X Account button
     document.getElementById('connect-x-btn')?.addEventListener('click', () => this.connectXAccount());
+
+    // Telegram Account toggle
+    document.getElementById('telegram-account-toggle')?.addEventListener('click', () => this.toggleTelegramSection());
+
+    // Connect Telegram button
+    document.getElementById('connect-telegram-btn')?.addEventListener('click', () => this.connectTelegram());
+
+    // Discord Account toggle
+    document.getElementById('discord-account-toggle')?.addEventListener('click', () => this.toggleDiscordSection());
+
+    // Connect Discord button
+    document.getElementById('connect-discord-btn')?.addEventListener('click', () => this.connectDiscord());
+
+    // Test Telegram button
+    document.getElementById('test-telegram-btn')?.addEventListener('click', () => this.testTelegramConnection());
+
+    // Test Discord button
+    document.getElementById('test-discord-btn')?.addEventListener('click', () => this.testDiscordConnection());
 
     // Subscription item click
     document.getElementById('subscription-item')?.addEventListener('click', () => {
@@ -106,8 +137,10 @@ class SidePanelManager {
     document.getElementById('refresh-btn')?.addEventListener('click', () => this.loadTokenData());
     document.getElementById('retry-btn')?.addEventListener('click', () => this.loadTokenData());
 
-    // Post button
-    document.querySelector('.post-btn')?.addEventListener('click', () => this.postOnX());
+    // Post buttons
+    document.getElementById('post-x-btn')?.addEventListener('click', () => this.postOnX());
+    document.getElementById('post-telegram-btn')?.addEventListener('click', () => this.postOnTelegram());
+    document.getElementById('post-discord-btn')?.addEventListener('click', () => this.postOnDiscord());
 
     // Generate button
     document.querySelector('.generate-btn-float')?.addEventListener('click', () => this.generateCaption());
@@ -139,6 +172,20 @@ class SidePanelManager {
         popup.style.display = 'none';
       }
     });
+
+    // Save template button
+    document.getElementById('save-template-btn')?.addEventListener('click', () => {
+      this.saveCaptionTemplate();
+    });
+
+    // Parameter tag click to insert
+    this.setupParameterTagListeners();
+
+    // Emoji click to insert
+    this.setupEmojiListeners();
+
+    // Load caption template on init
+    this.loadCaptionTemplate();
   }
 
   private toggleCaptionSettings(): void {
@@ -198,6 +245,162 @@ class SidePanelManager {
       this.showToast('KeyCode saved successfully!');
       if (input) input.value = '';
     });
+  }
+
+  private toggleTelegramSection(): void {
+    const content = document.getElementById('telegram-account-content');
+    const chevron = document.querySelector('#telegram-account-toggle .chevron-icon');
+    
+    if (content && chevron) {
+      const isExpanded = content.classList.contains('expanded');
+      
+      if (isExpanded) {
+        content.classList.remove('expanded');
+        content.style.display = 'none';
+        chevron.classList.remove('expanded');
+      } else {
+        content.classList.add('expanded');
+        content.style.display = 'flex';
+        chevron.classList.add('expanded');
+        this.loadTelegramStatus();
+      }
+    }
+  }
+
+  private async connectTelegram(): Promise<void> {
+    const botTokenInput = document.getElementById('telegram-bot-token-input') as HTMLInputElement;
+    const chatIdInput = document.getElementById('telegram-chat-id-input') as HTMLInputElement;
+    
+    const botToken = botTokenInput?.value?.trim();
+    const chatId = chatIdInput?.value?.trim();
+    
+    if (!botToken) {
+      this.showToast('Please enter your Telegram Bot Token');
+      return;
+    }
+
+    // Save to chrome storage
+    chrome.storage.local.set({ 
+      telegramBotToken: botToken,
+      telegramChatId: chatId 
+    }, () => {
+      console.log('[KOLsuite] Telegram account saved');
+      this.showToast('Telegram connected successfully!');
+      this.updateTelegramStatus(true);
+      if (botTokenInput) botTokenInput.value = '';
+      if (chatIdInput) chatIdInput.value = '';
+    });
+  }
+
+  private loadTelegramStatus(): void {
+    chrome.storage.local.get(['telegramBotToken'], (items) => {
+      if (items.telegramBotToken) {
+        this.updateTelegramStatus(true);
+      }
+    });
+  }
+
+  private updateTelegramStatus(connected: boolean): void {
+    const statusDot = document.querySelector('#telegram-status .status-dot');
+    const statusText = document.querySelector('#telegram-status .status-text');
+    const connectBtn = document.getElementById('connect-telegram-btn');
+    
+    if (connected) {
+      statusDot?.classList.add('connected');
+      if (statusText) {
+        statusText.textContent = 'Connected';
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Update Token';
+      }
+    } else {
+      statusDot?.classList.remove('connected');
+      if (statusText) {
+        statusText.textContent = 'Not connected';
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Connect Account';
+      }
+    }
+  }
+
+  private toggleDiscordSection(): void {
+    const content = document.getElementById('discord-account-content');
+    const chevron = document.querySelector('#discord-account-toggle .chevron-icon');
+    
+    if (content && chevron) {
+      const isExpanded = content.classList.contains('expanded');
+      
+      if (isExpanded) {
+        content.classList.remove('expanded');
+        content.style.display = 'none';
+        chevron.classList.remove('expanded');
+      } else {
+        content.classList.add('expanded');
+        content.style.display = 'flex';
+        chevron.classList.add('expanded');
+        this.loadDiscordStatus();
+      }
+    }
+  }
+
+  private async connectDiscord(): Promise<void> {
+    const webhookInput = document.getElementById('discord-webhook-input') as HTMLInputElement;
+    
+    const webhookUrl = webhookInput?.value?.trim();
+    
+    if (!webhookUrl) {
+      this.showToast('Please enter your Discord Webhook URL');
+      return;
+    }
+
+    // Validate webhook URL format
+    if (!webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      this.showToast('Invalid Discord Webhook URL');
+      return;
+    }
+
+    // Save to chrome storage
+    chrome.storage.local.set({ 
+      discordWebhookUrl: webhookUrl
+    }, () => {
+      console.log('[KOLsuite] Discord webhook saved');
+      this.showToast('Discord connected successfully!');
+      this.updateDiscordStatus(true);
+      if (webhookInput) webhookInput.value = '';
+    });
+  }
+
+  private loadDiscordStatus(): void {
+    chrome.storage.local.get(['discordWebhookUrl'], (items) => {
+      if (items.discordWebhookUrl) {
+        this.updateDiscordStatus(true);
+      }
+    });
+  }
+
+  private updateDiscordStatus(connected: boolean): void {
+    const statusDot = document.querySelector('#discord-status .status-dot');
+    const statusText = document.querySelector('#discord-status .status-text');
+    const connectBtn = document.getElementById('connect-discord-btn');
+    
+    if (connected) {
+      statusDot?.classList.add('connected');
+      if (statusText) {
+        statusText.textContent = 'Connected';
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Update Webhook';
+      }
+    } else {
+      statusDot?.classList.remove('connected');
+      if (statusText) {
+        statusText.textContent = 'Not connected';
+      }
+      if (connectBtn) {
+        connectBtn.textContent = 'Connect Webhook';
+      }
+    }
   }
 
   private toggleKeyCodeSection(): void {
@@ -328,6 +531,189 @@ class SidePanelManager {
       toast.style.animation = 'fadeOut 0.3s';
       setTimeout(() => toast.remove(), 300);
     }, 2000);
+  }
+
+  private loadSubscriptionLimit(): void {
+    // Load from storage or use default
+    chrome.storage.local.get(['tokenUsed', 'tokenLimit', 'subscriptionPlan'], (items) => {
+      const used = items.tokenUsed || 0;
+      const limit = items.tokenLimit || 100; // Default free plan limit
+      const plan = items.subscriptionPlan || 'free';
+      
+      this.updateSubscriptionBadge(used, limit);
+      this.updateTierBadge(plan);
+    });
+  }
+
+  private loadXUsername(): void {
+    // Load X username from storage
+    chrome.storage.local.get(['xUsername'], (items) => {
+      const username = items.xUsername;
+      const usernameElement = document.getElementById('username-text');
+      const userProfile = document.getElementById('user-profile');
+      const signInBtn = document.getElementById('sign-in-x-btn');
+      
+      if (username && username !== '@username') {
+        // User is signed in, show profile
+        if (usernameElement) {
+          usernameElement.textContent = username;
+        }
+        if (userProfile) {
+          userProfile.style.display = 'flex';
+        }
+        if (signInBtn) {
+          signInBtn.style.display = 'none';
+        }
+      } else {
+        // User is not signed in, show sign in button
+        if (userProfile) {
+          userProfile.style.display = 'none';
+        }
+        if (signInBtn) {
+          signInBtn.style.display = 'flex';
+        }
+      }
+    });
+  }
+
+  private saveCaptionTemplate(): void {
+    const textarea = document.getElementById('caption-template') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const template = textarea.value;
+    chrome.storage.local.set({ captionTemplate: template }, () => {
+      console.log('[KOLsuite] Caption template saved');
+      this.showToast('Template saved!');
+      
+      // Close popup
+      const popup = document.getElementById('caption-settings-popup');
+      if (popup) popup.style.display = 'none';
+    });
+  }
+
+  private loadCaptionTemplate(): void {
+    chrome.storage.local.get(['captionTemplate'], (items) => {
+      const template = items.captionTemplate;
+      if (!template) return;
+
+      const textarea = document.getElementById('caption-template') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.value = template;
+      }
+    });
+  }
+
+  private setupParameterTagListeners(): void {
+    const paramTags = document.querySelectorAll('.param-tag');
+    const textarea = document.getElementById('caption-template') as HTMLTextAreaElement;
+    
+    if (!textarea) return;
+
+    paramTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        const param = tag.textContent || '';
+        const cursorPos = textarea.selectionStart;
+        const textBefore = textarea.value.substring(0, cursorPos);
+        const textAfter = textarea.value.substring(textarea.selectionEnd);
+        
+        // Insert parameter at cursor position
+        textarea.value = textBefore + param + textAfter;
+        
+        // Move cursor after inserted parameter
+        const newCursorPos = cursorPos + param.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        textarea.focus();
+      });
+    });
+  }
+
+  private setupEmojiListeners(): void {
+    const emojiItems = document.querySelectorAll('.emoji-item');
+    const textarea = document.getElementById('caption-template') as HTMLTextAreaElement;
+    
+    if (!textarea) return;
+
+    emojiItems.forEach(emoji => {
+      emoji.addEventListener('click', () => {
+        const emojiChar = emoji.textContent || '';
+        const cursorPos = textarea.selectionStart;
+        const textBefore = textarea.value.substring(0, cursorPos);
+        const textAfter = textarea.value.substring(textarea.selectionEnd);
+        
+        // Insert emoji at cursor position
+        textarea.value = textBefore + emojiChar + textAfter;
+        
+        // Move cursor after inserted emoji
+        const newCursorPos = cursorPos + emojiChar.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        textarea.focus();
+      });
+    });
+  }
+
+  private updateTierBadge(plan: string): void {
+    const tierText = document.getElementById('tier-text');
+    const tierBadge = document.getElementById('tier-badge');
+    
+    if (tierText) {
+      // Capitalize first letter
+      tierText.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+    }
+
+    if (tierBadge) {
+      // Add premium class for premium tier
+      if (plan === 'premium' || plan === 'pro') {
+        tierBadge.classList.add('premium');
+      } else {
+        tierBadge.classList.remove('premium');
+      }
+    }
+  }
+
+  private updateSubscriptionBadge(used: number, limit: number): void {
+    const badgeText = document.getElementById('token-limit-text');
+    const badge = document.getElementById('subscription-badge');
+    
+    if (badgeText) {
+      badgeText.textContent = `${used}/${limit}`;
+    }
+
+    // Change badge color based on usage percentage
+    if (badge) {
+      const percentage = (used / limit) * 100;
+      
+      if (percentage >= 90) {
+        // Red - almost at limit
+        badge.style.background = 'rgba(239, 68, 68, 0.15)';
+        badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      } else if (percentage >= 70) {
+        // Orange - getting close
+        badge.style.background = 'rgba(249, 115, 22, 0.15)';
+        badge.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+      } else {
+        // Default blue
+        badge.style.background = 'rgba(79, 70, 229, 0.15)';
+        badge.style.borderColor = 'rgba(79, 70, 229, 0.3)';
+      }
+    }
+  }
+
+  private incrementTokenUsage(): void {
+    chrome.storage.local.get(['tokenUsed', 'tokenLimit'], (items) => {
+      const used = (items.tokenUsed || 0) + 1;
+      const limit = items.tokenLimit || 100;
+      
+      chrome.storage.local.set({ tokenUsed: used }, () => {
+        this.updateSubscriptionBadge(used, limit);
+        
+        // Warn if approaching limit
+        if (used >= limit) {
+          this.showToast('⚠️ Token limit reached! Upgrade to continue.');
+        } else if (used >= limit * 0.9) {
+          this.showToast(`⚠️ ${limit - used} tokens remaining`);
+        }
+      });
+    });
   }
 
   private async loadTokenData(): Promise<void> {
@@ -510,6 +896,12 @@ class SidePanelManager {
     this.updateElement('metric-insiders', tokenInfo.insiders);
     this.updateElement('metric-top10', tokenInfo.top10);
     
+    // Bonding Curve
+    this.updateBondingCurve(tokenInfo);
+    
+    // Summary
+    this.updateSummary(tokenInfo);
+    
     console.log('[TokenPeek Sidepanel] ✅ Token displayed!');
   }
   
@@ -518,6 +910,146 @@ class SidePanelManager {
     if (el && value !== undefined && value !== null) {
       el.textContent = value.toString();
     }
+  }
+
+  private updateBondingCurve(tokenInfo: any): void {
+    // Calculate bonding curve progress (example: based on market cap or liquidity)
+    const current = tokenInfo.mcap ? parseFloat(tokenInfo.mcap.replace(/[^0-9.]/g, '')) : 0;
+    const target = 100; // Target in K (e.g., $100K)
+    const percentage = Math.min((current / target) * 100, 100);
+    
+    // Update percentage display
+    const percentageEl = document.getElementById('bonding-percentage');
+    if (percentageEl) {
+      percentageEl.textContent = `${percentage.toFixed(1)}%`;
+    }
+    
+    // Update progress bar
+    const progressBar = document.getElementById('bonding-progress-fill');
+    if (progressBar) {
+      (progressBar as HTMLElement).style.width = `${percentage}%`;
+    }
+    
+    // Update current and target values
+    this.updateElement('bonding-current', tokenInfo.mcap || '$0.00K');
+    this.updateElement('bonding-target', '$100K');
+  }
+
+  private toggleSummary(): void {
+    const header = document.getElementById('summary-toggle');
+    const content = document.getElementById('summary-content');
+    
+    if (header && content) {
+      header.classList.toggle('active');
+      content.classList.toggle('expanded');
+    }
+  }
+
+  private updateSummary(tokenInfo: any): void {
+    // Generate simple summary text
+    const name = tokenInfo.name || 'This token';
+    const symbol = tokenInfo.symbol || '';
+    const mcap = tokenInfo.mcap || '$0';
+    const holders = tokenInfo.holders || '0';
+    
+    const summaryText = `${name}${symbol ? ' (' + symbol + ')' : ''} has a market cap of ${mcap} with ${holders} holders. The token shows current metrics including liquidity, volume, and holder distribution. Monitor the bonding curve progress and key indicators above for real-time updates.`;
+    
+    this.updateElement('summary-text', summaryText);
+  }
+
+  private async testTelegramConnection(): Promise<void> {
+    const testBtn = document.getElementById('test-telegram-btn') as HTMLButtonElement;
+    
+    if (testBtn) {
+      testBtn.disabled = true;
+      testBtn.textContent = 'Testing...';
+    }
+
+    chrome.storage.local.get(['telegramBotToken', 'telegramChatId'], async (items) => {
+      if (!items.telegramBotToken) {
+        this.showToast('Please save Bot Token first');
+        if (testBtn) {
+          testBtn.disabled = false;
+          testBtn.textContent = 'Test Connection';
+        }
+        return;
+      }
+
+      try {
+        // Test getMe endpoint to verify bot token
+        const response = await fetch(`https://api.telegram.org/bot${items.telegramBotToken}/getMe`);
+        const data = await response.json();
+
+        if (data.ok) {
+          this.showToast(`✓ Connected to bot: @${data.result.username}`);
+          
+          // If chat ID is provided, try sending a test message
+          if (items.telegramChatId) {
+            await this.sendTelegramMessage(
+              items.telegramBotToken, 
+              items.telegramChatId, 
+              '✓ Test message from KOLsuite'
+            );
+          }
+        } else {
+          this.showToast('✗ Invalid Bot Token');
+        }
+      } catch (error) {
+        console.error('[KOLsuite] Test failed:', error);
+        this.showToast('✗ Connection failed');
+      } finally {
+        if (testBtn) {
+          testBtn.disabled = false;
+          testBtn.textContent = 'Test Connection';
+        }
+      }
+    });
+  }
+
+  private async testDiscordConnection(): Promise<void> {
+    const testBtn = document.getElementById('test-discord-btn') as HTMLButtonElement;
+    
+    if (testBtn) {
+      testBtn.disabled = true;
+      testBtn.textContent = 'Testing...';
+    }
+
+    chrome.storage.local.get(['discordWebhookUrl'], async (items) => {
+      if (!items.discordWebhookUrl) {
+        this.showToast('Please save Webhook URL first');
+        if (testBtn) {
+          testBtn.disabled = false;
+          testBtn.textContent = 'Test Connection';
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch(items.discordWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: '✓ Test message from KOLsuite'
+          })
+        });
+
+        if (response.ok || response.status === 204) {
+          this.showToast('✓ Discord webhook is working!');
+        } else {
+          this.showToast('✗ Invalid webhook URL');
+        }
+      } catch (error) {
+        console.error('[KOLsuite] Test failed:', error);
+        this.showToast('✗ Connection failed');
+      } finally {
+        if (testBtn) {
+          testBtn.disabled = false;
+          testBtn.textContent = 'Test Connection';
+        }
+      }
+    });
   }
 
   private postOnX(): void {
@@ -534,6 +1066,105 @@ class SidePanelManager {
     window.open(tweetUrl, '_blank');
   }
 
+  private postOnTelegram(): void {
+    console.log('[TokenPeek] Post on Telegram clicked');
+    const caption = (document.getElementById('caption-input') as HTMLTextAreaElement)?.value || '';
+    
+    if (!caption.trim()) {
+      this.showToast('Please write a caption first!');
+      return;
+    }
+    
+    // Check if Telegram is configured
+    chrome.storage.local.get(['telegramBotToken', 'telegramChatId'], (items) => {
+      if (items.telegramBotToken && items.telegramChatId) {
+        // Send via Telegram Bot API
+        this.sendTelegramMessage(items.telegramBotToken, items.telegramChatId, caption);
+      } else {
+        // Fallback to share URL
+        const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(caption)}`;
+        window.open(telegramUrl, '_blank');
+        
+        if (!items.telegramBotToken) {
+          this.showToast('Configure Telegram Bot in Settings for direct posting');
+        }
+      }
+    });
+  }
+
+  private async sendTelegramMessage(botToken: string, chatId: string, message: string): Promise<void> {
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'HTML'
+        })
+      });
+
+      if (response.ok) {
+        this.showToast('Posted to Telegram successfully!');
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('[KOLsuite] Telegram error:', error);
+      this.showToast('Failed to post to Telegram');
+    }
+  }
+
+  private postOnDiscord(): void {
+    console.log('[TokenPeek] Post on Discord clicked');
+    const caption = (document.getElementById('caption-input') as HTMLTextAreaElement)?.value || '';
+    
+    if (!caption.trim()) {
+      this.showToast('Please write a caption first!');
+      return;
+    }
+    
+    // Check if Discord webhook is configured
+    chrome.storage.local.get(['discordWebhookUrl'], (items) => {
+      if (items.discordWebhookUrl) {
+        // Send via Discord webhook
+        this.sendDiscordMessage(items.discordWebhookUrl, caption);
+      } else {
+        // Copy to clipboard as fallback
+        navigator.clipboard.writeText(caption).then(() => {
+          this.showToast('Caption copied! Configure Discord Webhook in Settings for direct posting.');
+        }).catch(() => {
+          this.showToast('Failed to copy caption');
+        });
+      }
+    });
+  }
+
+  private async sendDiscordMessage(webhookUrl: string, message: string): Promise<void> {
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: message
+        })
+      });
+
+      if (response.ok || response.status === 204) {
+        this.showToast('Posted to Discord successfully!');
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('[KOLsuite] Discord error:', error);
+      this.showToast('Failed to post to Discord');
+    }
+  }
+
   private generateCaption(): void {
     console.log('[TokenPeek] Generate caption clicked');
     
@@ -542,21 +1173,43 @@ class SidePanelManager {
       return;
     }
     
-    const mintAddress = this.tokenData.mint || 'N/A';
+    // Increment token usage for AI generation
+    this.incrementTokenUsage();
     
-    const caption = `🚀 ${this.tokenData.name} ($${this.tokenData.symbol})\n\n` +
-                   `💰 Price: ${this.tokenData.price}\n` +
-                   `📊 24H Vol: ${this.tokenData.volume24h}\n` +
-                   `💧 Liquidity: ${this.tokenData.liquidity}\n\n` +
-                   `📍 CA: ${mintAddress}\n\n` +
-                   `#Solana #Crypto #${this.tokenData.symbol}`;
-    
-    const textarea = document.getElementById('caption-input') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.value = caption;
-      this.updatePreview(caption);
-      this.showToast('Caption generated!');
-    }
+    // Get template from storage
+    chrome.storage.local.get(['captionTemplate'], (items) => {
+      let template = items.captionTemplate || `🚀 {NAME} (\${SYMBOL})\n\n💰 Price: {PRICE}\n📊 MCAP: {MCAP}\n💧 Liquidity: {LIQUIDITY}\n📈 24H Vol: {VOLUME}\n\n📍 CA: {CA}\n\n#Solana #Crypto #{SYMBOL}`;
+      
+      // Replace parameters with actual data
+      const caption = template
+        .replace(/{NAME}/g, this.tokenData.name || 'N/A')
+        .replace(/{SYMBOL}/g, this.tokenData.symbol || 'N/A')
+        .replace(/{PRICE}/g, this.tokenData.price || 'N/A')
+        .replace(/{FEES}/g, this.tokenData.feesPaid || 'N/A')
+        .replace(/{AUDIT}/g, this.tokenData.audit || 'N/A')
+        .replace(/{MCAP}/g, this.tokenData.mcap || 'N/A')
+        .replace(/{FDV}/g, this.tokenData.fdv || 'N/A')
+        .replace(/{VOLUME}/g, this.tokenData.volume24h || 'N/A')
+        .replace(/{LIQUIDITY}/g, this.tokenData.liquidity || 'N/A')
+        .replace(/{5M}/g, this.tokenData.change5m || 'N/A')
+        .replace(/{1H}/g, this.tokenData.change1h || 'N/A')
+        .replace(/{6H}/g, this.tokenData.change6h || 'N/A')
+        .replace(/{24H}/g, this.tokenData.change24h || 'N/A')
+        .replace(/{BUNDLED}/g, this.tokenData.bundled || 'N/A')
+        .replace(/{SNIPED}/g, this.tokenData.sniped || 'N/A')
+        .replace(/{DEVHOLD}/g, this.tokenData.devHoldings || 'N/A')
+        .replace(/{INSIDERS}/g, this.tokenData.insiders || 'N/A')
+        .replace(/{TOP10}/g, this.tokenData.top10Holders || 'N/A')
+        .replace(/{HOLDERS}/g, this.tokenData.holders || 'N/A')
+        .replace(/{CA}/g, this.tokenData.mint || 'N/A');
+      
+      const textarea = document.getElementById('caption-input') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.value = caption;
+        this.updatePreview(caption);
+        this.showToast('Caption generated!');
+      }
+    });
   }
 
   private updatePreview(text: string): void {
