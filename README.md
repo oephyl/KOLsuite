@@ -109,10 +109,6 @@ KOLsuite/
 │   │   ├── sidepanel.html      # Main UI
 │   │   ├── sidepanel.ts        # UI logic
 │   │   └── sidepanel.css       # Styling
-│   ├── options/
-│   │   ├── options.html        # Settings page
-│   │   ├── options.ts          # Settings logic
-│   │   └── options.css         # Settings styles
 │   ├── shared/
 │   │   ├── types.ts            # TypeScript definitions
 │   │   ├── storage.ts          # Chrome Storage API wrapper

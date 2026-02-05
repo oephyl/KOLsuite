@@ -10,7 +10,6 @@ export default defineConfig({
       input: {
         serviceWorker: resolve(__dirname, 'src/background/serviceWorker.ts'),
         content: resolve(__dirname, 'src/content/index.ts'),
-        options: resolve(__dirname, 'src/options/options.ts'),
         sidepanel: resolve(__dirname, 'src/sidepanel/sidepanel.ts'),
       },
       output: {
@@ -20,9 +19,6 @@ export default defineConfig({
           }
           if (chunkInfo.name === 'content') {
             return 'content/index.js';
-          }
-          if (chunkInfo.name === 'options') {
-            return 'options/options.js';
           }
           if (chunkInfo.name === 'sidepanel') {
             return 'sidepanel/sidepanel.js';
@@ -49,14 +45,6 @@ export default defineConfig({
         {
           src: 'src/sidepanel/sidepanel.css',
           dest: 'sidepanel',
-        },
-        {
-          src: 'src/options/options.html',
-          dest: 'options',
-        },
-        {
-          src: 'src/options/options.css',
-          dest: 'options',
         },
         {
           src: 'src/content/overlay.css',
