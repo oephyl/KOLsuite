@@ -1,0 +1,26 @@
+﻿            <div class="emoji-grid">
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+              <button class="emoji-item" data-emoji=""></button>
+            </div>

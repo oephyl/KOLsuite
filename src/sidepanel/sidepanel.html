@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -18,10 +18,10 @@
           <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
-          Sign in with X
+          Sign X
         </button>
         <div class="brand-title" id="user-profile" style="display: none;">
-          <div class="profile-avatar" id="profile-avatar"></div>
+          <div class="profile-avatar" id="header-profile-avatar"></div>
           <span class="username-text" id="username-text">@username</span>
         </div>
         <div class="header-badges">
@@ -129,7 +129,9 @@
       <div class="tab-content-container">
         
         <!-- Details Tab Content -->
-        <div class="tab-content active" id="details-tab-content">
+        <div class="details-container" style="overflow: hidden; max-height: 100vh; position: relative;">
+        <div class="tab-content active" id="details-tab-content" style="overflow: hidden; position: relative; z-index: 10;">
+          <!-- Details Only - No Twitter Content -->
           
       <!-- Stats Grid -->
       <div class="stats-grid">
@@ -344,7 +346,7 @@
               <button class="emoji-item" data-emoji="🎪">🎪</button>
               <button class="emoji-item" data-emoji="🎨">🎨</button>
               <button class="emoji-item" data-emoji="🎭">🎭</button>
-              <button class="emoji-item" data-emoji="🎪">🎪</button>
+              <button class="emoji-item" data-emoji="🎉">🎉</button>
               <button class="emoji-item" data-emoji="💥">💥</button>
               <button class="emoji-item" data-emoji="✨">✨</button>
               <button class="emoji-item" data-emoji="🌟">🌟</button>
@@ -397,47 +399,38 @@
               <p class="template-label">Emojis:</p>
               <div class="emoji-picker">
                 <div class="emoji-grid">
-                  <button class="emoji-item" data-emoji="🚀">🚀</button>
-                  <button class="emoji-item" data-emoji="💰">💰</button>
-                  <button class="emoji-item" data-emoji="📊">📊</button>
-                  <button class="emoji-item" data-emoji="📈">📈</button>
-                  <button class="emoji-item" data-emoji="📉">📉</button>
-                  <button class="emoji-item" data-emoji="💧">💧</button>
-                  <button class="emoji-item" data-emoji="💎">💎</button>
+                 <button class="emoji-item" data-emoji="💎">💎</button>
                   <button class="emoji-item" data-emoji="🔥">🔥</button>
+                  <button class="emoji-item" data-emoji="💰">💰</button>
+                  <button class="emoji-item" data-emoji="📈">📈</button>
+                  <button class="emoji-item" data-emoji="📊">📊</button>
                   <button class="emoji-item" data-emoji="⚡">⚡</button>
+                  <button class="emoji-item" data-emoji="🌙">🌙</button>
                   <button class="emoji-item" data-emoji="⭐">⭐</button>
-                  <button class="emoji-item" data-emoji="🌟">🌟</button>
-                  <button class="emoji-item" data-emoji="📍">📍</button>
                   <button class="emoji-item" data-emoji="🎯">🎯</button>
-                  <button class="emoji-item" data-emoji="🔒">🔒</button>
-                  <button class="emoji-item" data-emoji="🔑">🔑</button>
-                  <button class="emoji-item" data-emoji="🏆">🏆</button>
-                  <button class="emoji-item" data-emoji="👥">👥</button>
-                  <button class="emoji-item" data-emoji="👨‍💻">👨‍💻</button>
-                  <button class="emoji-item" data-emoji="📦">📦</button>
-                  <button class="emoji-item" data-emoji="🔍">🔍</button>
-                  <button class="emoji-item" data-emoji="✅">✅</button>
-                  <button class="emoji-item" data-emoji="❌">❌</button>
-                  <button class="emoji-item" data-emoji="⚠️">⚠️</button>
+                  <button class="emoji-item" data-emoji="🎪">🎪</button>
+                  <button class="emoji-item" data-emoji="🎨">🎨</button>
+                  <button class="emoji-item" data-emoji="🎭">🎭</button>
+                  <button class="emoji-item" data-emoji="🎉">🎉</button>
+                  <button class="emoji-item" data-emoji="💥">💥</button>
+                  <button class="emoji-item" data-emoji="✨">✨</button>
+                  <button class="emoji-item" data-emoji="🌟">🌟</button>
+                  <button class="emoji-item" data-emoji="💫">💫</button>
+                  <button class="emoji-item" data-emoji="🔮">🔮</button>
+                  <button class="emoji-item" data-emoji="🎰">🎰</button>
                   <button class="emoji-item" data-emoji="🚨">🚨</button>
-                  <button class="emoji-item" data-emoji="🔴">🔴</button>
-                  <button class="emoji-item" data-emoji="🟢">🟢</button>
-                  <button class="emoji-item" data-emoji="🟡">🟡</button>
-                  <button class="emoji-item" data-emoji="👀">👀</button>
-                  <button class="emoji-item" data-emoji="👍">👍</button>
-                  <button class="emoji-item" data-emoji="👎">👎</button>
+                  <button class="emoji-item" data-emoji="🔔">🔔</button>
                 </div>
               </div>
             </div>
-            <textarea id="caption-template" class="template-textarea" placeholder="Enter your caption template using parameters like {NAME}, {PRICE}, {MCAP}, etc.">🚀 {NAME} (${SYMBOL})
+            <textarea id="caption-template" class="template-textarea" placeholder="Enter your caption template using parameters like {NAME}, {PRICE}, {MCAP}, etc.">ðŸš€ {NAME} (${SYMBOL})
 
-💰 Price: {PRICE}
-📊 MCAP: {MCAP}
-💧 Liquidity: {LIQUIDITY}
-📈 24H Vol: {VOLUME}
+ðŸ’° Price: {PRICE}
+ðŸ“Š MCAP: {MCAP}
+ðŸ’§ Liquidity: {LIQUIDITY}
+ðŸ“ˆ 24H Vol: {VOLUME}
 
-📍 CA: {CA}
+ðŸ“ CA: {CA}
 
 #Solana #Crypto #{SYMBOL}</textarea>
             <button class="save-template-btn" id="save-template-btn">Save Template</button>
@@ -445,348 +438,247 @@
         </div>
 
         </div> <!-- End Details Tab Content -->
+      </div> <!-- End Details Container -->
         
         <!-- Tweet Tab Content -->
+        <div class="tweet-container">
         <div class="tab-content" id="tweet-tab-content">
           
-          <!-- Tweet Composer -->
-          <div class="tweet-composer-section">
-            <div class="section-header">
-              <h3 class="section-title">Compose Tweet</h3>
-              <div class="character-count" id="tweet-char-count">0/280</div>
-            </div>
-            <div class="tweet-composer-card">
-              <textarea id="tweet-input" class="tweet-textarea" placeholder="What's happening?"></textarea>
-              
-              <!-- Tweet Controls -->
-              <div class="tweet-controls">
-                <div class="tweet-controls-left">
-                  <button class="tweet-control-btn" id="tweet-emoji-btn" title="Add Emoji">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                      <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
-                    </svg>
-                  </button>
-                  <button class="tweet-control-btn" id="tweet-media-btn" title="Add Media">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                      <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
-                    </svg>
-                  </button>
-                  <button class="tweet-control-btn" id="tweet-hashtag-btn" title="Add Hashtags">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M5.5 6.5H4a.5.5 0 0 1 0-1h1.5V4a.5.5 0 0 1 1 0v1.5H8a.5.5 0 0 1 0 1H6.5V8a.5.5 0 0 1-1 0V6.5zm6.5.5h-1.5V4a.5.5 0 0 0-1 0v2.5H8a.5.5 0 0 0 0 1h1.5V10a.5.5 0 0 0 1 0V7.5H12a.5.5 0 0 0 0-1z"/>
-                      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm13 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1z"/>
-                    </svg>
-                  </button>
-                </div>
-                <button class="tweet-btn" id="tweet-post-btn">Tweet</button>
-              </div>
-              
-              <!-- Tweet Preview -->
-              <div class="tweet-preview" id="tweet-preview" style="display: none;">
-                <div class="tweet-preview-header">
-                  <svg width="16" height="16" fill="#1DA1F2" viewBox="0 0 24 24">
-                    <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+          <!-- Tweet Feed -->
+          <div class="twitter-feed">
+            <div class="feed-header">
+              <div class="tweet-tabs">
+                <button class="tweet-tab-btn active" id="latest-tweets-tab">
+                  <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
                   </svg>
-                  <span class="tweet-preview-label">Tweet Preview</span>
-                </div>
-                <div class="tweet-preview-content" id="tweet-preview-content">
-                  <p id="tweet-preview-text">Your tweet will appear here...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Tweet Templates -->
-          <div class="tweet-templates-section">
-            <div class="section-header">
-              <h3 class="section-title">Quick Templates</h3>
-            </div>
-            <div class="template-grid">
-              <button class="template-card" data-template="bullish">
-                <div class="template-icon">🚀</div>
-                <div class="template-name">Bullish Call</div>
-              </button>
-              <button class="template-card" data-template="alert">
-                <div class="template-icon">🚨</div>
-                <div class="template-name">Alert</div>
-              </button>
-              <button class="template-card" data-template="analysis">
-                <div class="template-icon">📊</div>
-                <div class="template-name">Analysis</div>
-              </button>
-              <button class="template-card" data-template="gem">
-                <div class="template-icon">💎</div>
-                <div class="template-name">Hidden Gem</div>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Twitter Profile & Feed Section -->
-          <div class="twitter-feed-section">
-            <!-- Sticky Profile Header -->
-            <div class="profile-sticky-header" id="profile-sticky-header">
-              <div class="profile-header-content">
-                <div class="profile-avatar-section">
-                  <img class="profile-avatar" id="profile-avatar" src="" alt="Profile Avatar">
-                  <div class="profile-verification" id="profile-verification">
-                    <svg class="verified-badge" width="20" height="20" fill="#1DA1F2" viewBox="0 0 24 24">
-                      <path d="M22.46 6c-.85.38-1.78.64-2.75.76 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.18-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1-4-.2-7.55-2.12-9.92-5.04-.42.72-.66 1.55-.66 2.44 0 1.67.85 3.14 2.14 3.9-.79-.03-1.53-.24-2.18-.6v.06c0 2.33 1.66 4.27 3.86 4.72-.4.11-.83.17-1.27.17-.31 0-.62-.03-.92-.08.62 1.94 2.42 3.35 4.55 3.39-1.67 1.31-3.77 2.09-6.05 2.09-.39 0-.78-.02-1.17-.07 2.18 1.4 4.77 2.22 7.55 2.22 9.06 0 14.01-7.5 14.01-14.01 0-.21 0-.42-.01-.63.96-.69 1.8-1.56 2.46-2.55z"/>
-                    </svg>
-                  </div>
-                </div>
-                <div class="profile-info">
-                  <div class="profile-names">
-                    <h2 class="profile-name" id="profile-name">Loading...</h2>
-                    <span class="profile-handle" id="profile-handle">@loading</span>
-                  </div>
-                  <div class="profile-stats">
-                    <div class="stat-item">
-                      <span class="stat-number" id="profile-following">-</span>
-                      <span class="stat-label">Following</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number" id="profile-followers">-</span>
-                      <span class="stat-label">Followers</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number" id="profile-tweets">-</span>
-                      <span class="stat-label">Tweets</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="profile-bio" id="profile-bio">
-                Loading profile bio...
-              </div>
-            </div>
-            
-            <!-- Profile Tabs -->
-            <div class="profile-tabs" id="profile-tabs">
-              <button class="tab-btn active" data-tab="timeline">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                </svg>
-                Timeline
-              </button>
-              <button class="tab-btn" data-tab="followers">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                  <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-                  <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                </svg>
-                Verified Followers
-              </button>
-              <button class="tab-btn" data-tab="account">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                </svg>
-                Account Age
-              </button>
-            </div>
-            
-            <div class="section-header">
-              <h3 class="section-title">Twitter Feed</h3>
-              <div class="feed-controls">
-                <select class="feed-filter" id="feed-filter">
-                  <option value="all">All Tweets</option>
-                  <option value="official">Official Account</option>
-                  <option value="mentions">Mentions</option>
-                  <option value="latest">Latest</option>
-                  <option value="top">Top Tweets</option>
-                </select>
-                <button class="refresh-btn" id="refresh-feed-btn" title="Refresh Feed">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                  <span>Tweets</span>
+                </button>
+                <button class="tweet-tab-btn" id="profile-tab">
+                  <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
                   </svg>
+                  <span>Profile</span>
                 </button>
               </div>
+              <button class="refresh-btn" title="Refresh Feed">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+              </button>
             </div>
             
-            <!-- Profile Tab Contents -->
-            <div class="profile-tab-content" id="profile-tab-content">
+            <!-- Latest Tweets Content -->
+            <div class="tweet-tab-content active" id="latest-tweets-content">
               
-              <!-- Timeline Tab -->
-              <div class="tab-panel active" id="timeline-panel">
-                <!-- Search Bar -->
-                <div class="search-bar">
-                  <div class="search-input-container">
-                    <svg class="search-icon" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+              <!-- Sample Tweet Posts -->
+              <div class="tweet-card">
+                <div class="tweet-avatar">
+                  <img src="https://i.pravatar.cc/40?img=2" alt="User" class="avatar-small">
+                </div>
+                <div class="tweet-content">
+                  <div class="tweet-header">
+                    <span class="author-name">Crypto Trader</span>
+                    <svg class="verified-badge" width="12" height="12" fill="#1DA1F2">
+                      <path d="M8.5 1.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12.22 6.22a.75.75 0 00-1.06-1.06L7.25 9.06 5.78 7.59a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5z"/>
                     </svg>
-                    <input type="text" class="search-input" id="tweet-search" placeholder="Search tweets about this token...">
-                    <button class="clear-search" id="clear-search" style="display: none;">
-                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                    <span class="author-handle">@cryptotrader</span>
+                    <span class="tweet-time">·</span>
+                    <span class="tweet-time">2h</span>
+                  </div>
+                  <div class="tweet-text">
+                    🚀 Just found this gem on Solana! 📊 Strong fundamentals 💰 Low market cap 🔒 Audited contract DYOR but this could be huge! 💎 #Solana #Crypto #DeFi
+                  </div>
+                  <div class="tweet-engagement">
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366a.75.75 0 010 1.5H9.756c-3.6 0-6.505 2.904-6.505 6.5s2.905 6.5 6.505 6.5h4.366a.75.75 0 010 1.5H9.756c-4.421 0-8.005-3.58-8.005-8z"/>
                       </svg>
+                      <span>12</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.061 0s-.293.768 0 1.061l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767.001-1.06z"/>
+                      </svg>
+                      <span>5</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
+                      </svg>
+                      <span>45</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tweet-card">
+                <div class="tweet-avatar">
+                  <img src="https://i.pravatar.cc/40?img=3" alt="User" class="avatar-small">
+                </div>
+                <div class="tweet-content">
+                  <div class="tweet-header">
+                    <span class="tweet-author">DeFi Hunter</span>
+                    <span class="tweet-handle">@defihunter</span>
+                    <span class="tweet-time">Â·</span>
+                    <span class="tweet-time">4h</span>
+                  </div>
+                  <div class="tweet-text">
+                    ðŸ’Ž Token analysis update:
+                    
+                    âœ… Liquidity: Growing
+                    âœ… Volume: 24h increase  
+                    âœ… Holders: Community expanding
+                    
+                    Remember always DYOR! ðŸ”
+                    
+                    #TokenAnalysis #Research
+                  </div>
+                  <div class="tweet-engagement">
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366a.75.75 0 010 1.5H9.756c-3.6 0-6.505 2.904-6.505 6.5s2.905 6.5 6.505 6.5h4.366a.75.75 0 010 1.5H9.756c-4.421 0-8.005-3.58-8.005-8z"/>
+                      </svg>
+                      <span>8</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.061 0s-.293.768 0 1.061l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767.001-1.06z"/>
+                      </svg>
+                      <span>3</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
+                      </svg>
+                      <span>27</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tweet-card">
+                <div class="tweet-avatar">
+                  <img src="https://i.pravatar.cc/40?img=4" alt="User" class="avatar-small">
+                </div>
+                <div class="tweet-content">
+                  <div class="tweet-header">
+                    <span class="tweet-author">Solana Expert</span>
+                    <svg class="verified-icon" width="16" height="16" fill="#1DA1F2">
+                      <path d="M8.5 1.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12.22 6.22a.75.75 0 00-1.06-1.06L7.25 9.06 5.78 7.59a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5z"/>
+                    </svg>
+                    <span class="tweet-handle">@solanaexpert</span>
+                    <span class="tweet-time">Â·</span>
+                    <span class="tweet-time">6h</span>
+                  </div>
+                  <div class="tweet-text">
+                    ðŸ”¥ New project launching on Solana!
+                    
+                    ðŸ“ˆ Promising tokenomics
+                    ðŸŽ¯ Clear use case
+                    ðŸ‘¥ Strong community
+                    ðŸ’¼ Experienced team
+                    
+                    Early stage opportunity ðŸ‘€
+                    
+                    What do you think? ðŸ¤”
+                  </div>
+                  <div class="tweet-actions">
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.633.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-3.13-2.538-5.65-5.8-5.787zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c2.319 0 4.302 1.905 4.302 4.296-.002 1.704-.777 3.328-2.515 4.08z"/>
+                      </svg>
+                      <span>18</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-3.04c-.414 0-.75.336-.75.75s.336.75.75.75h3.04c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.061 0s-.293.768 0 1.061l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767.001-1.06z"/>
+                        <path d="M10.22 5.73c.293-.293.293-.768 0-1.061L6.72 1.17c-.293-.293-.768-.293-1.061 0L2.16 4.669c-.293.293-.293.768 0 1.061s.768.293 1.061 0L5.44 3.51v10.24c0 1.24-1.01 2.25-2.25 2.25H.15c-.414 0-.75.336-.75.75s.336.75.75.75h3.04c2.068 0 3.75-1.682 3.75-3.75V3.51l2.22 2.22c.148.147.34.22.531.22s.384-.073.531-.22z"/>
+                      </svg>
+                      <span>9</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
+                      </svg>
+                      <span>63</span>
+                    </div>
+                    <div class="engagement-item">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            </div> <!-- End Latest Tweets Content -->
+            
+            <!-- Profile Content -->
+            <div class="tweet-tab-content" id="profile-content" style="display: none;">
+              <div class="profile-section">
+                <div class="profile-card">
+                  <div class="profile-header">
+                    <div class="profile-avatar">
+                      <img src="https://i.pravatar.cc/80?img=1" alt="Profile" class="profile-image">
+                      <div class="verified-badge">
+                        <svg width="14" height="14" fill="#1DA1F2">
+                          <path d="M8.5 1.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12.22 6.22a.75.75 0 00-1.06-1.06L7.25 9.06 5.78 7.59a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="profile-info">
+                      <div class="profile-name-wrapper">
+                        <span class="profile-name">Crypto Analyst</span>
+                      </div>
+                      <div class="profile-handle">@cryptoanalyst</div>
+                      <div class="profile-stats">
+                        <span class="stat-item">
+                          <span class="stat-number">1,234</span>
+                          <span class="stat-label">Following</span>
+                        </span>
+                        <span class="stat-divider">•</span>
+                        <span class="stat-item">
+                          <span class="stat-number">15.3K</span>
+                          <span class="stat-label">Followers</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="profile-bio">
+                    Solana ecosystem explorer • On-chain analyst • Early investor in innovative projects • Sharing alpha and insights • Not financial advice
+                  </div>
+                  
+                  <div class="profile-actions">
+                    <button class="profile-btn follow-btn">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                      </svg>
+                      Follow
+                    </button>
+                    <button class="profile-btn message-btn">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"/>
+                      </svg>
+                      Message
                     </button>
                   </div>
                 </div>
-                
-                <!-- Tweet Feed Container -->
-                <div class="tweet-feed-container" id="tweet-feed-container">
-              
-              <!-- Loading State -->
-              <div class="feed-loading" id="feed-loading">
-                <div class="loading-spinner"></div>
-                <span>Loading Twitter feed...</span>
               </div>
-              
-              <!-- No Data State -->
-              <div class="feed-no-data" id="feed-no-data" style="display: none;">
-                <div class="no-data-icon">
-                  <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
-                  </svg>
-                </div>
-                <h3>No tweets found</h3>
-                <p>Connect your Twitter account or check your search terms</p>
-                <button class="retry-btn" id="retry-feed-btn">Try Again</button>
-              </div>
-              
-              <!-- Dynamic Tweet Cards will be loaded here -->
-              
-              <!-- Error State -->
-              <div class="feed-error" id="feed-error" style="display: none;">
-                <div class="error-icon">
-                  <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                  </svg>
-                </div>
-                <h3>Failed to load tweets</h3>
-                <p>Please check your internet connection and try again</p>
-                <button class="retry-btn" id="retry-error-btn">Retry</button>
-              </div>
-              
-              <!-- Real tweets will be loaded here dynamically by JavaScript -->
-              
-              <!-- Loading More Indicator -->
-              <div class="loading-more" id="loading-more" style="display: none;">
-                <div class="loading-spinner"></div>
-                <span>Loading more tweets...</span>
-              </div>
-              
-                </div>
-              </div> <!-- End Timeline Panel -->
-              
-              <!-- Verified Followers Tab -->
-              <div class="tab-panel" id="followers-panel" style="display: none;">
-                <div class="followers-header">
-                  <h3>Verified Followers</h3>
-                  <div class="followers-stats">
-                    <div class="stat-item">
-                      <span class="stat-number" id="verified-count">-</span>
-                      <span class="stat-label">Verified</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number" id="blue-checkmarks">-</span>
-                      <span class="stat-label">Blue Checkmarks</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number" id="influencers">-</span>
-                      <span class="stat-label">Influencers</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="followers-filters">
-                  <button class="filter-btn active" data-filter="all">All Verified</button>
-                  <button class="filter-btn" data-filter="blue">Blue Checkmarks</button>
-                  <button class="filter-btn" data-filter="influencers">Influencers</button>
-                  <button class="filter-btn" data-filter="orgs">Organizations</button>
-                </div>
-                
-                <div class="followers-list" id="followers-list">
-                  <div class="follower-loading">
-                    <div class="loading-spinner"></div>
-                    <span>Loading verified followers...</span>
-                  </div>
-                </div>
-              </div> <!-- End Followers Panel -->
-              
-              <!-- Account Age Tab -->
-              <div class="tab-panel" id="account-panel" style="display: none;">
-                <div class="account-info-grid">
-                  <div class="account-info-card">
-                    <div class="info-header">
-                      <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-                      </svg>
-                      <h3>Account Information</h3>
-                    </div>
-                    <div class="info-items">
-                      <div class="info-item">
-                        <span class="info-label">Created Date:</span>
-                        <span class="info-value" id="account-created">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Account Age:</span>
-                        <span class="info-value" id="account-age">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Account Status:</span>
-                        <span class="info-value" id="account-status">Loading...</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="account-info-card">
-                    <div class="info-header">
-                      <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                      </svg>
-                      <h3>Activity Statistics</h3>
-                    </div>
-                    <div class="info-items">
-                      <div class="info-item">
-                        <span class="info-label">Total Tweets:</span>
-                        <span class="info-value" id="total-tweets">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Average Daily:</span>
-                        <span class="info-value" id="daily-average">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Last Active:</span>
-                        <span class="info-value" id="last-active">Loading...</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="account-info-card">
-                    <div class="info-header">
-                      <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0L2.137 1.844z"/>
-                        <path d="M11.5 3a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h6zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-6z"/>
-                      </svg>
-                      <h3>Verification History</h3>
-                    </div>
-                    <div class="info-items">
-                      <div class="info-item">
-                        <span class="info-label">Verification Date:</span>
-                        <span class="info-value" id="verification-date">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Verification Type:</span>
-                        <span class="info-value" id="verification-type">Loading...</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Badge Status:</span>
-                        <span class="info-value" id="badge-status">Loading...</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> <!-- End Account Panel -->
-              
-            </div> <!-- End Profile Tab Content -->
-          </div> <!-- End Twitter Feed Section -->
-        
+            </div>
+        </div> <!-- End Twitter Feed -->
         </div> <!-- End Tweet Tab Content -->
+        </div> <!-- End Tweet Container -->
         
       </div> <!-- End Tab Content Container -->
 
@@ -952,14 +844,14 @@
               <p class="setting-description">Customize your Discord call message format</p>
             </div>
           </div>
-          <textarea id="discord-template-input" class="keycode-input" style="min-height: 120px; resize: vertical;" placeholder="🚀 {NAME} (${SYMBOL})
+          <textarea id="discord-template-input" class="keycode-input" style="min-height: 120px; resize: vertical;" placeholder="ðŸš€ {NAME} (${SYMBOL})
 
-💰 Price: {PRICE}
-📊 MCAP: {MCAP}
-💧 Liquidity: {LIQUIDITY}
-📈 24H Vol: {VOLUME}
+ðŸ’° Price: {PRICE}
+ðŸ“Š MCAP: {MCAP}
+ðŸ’§ Liquidity: {LIQUIDITY}
+ðŸ“ˆ 24H Vol: {VOLUME}
 
-📍 CA: {CA}
+ðŸ“ CA: {CA}
 
 #Solana #Crypto #{SYMBOL}"></textarea>
           <p class="setting-description" style="font-size: 11px; margin-top: 8px; color: var(--text-muted);">
@@ -989,8 +881,8 @@
           <select id="language-select" class="setting-select">
             <option value="en">English</option>
             <option value="id">Bahasa Indonesia</option>
-            <option value="zh">中文</option>
-            <option value="ja">日本語</option>
+            <option value="zh">ä¸­æ–‡</option>
+            <option value="ja">æ—¥æœ¬èªž</option>
           </select>
         </div>
       </div>
@@ -1063,8 +955,8 @@
   <!-- Error State -->
   <div id="error-state" class="state" style="display: none;">
     <div class="error-content">
-      <p id="error-message">❌ Error loading token</p>
-      <button id="retry-btn" class="retry-btn">🔄 Retry</button>
+      <p id="error-message">âŒ Error loading token</p>
+      <button id="retry-btn" class="retry-btn">ðŸ”„ Retry</button>
     </div>
   </div>
 

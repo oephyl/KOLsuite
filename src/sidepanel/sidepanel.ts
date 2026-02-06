@@ -24,6 +24,9 @@ class SidePanelManager {
     this.setupTabListeners();
     this.loadSubscriptionLimit();
     this.loadXUsername();
+    
+    // Setup Twitter feed functionality
+    this.setupTwitterFeed();
   }
 
   private setupTabListeners(): void {
@@ -56,6 +59,17 @@ class SidePanelManager {
 
     // Back button in settings
     document.getElementById('back-btn')?.addEventListener('click', () => this.closeSettings());
+
+    // Tab buttons with explicit debugging
+    document.getElementById('details-tab-btn')?.addEventListener('click', () => {
+      console.log('[KOLsuite] Details tab clicked');
+      this.switchTab('details');
+    });
+    
+    document.getElementById('tweet-tab-btn')?.addEventListener('click', () => {
+      console.log('[KOLsuite] Tweet tab clicked');
+      this.switchTab('tweet');
+    });
 
     // KeyCode toggle
     document.getElementById('keycode-toggle')?.addEventListener('click', () => this.toggleKeyCodeSection());
@@ -148,6 +162,20 @@ class SidePanelManager {
 
     // Upload button - image upload functionality
     document.getElementById('upload-btn')?.addEventListener('click', () => this.openImageUpload());
+
+    // Profile Navigation Tabs
+    document.querySelectorAll('.profile-nav-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const tabName = target.dataset.tab;
+        if (tabName) {
+          this.switchProfileTab(tabName);
+        }
+      });
+    });
+
+    // Tweet compose functionality
+    this.setupTweetComposer();
     document.getElementById('image-upload')?.addEventListener('change', (e) => this.handleImageUpload(e));
     document.getElementById('remove-image-btn')?.addEventListener('click', () => this.removeImage());
 
@@ -908,16 +936,47 @@ class SidePanelManager {
   }
 
   private switchTab(tabName: string): void {
+    console.log(`[KOLsuite] Switching to tab: ${tabName}`);
+    
+    // Remove all existing tab classes from body
+    document.body.className = document.body.className.replace(/\btab-\w+/g, '');
+    
+    // Add the appropriate tab class to body for CSS targeting
+    if (tabName === 'details') {
+      document.body.classList.add('tab-details');
+    } else if (tabName === 'tweet') {
+      document.body.classList.add('tab-tweets');
+    }
+    
     // Remove active class from all tabs and contents
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
     
     // Add active class to clicked tab and its content
     const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
     const activeContent = document.getElementById(`${tabName}-tab-content`);
     
-    if (activeTab) activeTab.classList.add('active');
-    if (activeContent) activeContent.classList.add('active');
+    if (activeTab) {
+      activeTab.classList.add('active');
+      console.log('[KOLsuite] Activated tab:', tabName);
+    }
+    
+    if (activeContent) {
+      activeContent.classList.add('active');
+      console.log('[KOLsuite] Activated content:', `${tabName}-tab-content`);
+      
+      // Load profile data only when tweet tab is activated
+      if (tabName === 'tweet') {
+        this.loadProfileData();
+      }
+    } else {
+      console.error('[KOLsuite] Content not found:', `${tabName}-tab-content`);
+    }
   }
 
   private setupProfileTabs(): void {
@@ -991,27 +1050,7 @@ class SidePanelManager {
     });
   }
 
-  private switchProfileTab(tabName: string): void {
-    // Remove active class from all profile tabs and panels
-    document.querySelectorAll('.profile-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(panel => {
-      panel.classList.remove('active');
-      (panel as HTMLElement).style.display = 'none';
-    });
-    
-    // Add active class to clicked tab
-    const activeTab = document.querySelector(`.profile-tabs .tab-btn[data-tab="${tabName}"]`);
-    const activePanel = document.getElementById(`${tabName}-panel`);
-    
-    if (activeTab) activeTab.classList.add('active');
-    if (activePanel) {
-      activePanel.classList.add('active');
-      (activePanel as HTMLElement).style.display = 'flex';
-    }
 
-    // Load data for the specific tab
-    this.loadProfileTabData(tabName);
-  }
 
   private loadProfileTabData(tabName: string): void {
     switch (tabName) {
@@ -1181,6 +1220,8 @@ class SidePanelManager {
   }
 
   private loadProfileData(): void {
+    console.log('[KOLsuite] Loading profile data for tweet tab');
+    
     // Update profile header with token data
     const profileAvatar = document.getElementById('profile-avatar') as HTMLImageElement;
     const profileName = document.getElementById('profile-name');
@@ -1262,7 +1303,10 @@ class SidePanelManager {
 
     // Tweet post button
     document.getElementById('tweet-post-btn')?.addEventListener('click', () => {
-      this.postTweet();
+      const textarea = document.getElementById('tweet-input') as HTMLTextAreaElement;
+      if (textarea && textarea.value.trim()) {
+        this.postTweet(textarea.value.trim());
+      }
     });
 
     // Twitter feed functionality
@@ -1270,6 +1314,9 @@ class SidePanelManager {
   }
 
   private setupTwitterFeed(): void {
+    // Tweet tabs functionality
+    this.setupTweetTabs();
+    
     // Feed filter dropdown
     const feedFilter = document.getElementById('feed-filter') as HTMLSelectElement;
     if (feedFilter) {
@@ -1319,6 +1366,43 @@ class SidePanelManager {
     setTimeout(() => {
       this.refreshTwitterFeed();
     }, 100);
+  }
+
+  private setupTweetTabs(): void {
+    const latestTweetsTab = document.getElementById('latest-tweets-tab');
+    const profileTab = document.getElementById('profile-tab');
+    const latestTweetsContent = document.getElementById('latest-tweets-content');
+    const profileContent = document.getElementById('profile-content');
+
+    if (!latestTweetsTab || !profileTab || !latestTweetsContent || !profileContent) {
+      return;
+    }
+
+    // Latest Tweets tab click
+    latestTweetsTab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      document.querySelectorAll('.tweet-tab-btn').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tweet-tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Add active class to clicked tab and corresponding content
+      latestTweetsTab.classList.add('active');
+      latestTweetsContent.classList.add('active');
+      latestTweetsContent.style.display = 'block';
+      profileContent.style.display = 'none';
+    });
+
+    // Profile tab click
+    profileTab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      document.querySelectorAll('.tweet-tab-btn').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tweet-tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Add active class to clicked tab and corresponding content
+      profileTab.classList.add('active');
+      profileContent.classList.add('active');
+      profileContent.style.display = 'block';
+      latestTweetsContent.style.display = 'none';
+    });
   }
 
   private filterTweetFeed(filterType: string): void {
@@ -1681,24 +1765,7 @@ Early opportunity! DYOR 🔍
     }
   }
 
-  private postTweet(): void {
-    const textarea = document.getElementById('tweet-input') as HTMLTextAreaElement;
-    if (!textarea || !textarea.value.trim()) return;
 
-    // Here you would integrate with X (Twitter) API
-    // For now, just show a success message
-    this.showToast('Tweet posted successfully! (Placeholder)');
-    
-    // Clear the textarea
-    textarea.value = '';
-    
-    // Trigger input event to update character count
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    
-    // Hide preview
-    this.updateTweetPreview('');
-  }
 
   private formatNumber(num: number | string): string {
     const numValue = typeof num === 'string' ? parseFloat(num) : num;
@@ -1971,9 +2038,6 @@ Early opportunity! DYOR 🔍
     
     // Summary
     this.updateSummary(tokenInfo);
-    
-    // Load profile data for Twitter integration
-    this.loadProfileData();
     
     console.log('[TokenPeek Sidepanel] ✅ Token displayed!');
   }
@@ -2353,6 +2417,187 @@ Early opportunity! DYOR 🔍
     } else {
       previewCard.style.display = 'none';
       previewText.textContent = 'Your caption will appear here...';
+    }
+  }
+
+  private switchProfileTab(tabName: string): void {
+    // Remove active class from all tabs
+    document.querySelectorAll('.profile-nav-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Hide all tab contents
+    document.querySelectorAll('.feed-tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    
+    // Activate selected tab
+    const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
+    const selectedContent = document.getElementById(`${tabName}-content`);
+    
+    if (selectedTab) {
+      selectedTab.classList.add('active');
+    }
+    
+    if (selectedContent) {
+      selectedContent.classList.add('active');
+    }
+    
+    console.log(`[KOLsuite] Switched to ${tabName} tab`);
+  }
+
+  private setupTweetComposer(): void {
+    const textarea = document.getElementById('tweet-compose-input') as HTMLTextAreaElement;
+    const charCount = document.querySelector('.char-count');
+    const submitBtn = document.querySelector('.tweet-submit-btn') as HTMLButtonElement;
+    
+    if (textarea && charCount && submitBtn) {
+      // Character count and button state
+      textarea.addEventListener('input', () => {
+        const length = textarea.value.length;
+        charCount.textContent = `${length}/280`;
+        
+        // Update submit button state
+        if (length > 0 && length <= 280) {
+          submitBtn.disabled = false;
+        } else {
+          submitBtn.disabled = true;
+        }
+        
+        // Color coding for character count
+        if (length > 260) {
+          (charCount as HTMLElement).style.color = '#f53d3d';
+        } else if (length > 240) {
+          (charCount as HTMLElement).style.color = '#ffd400';
+        } else {
+          (charCount as HTMLElement).style.color = 'var(--text-secondary)';
+        }
+      });
+
+      // Submit tweet functionality
+      submitBtn.addEventListener('click', () => {
+        if (textarea.value.trim() && textarea.value.length <= 280) {
+          this.postTweet(textarea.value.trim());
+        }
+      });
+    }
+
+    // Tool buttons functionality
+    document.querySelectorAll('.tool-btn').forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        switch(index) {
+          case 0: // Photo
+            this.addPhotoToTweet();
+            break;
+          case 1: // GIF
+            this.addGifToTweet();
+            break;
+          case 2: // Emoji
+            this.showEmojiPicker();
+            break;
+        }
+      });
+    });
+
+    // Reply buttons on tweets
+    document.querySelectorAll('.reply-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.replyToTweet();
+      });
+    });
+  }
+
+  private postTweet(content: string): void {
+    console.log('[KOLsuite] Posting tweet:', content);
+    this.showToast('Tweet posted! (UI Demo)');
+    
+    // Clear textarea
+    const textarea = document.getElementById('tweet-compose-input') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.value = '';
+      textarea.dispatchEvent(new Event('input')); // Trigger input event to update UI
+    }
+
+    // Add to feed (demo functionality)
+    this.addTweetToFeed(content);
+  }
+
+  private addTweetToFeed(content: string): void {
+    const postsContent = document.getElementById('posts-content');
+    if (!postsContent) return;
+
+    const tweetCard = document.createElement('div');
+    tweetCard.className = 'tweet-card';
+    
+    tweetCard.innerHTML = `
+      <div class="tweet-avatar">
+        <img src="https://i.pravatar.cc/40?img=1" alt="You" class="avatar-small">
+      </div>
+      <div class="tweet-content">
+        <div class="tweet-header">
+          <span class="tweet-author">You</span>
+          <span class="tweet-handle">@username</span>
+          <span class="tweet-time">·</span>
+          <span class="tweet-time">now</span>
+        </div>
+        <div class="tweet-text">${content}</div>
+        <div class="tweet-actions">
+          <button class="action-btn reply-btn">
+            <svg width="16" height="16" fill="currentColor">
+              <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366a.75.75 0 010 1.5H9.756c-3.6 0-6.505 2.904-6.505 6.5s2.905 6.5 6.505 6.5h4.366a.75.75 0 010 1.5H9.756c-4.421 0-8.005-3.58-8.005-8z"/>
+            </svg>
+            <span>0</span>
+          </button>
+          <button class="action-btn retweet-btn">
+            <svg width="16" height="16" fill="currentColor">
+              <path d="M4.5 3.88l4.432-4.14a1.042 1.042 0 011.614 0L14.982 3.88c.8.75.8 2.028 0 2.777L10.546 10.8a1.042 1.042 0 01-1.614 0L4.5 6.657c-.8-.749-.8-2.027 0-2.777z"/>
+            </svg>
+            <span>0</span>
+          </button>
+          <button class="action-btn like-btn">
+            <svg width="16" height="16" fill="currentColor">
+              <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg>
+            <span>0</span>
+          </button>
+          <button class="action-btn share-btn">
+            <svg width="16" height="16" fill="currentColor">
+              <path d="M4.5 3.88l4.432-4.14a1.042 1.042 0 011.614 0L14.982 3.88c.8.75.8 2.028 0 2.777L10.546 10.8a1.042 1.042 0 01-1.614 0L4.5 6.657c-.8-.749-.8-2.027 0-2.777z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Insert after composer
+    const composer = postsContent.querySelector('.tweet-composer');
+    if (composer && composer.nextSibling) {
+      postsContent.insertBefore(tweetCard, composer.nextSibling);
+    }
+  }
+
+  private addPhotoToTweet(): void {
+    this.showToast('Photo picker (UI Demo)');
+  }
+
+  private addGifToTweet(): void {
+    this.showToast('GIF picker (UI Demo)');
+  }
+
+  private showEmojiPicker(): void {
+    this.showToast('Emoji picker (UI Demo)');
+  }
+
+  private replyToTweet(): void {
+    this.showToast('Reply functionality (UI Demo)');
+    
+    // Focus on composer
+    const textarea = document.getElementById('tweet-compose-input') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.focus();
+      textarea.value = '@username ';
+      textarea.dispatchEvent(new Event('input'));
     }
   }
 
