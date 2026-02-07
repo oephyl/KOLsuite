@@ -1403,6 +1403,137 @@ class SidePanelManager {
       profileContent.style.display = 'block';
       latestTweetsContent.style.display = 'none';
     });
+
+    // Setup profile sub-tabs
+    this.setupProfileSubTabs();
+    
+    // Setup profile action buttons
+    this.setupProfileActions();
+  }
+
+  private setupProfileSubTabs(): void {
+    const followingTab = document.getElementById('following-tab');
+    const followersTab = document.getElementById('followers-tab');
+    const followingContent = document.getElementById('following-content');
+    const followersContent = document.getElementById('followers-content');
+
+    if (!followingTab || !followersTab || !followingContent || !followersContent) {
+      return;
+    }
+
+    // Following tab click
+    followingTab.addEventListener('click', () => {
+      document.querySelectorAll('.profile-tab-btn').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.profile-sub-content').forEach(content => {
+        content.classList.remove('active');
+        (content as HTMLElement).style.display = 'none';
+      });
+      
+      followingTab.classList.add('active');
+      followingContent.classList.add('active');
+      followingContent.style.display = 'block';
+    });
+
+    // Followers tab click
+    followersTab.addEventListener('click', () => {
+      document.querySelectorAll('.profile-tab-btn').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.profile-sub-content').forEach(content => {
+        content.classList.remove('active');
+        (content as HTMLElement).style.display = 'none';
+      });
+      
+      followersTab.classList.add('active');
+      followersContent.classList.add('active');
+      followersContent.style.display = 'block';
+    });
+
+    // Setup following filters
+    this.setupFollowingFilters();
+  }
+
+  private setupFollowingFilters(): void {
+    const allBtn = document.getElementById('all-following');
+    const verifiedBtn = document.getElementById('verified-following');
+
+    if (!allBtn || !verifiedBtn) return;
+
+    allBtn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      allBtn.classList.add('active');
+      this.filterFollowing('all');
+    });
+
+    verifiedBtn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      verifiedBtn.classList.add('active');
+      this.filterFollowing('verified');
+    });
+  }
+
+  private setupProfileActions(): void {
+    const postBtn = document.getElementById('post-btn');
+    const replayBtn = document.getElementById('replay-btn');
+    const verifiedBtn = document.getElementById('verified-btn');
+    const followerBtn = document.getElementById('follower-btn');
+
+    if (!postBtn || !replayBtn || !verifiedBtn || !followerBtn) return;
+
+    // Post button click
+    postBtn.addEventListener('click', () => {
+      this.switchProfileAction('post');
+    });
+
+    // Replay button click
+    replayBtn.addEventListener('click', () => {
+      this.switchProfileAction('replay');
+    });
+
+    // Verified button click
+    verifiedBtn.addEventListener('click', () => {
+      this.switchProfileAction('verified');
+    });
+
+    // Follower button click
+    followerBtn.addEventListener('click', () => {
+      this.switchProfileAction('follower');
+    });
+  }
+
+  private switchProfileAction(action: 'post' | 'replay' | 'verified' | 'follower'): void {
+    // Remove active class from all action buttons
+    document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Remove active class from all action contents
+    document.querySelectorAll('.action-content').forEach(content => {
+      content.classList.remove('active');
+      (content as HTMLElement).style.display = 'none';
+    });
+
+    // Add active class to clicked button
+    const activeBtn = document.getElementById(`${action}-btn`);
+    if (activeBtn) {
+      activeBtn.classList.add('active');
+    }
+
+    // Show corresponding content
+    const activeContent = document.getElementById(`${action}-content`);
+    if (activeContent) {
+      activeContent.classList.add('active');
+      activeContent.style.display = 'block';
+    }
+
+    // Show toast notification
+    this.showToast(`Switched to ${action.charAt(0).toUpperCase() + action.slice(1)}`);
+  }
+
+  private filterFollowing(filterType: 'all' | 'verified'): void {
+    const userItems = document.querySelectorAll('.user-item');
+    
+    userItems.forEach(item => {
+      const hasVerified = item.querySelector('.mini-verified');
+      const shouldShow = filterType === 'all' || (filterType === 'verified' && hasVerified);
+      (item as HTMLElement).style.display = shouldShow ? 'flex' : 'none';
+    });
   }
 
   private filterTweetFeed(filterType: string): void {

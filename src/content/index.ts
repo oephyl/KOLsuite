@@ -212,6 +212,10 @@ window.addEventListener('popstate', () => {
   console.log('[TokenPeek] URL changed via popstate');
   const newToken = extractTokenFromPage();
   if (newToken && newToken.mint) {
-    chrome.storage.local.set({ currentToken: newToken, lastUpdated: Date.now() });
+    if (typeof chrome !== 'undefined' && chrome && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ currentToken: newToken, lastUpdated: Date.now() });
+    } else {
+      console.warn('chrome.storage.local not available');
+    }
   }
 });
