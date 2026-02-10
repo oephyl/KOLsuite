@@ -54,7 +54,7 @@
 .tp-wallet-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4BE784 0%, #22D3C7 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -107,7 +107,7 @@
 
 /* Balance Section */
 .tp-balance-section {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(75, 231, 132, 0.1);
   border-radius: 12px;
   padding: 12px;
   margin-bottom: 16px;
@@ -130,7 +130,7 @@
 }
 
 .tp-pnl-positive {
-  color: #34d399;
+  color: #4BE784;
   font-weight: 600;
 }
 
@@ -204,8 +204,8 @@
 }
 
 .tp-tab-btn.tp-tab-active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #4BE784;
+  border-bottom-color: #4BE784;
 }
 
 /* Panel Content */
@@ -297,7 +297,7 @@
 .tp-token-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4BE784 0%, #22D3C7 100%);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -340,7 +340,7 @@
 }
 
 .tp-token-change.positive {
-  color: #34d399;
+  color: #4BE784;
 }
 
 /* Empty State */
@@ -406,14 +406,14 @@
 /* Minimized Pill */
 .tp-minimized-pill {
   display: none;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4BE784 0%, #22D3C7 100%);
   padding: 12px 16px;
   border-radius: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
+  color: #0a0e14;
   font-size: 12px;
   font-weight: 500;
   transition: all 0.3s;
@@ -427,13 +427,13 @@
 
 .tp-minimized-pill:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(75, 231, 132, 0.4);
 }
 
 .tp-status-dot {
   width: 8px;
   height: 8px;
-  background: #34d399;
+  background: #4BE784;
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -521,9 +521,9 @@
 }
 
 .tp-status.tp-detected {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(75, 231, 132, 0.15);
+  color: #4BE784;
+  border: 1px solid rgba(75, 231, 132, 0.3);
 }
 
 .tp-status.tp-not-detected {
@@ -610,7 +610,7 @@
 .tp-rpc-input:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(102, 126, 234, 0.5);
+  border-color: rgba(75, 231, 132, 0.5);
 }
 
 .tp-rpc-input::placeholder {
@@ -618,7 +618,7 @@
 }
 
 .tp-checkbox {
-  accent-color: #667eea;
+  accent-color: #4BE784;
   margin-right: 8px;
 }
 
@@ -639,10 +639,10 @@
 }
 
 .tp-copy-btn {
-  background: rgba(102, 126, 234, 0.2);
-  border: 1px solid rgba(102, 126, 234, 0.4);
+  background: rgba(75, 231, 132, 0.2);
+  border: 1px solid rgba(75, 231, 132, 0.4);
   border-radius: 6px;
-  color: #667eea;
+  color: #4BE784;
   cursor: pointer;
   padding: 6px 10px;
   font-size: 11px;
@@ -652,12 +652,12 @@
 }
 
 .tp-copy-btn:hover {
-  background: rgba(102, 126, 234, 0.3);
-  border-color: rgba(102, 126, 234, 0.6);
+  background: rgba(75, 231, 132, 0.3);
+  border-color: rgba(75, 231, 132, 0.6);
 }
 
 .tp-copy-btn:active {
-  background: rgba(102, 126, 234, 0.4);
+  background: rgba(75, 231, 132, 0.4);
 }
 
 .tp-actions {
@@ -670,10 +670,10 @@
 
 .tp-action-btn {
   flex: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4BE784 0%, #22D3C7 100%);
   border: none;
   border-radius: 10px;
-  color: white;
+  color: #0a0e14;
   cursor: pointer;
   padding: 12px 16px;
   font-size: 13px;
@@ -683,7 +683,7 @@
 
 .tp-action-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 20px rgba(75, 231, 132, 0.3);
 }
 
 .tp-action-btn:disabled {
@@ -694,14 +694,14 @@
 }
 
 .tp-action-btn.tp-secondary {
-  background: rgba(102, 126, 234, 0.15);
-  color: #667eea;
-  border: 1px solid rgba(102, 126, 234, 0.3);
+  background: rgba(75, 231, 132, 0.15);
+  color: #4BE784;
+  border: 1px solid rgba(75, 231, 132, 0.3);
 }
 
 .tp-action-btn.tp-secondary:hover {
-  background: rgba(102, 126, 234, 0.25);
-  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(75, 231, 132, 0.25);
+  border-color: rgba(75, 231, 132, 0.5);
 }
 
 .tp-minimized .tp-content {
@@ -765,9 +765,9 @@
   }
   
   .tp-status.tp-detected {
-    background: #064e3b;
-    color: #6ee7b7;
-    border-color: #047857;
+    background: rgba(75, 231, 132, 0.15);
+    color: #4BE784;
+    border-color: rgba(75, 231, 132, 0.3);
   }
   
   .tp-status.tp-not-detected,

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -25,19 +25,9 @@
           <span class="username-text" id="username-text">@username</span>
         </div>
         <div class="header-badges">
-          <div class="subscription-badge" id="subscription-badge" title="Token Limit">
-            <svg width="8" height="8" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-            </svg>
-            <span id="token-limit-text">0/100</span>
-          </div>
-          <div class="tier-badge" id="tier-badge" title="Subscription Tier">
-            <svg width="8" height="8" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z"/>
-              <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
-            </svg>
-            <span id="tier-text">Free</span>
+          <div class="main-tab-navigation main-tab-switch main-tab-switch-in-header">
+            <button class="main-tab-btn active" id="main-tab-kol" data-main-tab="kol">Shill Mode</button>
+            <button class="main-tab-btn" id="main-tab-signal" data-main-tab="signal">Trade Mode</button>
           </div>
           <button id="settings-btn" class="header-btn" title="Settings">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -47,6 +37,8 @@
         </div>
       </div>
 
+      <!-- KOL Tab Content (current page) -->
+      <div id="main-kol-pane" class="main-tab-pane active">
       <!-- Token Identity Card -->
       <div class="token-identity" id="token-identity">
         <div class="token-avatar" style="width: 76px !important; height: 76px !important; border-radius: 14px !important;"></div>
@@ -59,6 +51,10 @@
               <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
               <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
             </svg>
+          </div>
+          <div class="wallet-dev-row" id="wallet-dev-row" title="Click to copy">
+            <span id="wallet-dev-short" class="wallet-dev-address">Exam...PLE</span>
+            <div class="wallet-dev-logo" id="wallet-dev-logo"></div>
           </div>
         </div>
       </div>
@@ -131,22 +127,26 @@
       <!-- Stats Grid -->
       <div class="stats-grid">
         
-        <!-- Row 1: 4 columns -->
-        <div class="stat-card">
+        <!-- Row 1: 5 columns -->
+        <div class="stat-card row1-col">
           <label>Price</label>
           <span class="value" id="stat-price">$0.00</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-card row1-col">
           <label>Fees Paid</label>
           <span class="value green" id="stat-fees">0.0000</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-card row1-col">
           <label>Audit</label>
           <span class="value orange" id="stat-audit">0/10</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-card row1-col">
           <label>MCAP</label>
           <span class="value" id="stat-mcap">$0.00K</span>
+        </div>
+        <div class="stat-card row1-col">
+          <label>Buys</label>
+          <span class="value green" id="stat-buys">0</span>
         </div>
 
         <!-- Row 2: 3 columns - FDV, 24H Vol, Liquidity -->
@@ -163,25 +163,7 @@
           <span class="value" id="stat-liquidity">$0.00K</span>
         </div>
 
-        <!-- Row 3: 4 timeframe columns -->
-        <div class="timeframe-card">
-          <label>5m</label>
-          <span class="value red" id="change-5m">-0.0%</span>
-        </div>
-        <div class="timeframe-card">
-          <label>1h</label>
-          <span class="value red" id="change-1h">-0.0%</span>
-        </div>
-        <div class="timeframe-card">
-          <label>6h</label>
-          <span class="value red" id="change-6h">-0.0%</span>
-        </div>
-        <div class="timeframe-card">
-          <label>24h</label>
-          <span class="value red" id="change-24h">-0.0%</span>
-        </div>
-
-        <!-- Row 4: 4 columns (Bundled, Remaining, Sniped, Remaining) -->
+        <!-- Row 3: 4 columns (Bundled, Remaining, Sniped, Remaining) -->
         <div class="stat-card mini">
           <label>Bundled</label>
           <span class="value orange" id="metric-bundled">0.0%</span>
@@ -199,7 +181,7 @@
           <span class="value orange" id="metric-remaining2">100%</span>
         </div>
 
-        <!-- Row 5: 4 columns (Dev H., Insiders, Top 10 H., + 1 more) -->
+        <!-- Row 4: 4 columns (Dev H., Insiders, Top 10 H., Holders) -->
         <div class="stat-card">
           <label>Dev H.</label>
           <span class="value green" id="metric-dev">0%</span>
@@ -248,12 +230,16 @@
             <span class="value orange" id="rug-risk">Medium</span>
           </div>
           <div class="rug-check-card">
-            <label>Liquidity Lock</label>
+            <label>Liq Lock</label>
             <span class="value green" id="rug-liquidity">Locked</span>
           </div>
           <div class="rug-check-card">
             <label>Mint Auth</label>
             <span class="value red" id="rug-mint">Enabled</span>
+          </div>
+          <div class="rug-check-card">
+            <label>Honeypot</label>
+            <span class="value green" id="rug-honeypot">No</span>
           </div>
         </div>
       </div>
@@ -474,7 +460,7 @@
                 <div class="tweet-content">
                   <div class="tweet-header">
                     <span class="author-name">Crypto Trader</span>
-                    <svg class="verified-badge" width="12" height="12" fill="#1DA1F2">
+                    <svg class="verified-badge" width="12" height="12" fill="#4BE784">
                       <path d="M8.5 1.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM12.22 6.22a.75.75 0 00-1.06-1.06L7.25 9.06 5.78 7.59a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5z"/>
                     </svg>
                     <span class="author-handle">@cryptotrader</span>
@@ -485,28 +471,20 @@
                     🚀 Just found this gem on Solana! 📊 Strong fundamentals 💰 Low market cap 🔒 Audited contract DYOR but this could be huge! 💎 #Solana #Crypto #DeFi
                   </div>
                   <div class="tweet-engagement">
-                    <div class="engagement-item">
-                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366a.75.75 0 010 1.5H9.756c-3.6 0-6.505 2.904-6.505 6.5s2.905 6.5 6.505 6.5h4.366a.75.75 0 010 1.5H9.756c-4.421 0-8.005-3.58-8.005-8z"/>
-                      </svg>
+                    <div class="engagement-item engagement-reply" title="Reply">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                       <span>12</span>
                     </div>
-                    <div class="engagement-item">
-                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.061 0s-.293.768 0 1.061l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767.001-1.06z"/>
-                      </svg>
+                    <div class="engagement-item engagement-repost" title="Repost">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
                       <span>5</span>
                     </div>
-                    <div class="engagement-item">
-                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
-                      </svg>
+                    <div class="engagement-item engagement-like" title="Like">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                       <span>45</span>
                     </div>
-                    <div class="engagement-item">
-                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/>
-                      </svg>
+                    <div class="engagement-item engagement-share" title="Share">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                     </div>
                   </div>
                 </div>
@@ -522,7 +500,7 @@
                     <div class="profile-avatar">
                       <img src="https://i.pravatar.cc/60?img=1" alt="Profile" class="profile-image">
                       <div class="verified-badge">
-                        <svg width="12" height="12" fill="#1DA1F2" viewBox="0 0 24 24">
+                        <svg width="12" height="12" fill="#4BE784" viewBox="0 0 24 24">
                           <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
                         </svg>
                       </div>
@@ -569,9 +547,9 @@
                         </div>
                         <div class="post-text">Just analyzed the latest Solana DeFi trends. The growth in TVL is incredible! 🚀 #Solana #DeFi</div>
                         <div class="post-engagement">
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-6 0v4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2zm-4-4a1 1 0 0 1 2 0v4h-2V5zm8 14H6V11h12v8z"/></svg> 234</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M21 6.5a2.5 2.5 0 0 0-2.5-2.5h-13A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20h13A2.5 2.5 0 0 0 21 17.5v-11zm-2.5-1.5A1.5 1.5 0 0 1 20 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-11A1.5 1.5 0 0 1 5.5 5h13z"/></svg> 45</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/></svg> 89</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 234</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 45</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 89</span>
                         </div>
                       </div>
                       <div class="dummy-post">
@@ -580,9 +558,9 @@
                         </div>
                         <div class="post-text">New research on blockchain scalability solutions. Thread below 🧵</div>
                         <div class="post-engagement">
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-6 0v4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2zm-4-4a1 1 0 0 1 2 0v4h-2V5zm8 14H6V11h12v8z"/></svg> 156</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M21 6.5a2.5 2.5 0 0 0-2.5-2.5h-13A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20h13A2.5 2.5 0 0 0 21 17.5v-11zm-2.5-1.5A1.5 1.5 0 0 1 20 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-11A1.5 1.5 0 0 1 5.5 5h13z"/></svg> 23</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/></svg> 67</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 156</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 23</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 67</span>
                         </div>
                       </div>
                       <div class="dummy-post">
@@ -591,9 +569,9 @@
                         </div>
                         <div class="post-text">Early investment opportunities in emerging protocols. DYOR always! 💰</div>
                         <div class="post-engagement">
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-6 0v4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2zm-4-4a1 1 0 0 1 2 0v4h-2V5zm8 14H6V11h12v8z"/></svg> 89</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M21 6.5a2.5 2.5 0 0 0-2.5-2.5h-13A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20h13A2.5 2.5 0 0 0 21 17.5v-11zm-2.5-1.5A1.5 1.5 0 0 1 20 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-11A1.5 1.5 0 0 1 5.5 5h13z"/></svg> 12</span>
-                          <span class="engagement-stat"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"/></svg> 34</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 89</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 12</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 34</span>
                         </div>
                       </div>
                     </div>
@@ -603,55 +581,86 @@
                     <div class="dummy-posts">
                       <div class="dummy-post repost">
                         <div class="post-header">
-                          <span class="repost-indicator">🔄 Reposted</span>
+                          <span class="repost-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Reposted</span>
                           <span class="post-time">3h</span>
                         </div>
                         <div class="original-author">@solana_dev</div>
                         <div class="post-text">Major update to Solana's consensus mechanism improving transaction finality by 40%</div>
                         <div class="post-engagement">
-                          <span class="engagement-stat">👍 567</span>
-                          <span class="engagement-stat">💬 89</span>
-                          <span class="engagement-stat">🔄 234</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 567</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 234</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 89</span>
                         </div>
                       </div>
                       <div class="dummy-post repost">
                         <div class="post-header">
-                          <span class="repost-indicator">🔄 Reposted</span>
+                          <span class="repost-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Reposted</span>
                           <span class="post-time">8h</span>
                         </div>
                         <div class="original-author">@defi_research</div>
                         <div class="post-text">Breaking: New DEX protocol launches with zero-slippage trading</div>
                         <div class="post-engagement">
-                          <span class="engagement-stat">👍 123</span>
-                          <span class="engagement-stat">💬 34</span>
-                          <span class="engagement-stat">🔄 78</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 123</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 78</span>
+                          <span class="engagement-stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 34</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div class="action-content" id="verified-content" style="display: none;">
-                    <div class="verified-info">
-                      <div class="verified-badge-large">
-                        <svg width="24" height="24" fill="#1DA1F2" viewBox="0 0 24 24">
-                          <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
-                        </svg>
+                    <div class="user-list verified-follower-list">
+                      <div class="user-item">
+                        <div class="user-avatar">
+                          <img src="https://i.pravatar.cc/30?img=8" alt="User" class="mini-avatar">
+                          <svg class="mini-verified" width="10" height="10" fill="#1d9bf0" viewBox="0 0 24 24">
+                            <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
+                          </svg>
+                        </div>
+                        <div class="user-info">
+                          <div class="user-name">Solana Foundation</div>
+                          <div class="user-handle">@solana</div>
+                        </div>
+                        <button class="follow-btn-mini">Follow</button>
                       </div>
-                      <h3>Verified Account</h3>
-                      <p class="verified-desc">This account is verified as an authentic crypto analyst and blockchain researcher.</p>
-                      <div class="verification-details">
-                        <div class="detail-item">
-                          <span class="detail-label">Verified since:</span>
-                          <span class="detail-value">March 2024</span>
+                      <div class="user-item">
+                        <div class="user-avatar">
+                          <img src="https://i.pravatar.cc/30?img=10" alt="User" class="mini-avatar">
+                          <svg class="mini-verified" width="10" height="10" fill="#1d9bf0" viewBox="0 0 24 24">
+                            <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
+                          </svg>
                         </div>
-                        <div class="detail-item">
-                          <span class="detail-label">Verification type:</span>
-                          <span class="detail-value">Professional</span>
+                        <div class="user-info">
+                          <div class="user-name">DeFi Protocol</div>
+                          <div class="user-handle">@defiprotocol</div>
                         </div>
-                        <div class="detail-item">
-                          <span class="detail-label">Specialization:</span>
-                          <span class="detail-value">DeFi & Solana Ecosystem</span>
+                        <button class="follow-btn-mini">Follow</button>
+                      </div>
+                      <div class="user-item">
+                        <div class="user-avatar">
+                          <img src="https://i.pravatar.cc/30?img=12" alt="User" class="mini-avatar">
+                          <svg class="mini-verified" width="10" height="10" fill="#1d9bf0" viewBox="0 0 24 24">
+                            <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
+                          </svg>
                         </div>
+                        <div class="user-info">
+                          <div class="user-name">NFT Collector</div>
+                          <div class="user-handle">@nftcollector</div>
+                        </div>
+                        <button class="follow-btn-mini">Follow</button>
+                      </div>
+                      <div class="user-item">
+                        <div class="user-avatar">
+                          <img src="https://i.pravatar.cc/30?img=3" alt="User" class="mini-avatar">
+                          <svg class="mini-verified" width="10" height="10" fill="#1d9bf0" viewBox="0 0 24 24">
+                            <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
+                          </svg>
+                        </div>
+                        <div class="user-info">
+                          <div class="user-name">Crypto News</div>
+                          <div class="user-handle">@cryptonews</div>
+                        </div>
+                        <button class="follow-btn-mini">Follow</button>
                       </div>
                     </div>
                   </div>
@@ -661,7 +670,7 @@
                       <div class="user-item">
                         <div class="user-avatar">
                           <img src="https://i.pravatar.cc/30?img=8" alt="User" class="mini-avatar">
-                          <svg class="mini-verified" width="8" height="8" fill="#1DA1F2" viewBox="0 0 24 24">
+                          <svg class="mini-verified" width="8" height="8" fill="#4BE784" viewBox="0 0 24 24">
                             <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
                           </svg>
                         </div>
@@ -684,7 +693,7 @@
                       <div class="user-item">
                         <div class="user-avatar">
                           <img src="https://i.pravatar.cc/30?img=10" alt="User" class="mini-avatar">
-                          <svg class="mini-verified" width="8" height="8" fill="#1DA1F2" viewBox="0 0 24 24">
+                          <svg class="mini-verified" width="8" height="8" fill="#4BE784" viewBox="0 0 24 24">
                             <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
                           </svg>
                         </div>
@@ -707,7 +716,7 @@
                       <div class="user-item">
                         <div class="user-avatar">
                           <img src="https://i.pravatar.cc/30?img=12" alt="User" class="mini-avatar">
-                          <svg class="mini-verified" width="8" height="8" fill="#1DA1F2" viewBox="0 0 24 24">
+                          <svg class="mini-verified" width="8" height="8" fill="#4BE784" viewBox="0 0 24 24">
                             <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
                           </svg>
                         </div>
@@ -732,7 +741,7 @@
         <!-- Post Preview -->
         <div class="post-preview-card" id="post-preview-card" style="display: none;">
           <div class="preview-header">
-            <svg width="16" height="16" fill="#1DA1F2" viewBox="0 0 24 24">
+            <svg width="16" height="16" fill="#4BE784" viewBox="0 0 24 24">
               <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
             </svg>
             <span class="preview-label">Preview Post</span>
@@ -743,7 +752,17 @@
         </div>
       </div>
 
-    </div>
+      </div>
+
+      </div>
+      <!-- End KOL Tab Content -->
+
+      <!-- Signal Tab Content -->
+      <div id="main-signal-pane" class="main-tab-pane">
+        <div class="signal-coming-soon">
+          <span class="signal-coming-soon-text signal-coming-soon-animate">Soon KOL Marketplace</span>
+        </div>
+      </div>
 
     <!-- Sticky Footer CTA -->
     <div class="sticky-footer">
@@ -954,16 +973,23 @@
   </div>
 
   <!-- Empty State -->
-  <div id="empty-state" class="state" style="display: none;">
+  <div id="empty-state" class="state state-empty" style="display: none;">
     <div class="empty-content">
-      <div class="empty-icon-container">
-        <svg class="empty-icon" width="80" height="80" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
-          <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <div class="empty-icon-wrap">
+        <div class="empty-icon-bg"></div>
+        <svg class="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h3 class="empty-title">No Token Detected</h3>
-      <p class="empty-subtitle">Navigate to a token page to start analyzing</p>
+      <h2 class="empty-title">No token detected</h2>
+      <p class="empty-subtitle">Open a token page on a supported platform to analyze metrics, risk, and share calls.</p>
+      <div class="empty-platforms">
+        <span class="empty-pill">GMGN</span>
+        <span class="empty-pill">Trojan</span>
+        <span class="empty-pill">Axiom</span>
+        <span class="empty-pill">Padre</span>
+      </div>
     </div>
   </div>
 

@@ -20,6 +20,7 @@ class SidePanelManager {
     console.log('[KOLsuite Sidepanel] Initializing...');
     this.loadTheme();
     this.setupEventListeners();
+    this.setupMainTabListeners();
     this.loadTokenData();
     this.setupTabListeners();
     this.loadSubscriptionLimit();
@@ -27,6 +28,31 @@ class SidePanelManager {
     
     // Setup Twitter feed functionality
     this.setupTwitterFeed();
+  }
+
+  private setupMainTabListeners(): void {
+    const kolBtn = document.getElementById('main-tab-kol');
+    const signalBtn = document.getElementById('main-tab-signal');
+    kolBtn?.addEventListener('click', () => this.switchMainTab('kol'));
+    signalBtn?.addEventListener('click', () => this.switchMainTab('signal'));
+  }
+
+  private switchMainTab(tab: 'kol' | 'signal'): void {
+    const kolPane = document.getElementById('main-kol-pane');
+    const signalPane = document.getElementById('main-signal-pane');
+    const footer = document.querySelector('.sticky-footer');
+    document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`[data-main-tab="${tab}"]`);
+    activeBtn?.classList.add('active');
+    if (tab === 'kol') {
+      kolPane?.classList.add('active');
+      signalPane?.classList.remove('active');
+      if (footer instanceof HTMLElement) footer.style.display = '';
+    } else {
+      kolPane?.classList.remove('active');
+      signalPane?.classList.add('active');
+      if (footer instanceof HTMLElement) footer.style.display = 'none';
+    }
   }
 
   private setupTabListeners(): void {
@@ -147,6 +173,7 @@ class SidePanelManager {
 
     // Address pill copy
     document.getElementById('address-pill')?.addEventListener('click', () => this.copyAddress());
+    document.getElementById('wallet-dev-row')?.addEventListener('click', () => this.copyWalletDev());
 
     // Retry/Refresh buttons
     document.getElementById('refresh-btn')?.addEventListener('click', () => this.loadTokenData());
@@ -806,26 +833,36 @@ class SidePanelManager {
     }
   }
 
-  private showToast(message: string): void {
+  private async copyWalletDev(): Promise<void> {
+    const full = document.getElementById('wallet-dev-short')?.getAttribute('data-full-address');
+    const addr = full || this.tokenData?.devWallet || this.tokenData?.creator || this.tokenData?.updateAuthority;
+    if (!addr) return;
+    try {
+      await navigator.clipboard.writeText(addr);
+      this.showToast('Wallet Dev copied!');
+    } catch (err) {
+      console.error('[KOLsuite] Failed to copy wallet dev:', err);
+    }
+  }
+
+  private showToast(message: string, title: string = 'KOLsuite'): void {
     const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(16, 185, 129, 0.9);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      z-index: 1000;
-      animation: fadeIn 0.3s;
-    `;
+    toast.className = 'kolsuite-toast';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'kolsuite-toast-title';
+    titleEl.textContent = title;
+    const messageEl = document.createElement('div');
+    messageEl.className = 'kolsuite-toast-message';
+    messageEl.textContent = message;
+    toast.appendChild(titleEl);
+    toast.appendChild(messageEl);
     document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('kolsuite-toast-visible'));
     setTimeout(() => {
-      toast.style.animation = 'fadeOut 0.3s';
-      setTimeout(() => toast.remove(), 300);
-    }, 2000);
+      toast.classList.remove('kolsuite-toast-visible');
+      toast.classList.add('kolsuite-toast-out');
+      setTimeout(() => toast.remove(), 320);
+    }, 2500);
   }
 
   private loadSubscriptionLimit(): void {
@@ -1521,9 +1558,6 @@ class SidePanelManager {
       activeContent.classList.add('active');
       activeContent.style.display = 'block';
     }
-
-    // Show toast notification
-    this.showToast(`Switched to ${action.charAt(0).toUpperCase() + action.slice(1)}`);
   }
 
   private filterFollowing(filterType: 'all' | 'verified'): void {
@@ -2139,21 +2173,32 @@ Early opportunity! DYOR 🔍
       const shortMint = `${mint.slice(0, 8)}...${mint.slice(-8)}`;
       mintEl.textContent = shortMint;
     }
+
+    // Wallet Dev
+    const devWallet = tokenInfo.devWallet || tokenInfo.creator || tokenInfo.updateAuthority || '';
+    const walletDevEl = document.getElementById('wallet-dev-short');
+    if (walletDevEl) {
+      if (devWallet && devWallet.length >= 8) {
+        walletDevEl.textContent = `${devWallet.slice(0, 6)}...${devWallet.slice(-6)}`;
+        walletDevEl.setAttribute('data-full-address', devWallet);
+      } else {
+        walletDevEl.textContent = '—';
+        walletDevEl.removeAttribute('data-full-address');
+      }
+    }
     
     // Stats
     this.updateElement('stat-price', tokenInfo.price);
     this.updateElement('stat-fees', tokenInfo.fees);
     this.updateElement('stat-audit', tokenInfo.audit);
+    this.updateElement('stat-mcap', tokenInfo.mcap);
+    this.updateElement('stat-buys', tokenInfo.buys ?? '0');
+    this.updateElement('stat-fdv', tokenInfo.fdv);
     this.updateElement('stat-volume', tokenInfo.volume24h);
     this.updateElement('stat-liquidity', tokenInfo.liquidity);
     
     // Timeframes
-    this.updateElement('change-5m', tokenInfo.change5m);
-    this.updateElement('change-1h', tokenInfo.change1h);
-    this.updateElement('change-6h', tokenInfo.change6h);
-    this.updateElement('change-1d', tokenInfo.change1d);
-    
-    // Metrics Row 4
+    // Metrics Row 3 (Bundled, etc.)
     this.updateElement('metric-bundled', tokenInfo.bundled);
     this.updateElement('metric-remaining1', tokenInfo.remaining1);
     this.updateElement('metric-sniped', tokenInfo.sniped);
@@ -2169,6 +2214,9 @@ Early opportunity! DYOR 🔍
     
     // Summary
     this.updateSummary(tokenInfo);
+    
+    // Auto-fill caption from template (sesuai setting template, ganti token = caption ikut ganti)
+    this.fillCaptionFromTemplate(tokenInfo);
     
     console.log('[TokenPeek Sidepanel] ✅ Token displayed!');
   }
@@ -2410,67 +2458,83 @@ Early opportunity! DYOR 🔍
     });
   }
 
+  /** Build buy links for Solana token (Trojan, Axiom, GMGN, Padre) */
+  private getTokenBuyLinks(mint: string): { label: string; url: string }[] {
+    if (!mint || mint.length < 32) return [];
+    return [
+      { label: 'Buy Trojan', url: `https://trojan.com/token/${mint}` },
+      { label: 'Buy Axiom', url: `https://axiom.trade/meme/${mint}?chain=sol` },
+      { label: 'Buy GMGN', url: `https://gmgn.ai/sol/token/${mint}` },
+      { label: 'Buy Padre', url: `https://trade.padre.gg/trade/solana/${mint}` }
+    ];
+  }
+
+  /** Discord message components: satu baris tombol link Buy (Trojan, Axiom, GMGN, Padre) */
+  private buildDiscordBuyButtons(tokenData?: any): { type: number; components: { type: number; style: number; label: string; url: string }[] }[] | undefined {
+    const mint = tokenData?.mint;
+    const links = this.getTokenBuyLinks(mint);
+    if (links.length === 0) return undefined;
+    return [{
+      type: 1,
+      components: links.map(({ label, url }) => ({
+        type: 2,
+        style: 5,
+        label,
+        url
+      }))
+    }];
+  }
+
+  /** Build embed field value: link markdown [Label](url) untuk fallback jika tombol tidak muncul */
+  private getBuyLinksMarkdown(mint: string): string {
+    const links = this.getTokenBuyLinks(mint);
+    return links.map(({ label, url }) => `[${label}](${url})`).join(' • ');
+  }
+
   private async sendDiscordMessage(webhookUrl: string, message: string, tokenData?: any): Promise<void> {
     try {
-      let payload;
-      
+      let payload: { content?: string; embeds?: object[]; components?: object[] };
+
       if (tokenData) {
-        // Send rich embed for token calls
+        const buyButtons = this.buildDiscordBuyButtons(tokenData);
+        const mint = tokenData.mint || '';
+        const buyLinksText = this.getBuyLinksMarkdown(mint);
+        const fields: { name: string; value: string; inline: boolean }[] = [
+          { name: '💰 Price', value: tokenData.price || 'N/A', inline: true },
+          { name: '📊 Market Cap', value: tokenData.mcap || 'N/A', inline: true },
+          { name: '💧 Liquidity', value: tokenData.liquidity || 'N/A', inline: true },
+          { name: '📈 24H Volume', value: tokenData.volume24h || 'N/A', inline: true },
+          { name: '🔥 24H Change', value: tokenData.change24h || 'N/A', inline: true },
+          { name: '👥 Holders', value: tokenData.holders || 'N/A', inline: true }
+        ];
+        if (buyLinksText) {
+          fields.push({ name: '🛒 Buy', value: buyLinksText, inline: false });
+        }
         payload = {
           embeds: [{
             title: `🚀 ${tokenData.name || 'Unknown Token'} (${tokenData.symbol || 'N/A'})`,
             description: message,
-            color: 0x8b5cf6, // Purple color
-            fields: [
-              {
-                name: '💰 Price',
-                value: tokenData.price || 'N/A',
-                inline: true
-              },
-              {
-                name: '📊 Market Cap',
-                value: tokenData.mcap || 'N/A',
-                inline: true
-              },
-              {
-                name: '💧 Liquidity',
-                value: tokenData.liquidity || 'N/A',
-                inline: true
-              },
-              {
-                name: '📈 24H Volume',
-                value: tokenData.volume24h || 'N/A',
-                inline: true
-              },
-              {
-                name: '🔥 24H Change',
-                value: tokenData.change24h || 'N/A',
-                inline: true
-              },
-              {
-                name: '👥 Holders',
-                value: tokenData.holders || 'N/A',
-                inline: true
-              }
-            ],
+            color: 0x8b5cf6,
+            fields,
             footer: {
-              text: `Contract: ${tokenData.mint || 'N/A'}`,
+              text: `Contract: ${mint || 'N/A'}`,
               icon_url: 'https://cryptologos.cc/logos/solana-sol-logo.png'
             },
             timestamp: new Date().toISOString(),
             thumbnail: {
               url: tokenData.image || 'https://cryptologos.cc/logos/solana-sol-logo.png'
             }
-          }]
+          }],
+          ...(buyButtons?.length ? { components: buyButtons } : {})
         };
       } else {
-        // Send simple text message
-        payload = {
-          content: message
-        };
+        payload = { content: message };
       }
 
-      const response = await fetch(webhookUrl, {
+      const urlWithComponents = webhookUrl.includes('?')
+        ? `${webhookUrl}&with_components=true`
+        : `${webhookUrl}?with_components=true`;
+      const response = await fetch(urlWithComponents, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2489,44 +2553,56 @@ Early opportunity! DYOR 🔍
     }
   }
 
+  private static readonly DEFAULT_CAPTION_TEMPLATE = `🚀 {NAME} (${'$'}{SYMBOL})\n\n💰 Price: {PRICE}\n📊 MCAP: {MCAP}\n💧 Liquidity: {LIQUIDITY}\n📈 24H Vol: {VOLUME}\n\n📍 CA: {CA}\n\n#Solana #Crypto #{SYMBOL}`;
+
+  private buildCaptionFromTemplate(tokenInfo: any, template: string): string {
+    const t = tokenInfo || {};
+    return (template || SidePanelManager.DEFAULT_CAPTION_TEMPLATE)
+      .replace(/{NAME}/g, t.name || t.token_name || 'N/A')
+      .replace(/{SYMBOL}/g, t.symbol || 'N/A')
+      .replace(/{PRICE}/g, t.price || t.price_usd || 'N/A')
+      .replace(/{FEES}/g, t.feesPaid ?? t.fees ?? 'N/A')
+      .replace(/{AUDIT}/g, t.audit || 'N/A')
+      .replace(/{MCAP}/g, t.mcap || t.market_cap || 'N/A')
+      .replace(/{FDV}/g, t.fdv || 'N/A')
+      .replace(/{VOLUME}/g, t.volume24h || t.volume || 'N/A')
+      .replace(/{LIQUIDITY}/g, t.liquidity || 'N/A')
+      .replace(/{5M}/g, t.change5m || 'N/A')
+      .replace(/{1H}/g, t.change1h || 'N/A')
+      .replace(/{6H}/g, t.change6h || 'N/A')
+      .replace(/{24H}/g, t.change24h || t.change1d || 'N/A')
+      .replace(/{BUNDLED}/g, t.bundled || 'N/A')
+      .replace(/{SNIPED}/g, t.sniped || 'N/A')
+      .replace(/{DEVHOLD}/g, t.devHoldings ?? t.dev ?? 'N/A')
+      .replace(/{INSIDERS}/g, t.insiders || 'N/A')
+      .replace(/{TOP10}/g, t.top10Holders ?? t.top10 ?? 'N/A')
+      .replace(/{HOLDERS}/g, t.holders || 'N/A')
+      .replace(/{CA}/g, t.mint || 'N/A');
+  }
+
+  private fillCaptionFromTemplate(tokenInfo: any): void {
+    if (!tokenInfo) return;
+    chrome.storage.local.get(['captionTemplate'], (items) => {
+      const template = items.captionTemplate || SidePanelManager.DEFAULT_CAPTION_TEMPLATE;
+      const caption = this.buildCaptionFromTemplate(tokenInfo, template);
+      const textarea = document.getElementById('caption-input') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.value = caption;
+        this.updatePreview(caption);
+      }
+    });
+  }
+
   private generateCaption(): void {
     console.log('[TokenPeek] Generate caption clicked');
-    
     if (!this.tokenData) {
       this.showToast('No token data available');
       return;
     }
-    
-    // Increment token usage for AI generation
     this.incrementTokenUsage();
-    
-    // Get template from storage
     chrome.storage.local.get(['captionTemplate'], (items) => {
-      let template = items.captionTemplate || `🚀 {NAME} (\${SYMBOL})\n\n💰 Price: {PRICE}\n📊 MCAP: {MCAP}\n💧 Liquidity: {LIQUIDITY}\n📈 24H Vol: {VOLUME}\n\n📍 CA: {CA}\n\n#Solana #Crypto #{SYMBOL}`;
-      
-      // Replace parameters with actual data
-      const caption = template
-        .replace(/{NAME}/g, this.tokenData.name || 'N/A')
-        .replace(/{SYMBOL}/g, this.tokenData.symbol || 'N/A')
-        .replace(/{PRICE}/g, this.tokenData.price || 'N/A')
-        .replace(/{FEES}/g, this.tokenData.feesPaid || 'N/A')
-        .replace(/{AUDIT}/g, this.tokenData.audit || 'N/A')
-        .replace(/{MCAP}/g, this.tokenData.mcap || 'N/A')
-        .replace(/{FDV}/g, this.tokenData.fdv || 'N/A')
-        .replace(/{VOLUME}/g, this.tokenData.volume24h || 'N/A')
-        .replace(/{LIQUIDITY}/g, this.tokenData.liquidity || 'N/A')
-        .replace(/{5M}/g, this.tokenData.change5m || 'N/A')
-        .replace(/{1H}/g, this.tokenData.change1h || 'N/A')
-        .replace(/{6H}/g, this.tokenData.change6h || 'N/A')
-        .replace(/{24H}/g, this.tokenData.change24h || 'N/A')
-        .replace(/{BUNDLED}/g, this.tokenData.bundled || 'N/A')
-        .replace(/{SNIPED}/g, this.tokenData.sniped || 'N/A')
-        .replace(/{DEVHOLD}/g, this.tokenData.devHoldings || 'N/A')
-        .replace(/{INSIDERS}/g, this.tokenData.insiders || 'N/A')
-        .replace(/{TOP10}/g, this.tokenData.top10Holders || 'N/A')
-        .replace(/{HOLDERS}/g, this.tokenData.holders || 'N/A')
-        .replace(/{CA}/g, this.tokenData.mint || 'N/A');
-      
+      const template = items.captionTemplate || SidePanelManager.DEFAULT_CAPTION_TEMPLATE;
+      const caption = this.buildCaptionFromTemplate(this.tokenData, template);
       const textarea = document.getElementById('caption-input') as HTMLTextAreaElement;
       if (textarea) {
         textarea.value = caption;
@@ -2542,13 +2618,8 @@ Early opportunity! DYOR 🔍
     
     if (!previewCard || !previewText) return;
     
-    if (text.trim().length > 0) {
-      previewCard.style.display = 'block';
-      previewText.textContent = text;
-    } else {
-      previewCard.style.display = 'none';
-      previewText.textContent = 'Your caption will appear here...';
-    }
+    previewText.textContent = text.trim().length > 0 ? text : 'Your caption will appear here...';
+    previewCard.style.display = 'none'; /* Preview post tidak ditampilkan saat generate */
   }
 
   private switchProfileTab(tabName: string): void {
