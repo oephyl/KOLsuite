@@ -37,6 +37,8 @@
         </div>
       </div>
 
+      <!-- Wrapper: only one pane visible, fills space below header -->
+      <div class="main-panes-wrapper">
       <!-- KOL Tab Content (current page) -->
       <div id="main-kol-pane" class="main-tab-pane active">
       <!-- Token Identity Card -->
@@ -757,12 +759,122 @@
       </div>
       <!-- End KOL Tab Content -->
 
-      <!-- Signal Tab Content -->
-      <div id="main-signal-pane" class="main-tab-pane">
-        <div class="signal-coming-soon">
-          <span class="signal-coming-soon-text signal-coming-soon-animate">Soon KOL Marketplace</span>
+      <!-- Signal Tab Content (Trade Mode) -->
+      <div id="main-signal-pane" class="main-tab-pane trade-mode-pane">
+        <div class="trade-mode-content">
+          <!-- Content Tabs: Public KOL | Private Call -->
+          <div class="trade-mode-tabs main-tab-navigation main-tab-switch">
+            <button class="main-tab-btn active" id="trade-tab-public" data-trade-tab="public">Public KOL</button>
+            <button class="main-tab-btn" id="trade-tab-private" data-trade-tab="private">Private Call</button>
+          </div>
+          <!-- Search -->
+          <div class="trade-mode-search-wrap">
+            <input type="text" class="trade-mode-search" id="trade-mode-search" placeholder="Search..." />
+          </div>
+          <!-- Call list -->
+          <div class="trade-mode-list" id="trade-mode-list">
+            <!-- Call cards (sample items) -->
+            <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+            <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+            <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
+      </div>
+      <!-- end main-panes-wrapper -->
 
     <!-- Sticky Footer CTA -->
     <div class="sticky-footer">

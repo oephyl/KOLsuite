@@ -21,6 +21,7 @@ class SidePanelManager {
     this.loadTheme();
     this.setupEventListeners();
     this.setupMainTabListeners();
+    this.setupTradeTabListeners();
     this.loadTokenData();
     this.setupTabListeners();
     this.loadSubscriptionLimit();
@@ -41,8 +42,8 @@ class SidePanelManager {
     const kolPane = document.getElementById('main-kol-pane');
     const signalPane = document.getElementById('main-signal-pane');
     const footer = document.querySelector('.sticky-footer');
-    document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.querySelector(`[data-main-tab="${tab}"]`);
+    document.querySelectorAll('.header-badges .main-tab-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`.header-badges [data-main-tab="${tab}"]`);
     activeBtn?.classList.add('active');
     if (tab === 'kol') {
       kolPane?.classList.add('active');
@@ -53,6 +54,24 @@ class SidePanelManager {
       signalPane?.classList.add('active');
       if (footer instanceof HTMLElement) footer.style.display = 'none';
     }
+  }
+
+  private setupTradeTabListeners(): void {
+    const list = document.getElementById('trade-mode-list');
+    const searchInput = document.getElementById('trade-mode-search') as HTMLInputElement | null;
+    document.querySelectorAll('.trade-mode-tabs [data-trade-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.trade-mode-tabs .main-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+    searchInput?.addEventListener('input', () => {
+      const q = (searchInput.value || '').trim().toLowerCase();
+      list?.querySelectorAll('.trade-call-card').forEach((card) => {
+        const text = (card.textContent || '').toLowerCase();
+        (card as HTMLElement).style.display = q === '' || text.includes(q) ? '' : 'none';
+      });
+    });
   }
 
   private setupTabListeners(): void {
