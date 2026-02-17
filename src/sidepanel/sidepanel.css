@@ -110,6 +110,11 @@ body {
 /* Scroll Content Area */
 .scroll-content {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
   overflow-y: scroll;
   scrollbar-gutter: stable;
   padding: 0;
@@ -137,6 +142,7 @@ body {
 
 /* Header */
 .panel-header {
+  flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -243,62 +249,267 @@ body {
   border-bottom-color: var(--primary);
 }
 
-.main-tab-pane {
+/* Wrapper below header: one pane visible, no empty gap */
+.main-panes-wrapper {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-panes-wrapper .main-tab-pane {
   display: none;
 }
 
-.main-tab-pane.active {
+.main-panes-wrapper .main-tab-pane.active {
   display: block;
+  min-width: 0;
 }
 
-#main-signal-pane.active {
+/* KOL pane: natural height so content scrolls in scroll-content */
+.main-panes-wrapper #main-kol-pane.active {
+  flex-shrink: 0;
+}
+
+/* Signal (Trade Mode) pane: fill wrapper from top, no empty red box */
+.main-panes-wrapper #main-signal-pane.active {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+/* Trade Mode content layout - stick to top, no empty space above */
+.trade-mode-pane .trade-mode-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 12px 10px 16px;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.trade-mode-tabs {
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.trade-mode-search-wrap {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.trade-mode-search {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--textarea-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.trade-mode-search::placeholder {
+  color: var(--text-muted);
+}
+
+.trade-mode-search:focus {
+  border-color: rgba(75, 231, 132, 0.4);
+}
+
+.trade-mode-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 2px;
+}
+
+.trade-mode-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.trade-mode-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+/* Call card */
+.trade-call-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trade-call-label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 120px);
-  padding: 24px;
-}
-
-.signal-coming-soon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.signal-coming-soon-text {
-  font-size: 14px;
+  gap: 6px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--text-muted);
 }
 
-.signal-coming-soon-animate {
-  font-size: 20px;
+.trade-call-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.trade-call-dot-avatar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--card-bg);
+}
+
+.trade-call-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.trade-call-left {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.trade-call-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.trade-call-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--textarea-bg);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  background: linear-gradient(90deg, var(--primary) 0%, #22D3C7 35%, var(--primary) 70%, #22D3C7 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: soon-marketplace-glow 3.5s ease-in-out infinite, soon-marketplace-shimmer 4s linear infinite;
-  filter: drop-shadow(0 0 8px rgba(75, 231, 132, 0.3));
+  color: var(--text-primary);
 }
 
-@keyframes soon-marketplace-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(75, 231, 132, 0.25)) drop-shadow(0 0 20px rgba(75, 231, 132, 0.1));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 16px rgba(75, 231, 132, 0.5)) drop-shadow(0 0 32px rgba(75, 231, 132, 0.2));
-    transform: scale(1.03);
-  }
+.trade-call-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-@keyframes soon-marketplace-shimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+.trade-call-title-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trade-call-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.trade-call-star {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.trade-call-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.trade-call-meta {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.trade-call-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.trade-call-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.trade-call-stat svg {
+  opacity: 0.8;
+}
+
+.trade-call-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.trade-call-values {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.trade-call-fee {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.trade-call-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 5px 8px;
+  background: var(--textarea-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 10px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.trade-call-action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(75, 231, 132, 0.3);
+}
+
+.trade-call-action-btn svg {
+  opacity: 0.9;
 }
 
 .sign-in-x-btn {
@@ -1553,19 +1764,20 @@ body {
   margin: 0;
 }
 
-/* Sticky Footer — tema gelap, selaras dengan panel */
+/* Sticky Footer: X, Telegram, Discord — fixed at bottom of panel */
 .sticky-footer {
-  position: sticky;
-  bottom: 0;
-  min-height: 52px;
-  padding: 8px 10px 10px;
+  flex-shrink: 0;
+  height: 56px;
+  padding: 0 10px;
   background: var(--bg-gradient-from);
   border-top: 1px solid var(--card-border);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   z-index: 10;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .post-btn {
@@ -2350,8 +2562,8 @@ body {
   }
   
   .sticky-footer {
-    height: 55px;
-    padding: 8px;
+    height: 56px;
+    padding: 0 8px;
   }
   
   .post-btn {
@@ -2423,8 +2635,8 @@ body {
   }
   
   .sticky-footer {
-    height: 60px;
-    padding: 10px;
+    height: 56px;
+    padding: 0 10px;
   }
   
   .post-btn {
@@ -2517,8 +2729,8 @@ body {
   }
   
   .sticky-footer {
-    height: 70px;
-    padding: 12px 16px;
+    height: 56px;
+    padding: 0 16px;
   }
   
   .post-btn {
