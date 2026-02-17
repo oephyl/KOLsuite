@@ -26,8 +26,8 @@
         </div>
         <div class="header-badges">
           <div class="main-tab-navigation main-tab-switch main-tab-switch-in-header">
-            <button class="main-tab-btn active" id="main-tab-kol" data-main-tab="kol">Shill Mode</button>
-            <button class="main-tab-btn" id="main-tab-signal" data-main-tab="signal">Trade Mode</button>
+            <button class="main-tab-btn active" id="main-tab-kol" data-main-tab="kol">Shill</button>
+            <button class="main-tab-btn" id="main-tab-signal" data-main-tab="signal">Trade</button>
           </div>
           <button id="settings-btn" class="header-btn" title="Settings">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -37,6 +37,8 @@
         </div>
       </div>
 
+      <!-- Wrapper: only one pane visible, fills space below header -->
+      <div class="main-panes-wrapper">
       <!-- KOL Tab Content (current page) -->
       <div id="main-kol-pane" class="main-tab-pane active">
       <!-- Dexscreener Banner (shown when dexscreenerListed=true) -->
@@ -810,18 +812,306 @@
       </div>
 
       </div>
-
-      </div>
       <!-- End KOL Tab Content -->
 
-      <!-- Signal Tab Content -->
-      <div id="main-signal-pane" class="main-tab-pane">
-        <div class="signal-coming-soon">
-          <span class="signal-coming-soon-text signal-coming-soon-animate">Soon KOL Marketplace</span>
+      <!-- Signal Tab Content (Trade Mode) -->
+      <div id="main-signal-pane" class="main-tab-pane trade-mode-pane">
+        <div class="trade-mode-content">
+          <!-- Row: Public KOL | VIP KOL + Filter button -->
+          <div class="trade-mode-header-row">
+            <div class="trade-mode-tabs main-tab-navigation main-tab-switch">
+              <button class="main-tab-btn active" id="trade-tab-public" data-trade-tab="public">Public KOL</button>
+              <button class="main-tab-btn" id="trade-tab-private" data-trade-tab="private">VIP KOL</button>
+              <button class="main-tab-btn" id="trade-tab-trending" data-trade-tab="trending">Trending</button>
+            </div>
+            <button type="button" class="trade-mode-filter-btn" id="trade-mode-filter-btn" title="Filter by launchpad">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2.628a2 2 0 0 1-.5.879l-4.5 5.5a.5.5 0 0 1-.772 0L2 4.379a2 2 0 0 1-.5-.879V1.5z"/>
+              </svg>
+              <span>Filter</span>
+            </button>
+          </div>
+          <!-- Public KOL / VIP KOL: search + list -->
+          <div class="trade-mode-pane-content trade-mode-calls-pane active" id="trade-mode-calls-pane" data-trade-pane="calls">
+            <div class="trade-mode-search-wrap">
+              <input type="text" class="trade-mode-search" id="trade-mode-search" placeholder="Search..." />
+            </div>
+            <div class="trade-mode-list" id="trade-mode-list">
+              <!-- Call cards (sample items) -->
+              <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+            <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+            <article class="trade-call-card">
+              <div class="trade-call-label">
+                <span class="trade-call-dot"></span>
+                <span>Crypto Hunter</span>
+              </div>
+              <div class="trade-call-body">
+                <div class="trade-call-left">
+                  <div class="trade-call-avatar-wrap">
+                    <div class="trade-call-avatar">B</div>
+                    <span class="trade-call-dot trade-call-dot-avatar"></span>
+                  </div>
+                  <div class="trade-call-info">
+                    <div class="trade-call-title-row">
+                      <span class="trade-call-title">FEAR BUY THE FEAR</span>
+                      <svg class="trade-call-star" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <div class="trade-call-subtitle">1s Cszi...pump</div>
+                    <div class="trade-call-meta">Q 8 &nbsp; 1</div>
+                    <div class="trade-call-stats">
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3z"/><path d="M1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3z"/><path d="M9 2.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3z"/><path d="M9 10.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg> 83%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/><path d="M1 11.5A1.5 1.5 0 0 1 2.5 10h11a1.5 1.5 0 0 1 1.5 1.5v2a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-2z"/></svg> 3%</span>
+                      <span class="trade-call-stat"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trade-call-right">
+                  <div class="trade-call-values">V $76 MC $2.22K</div>
+                  <div class="trade-call-fee">F 0.0,199 TX 1</div>
+                  <button type="button" class="trade-call-action-btn"><svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4 10.781c.217 0 .383-.107.383-.25 0-.138-.155-.25-.352-.25-1.352 0-2.3.893-2.3 1.983 0 .99.948 1.983 2.3 1.983.197 0 .353-.112.353-.25 0-.143-.166-.25-.383-.25-1.028 0-1.71.64-2.124 1.3-.259.403-.371.762-.371 1.3 0 .538.112.897.371 1.3.414.66 1.096 1.3 2.124 1.3z"/><path d="M8 1a2.5 2.5 0 0 0-2.5 2.5v.563A2.5 2.5 0 0 0 3 6.5v.563A2.5 2.5 0 0 0 5.5 9.5h5A2.5 2.5 0 0 0 13 7.063V6.5a2.5 2.5 0 0 0-2.5-2.5v-.563A2.5 2.5 0 0 0 8 1z"/></svg> 0.01</button>
+                </div>
+              </div>
+            </article>
+          </div>
+          </div>
+          <!-- Trending tab: top 3 podium + list -->
+          <div class="trade-mode-pane-content trade-trending-pane" id="trade-mode-trending-pane" data-trade-pane="trending">
+            <div class="trade-trending-podium">
+              <article class="trade-trending-podium-card" data-rank="2">
+                <span class="trade-trending-rank">2</span>
+                <div class="trade-trending-podium-avatar">B</div>
+                <div class="trade-trending-podium-title">TOKEN TWO</div>
+                <div class="trade-trending-podium-meta">$TWO · pump</div>
+                <div class="trade-trending-podium-stat">MC $12.5K</div>
+                <button type="button" class="trade-trending-podium-btn">Trade</button>
+              </article>
+              <article class="trade-trending-podium-card trade-trending-podium-first" data-rank="1">
+                <span class="trade-trending-rank">1</span>
+                <div class="trade-trending-podium-avatar">A</div>
+                <div class="trade-trending-podium-title">TOP TRENDING</div>
+                <div class="trade-trending-podium-meta">$TOP · pump</div>
+                <div class="trade-trending-podium-stat">MC $45K</div>
+                <button type="button" class="trade-trending-podium-btn">Trade</button>
+              </article>
+              <article class="trade-trending-podium-card" data-rank="3">
+                <span class="trade-trending-rank">3</span>
+                <div class="trade-trending-podium-avatar">C</div>
+                <div class="trade-trending-podium-title">THIRD TOKEN</div>
+                <div class="trade-trending-podium-meta">$THIRD · moonshot</div>
+                <div class="trade-trending-podium-stat">MC $8.2K</div>
+                <button type="button" class="trade-trending-podium-btn">Trade</button>
+              </article>
+            </div>
+            <div class="trade-trending-list-label">Other Trending</div>
+            <div class="trade-trending-list" id="trade-trending-list">
+              <article class="trade-call-card">
+                <div class="trade-call-label"><span class="trade-call-dot"></span><span>#4</span></div>
+                <div class="trade-call-body">
+                  <div class="trade-call-left">
+                    <div class="trade-call-avatar-wrap"><div class="trade-call-avatar">D</div></div>
+                    <div class="trade-call-info">
+                      <div class="trade-call-title-row"><span class="trade-call-title">FOURTH PICK</span></div>
+                      <div class="trade-call-subtitle">$FOUR · pump</div>
+                      <div class="trade-call-stats"><span class="trade-call-stat">MC $5.1K</span></div>
+                    </div>
+                  </div>
+                  <div class="trade-call-right">
+                    <button type="button" class="trade-call-action-btn">Trade</button>
+                  </div>
+                </div>
+              </article>
+              <article class="trade-call-card">
+                <div class="trade-call-label"><span class="trade-call-dot"></span><span>#5</span></div>
+                <div class="trade-call-body">
+                  <div class="trade-call-left">
+                    <div class="trade-call-avatar-wrap"><div class="trade-call-avatar">E</div></div>
+                    <div class="trade-call-info">
+                      <div class="trade-call-title-row"><span class="trade-call-title">FIFTH TREND</span></div>
+                      <div class="trade-call-subtitle">$FIVE · pump</div>
+                      <div class="trade-call-stats"><span class="trade-call-stat">MC $3.8K</span></div>
+                    </div>
+                  </div>
+                  <div class="trade-call-right">
+                    <button type="button" class="trade-call-action-btn">Trade</button>
+                  </div>
+                </div>
+              </article>
+              <article class="trade-call-card">
+                <div class="trade-call-label"><span class="trade-call-dot"></span><span>#6</span></div>
+                <div class="trade-call-body">
+                  <div class="trade-call-left">
+                    <div class="trade-call-avatar-wrap"><div class="trade-call-avatar">F</div></div>
+                    <div class="trade-call-info">
+                      <div class="trade-call-title-row"><span class="trade-call-title">SIXTH ONE</span></div>
+                      <div class="trade-call-subtitle">$SIX · axiom</div>
+                      <div class="trade-call-stats"><span class="trade-call-stat">MC $2.9K</span></div>
+                    </div>
+                  </div>
+                  <div class="trade-call-right">
+                    <button type="button" class="trade-call-action-btn">Trade</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+        <!-- Trade Filter Popup: Protocols, Ticker, Audit/Metrics, Socials -->
+        <div class="trade-filter-popup" id="trade-filter-popup" role="dialog" aria-label="Filter" style="display: none;">
+          <div class="trade-filter-popup-backdrop" id="trade-filter-popup-backdrop"></div>
+          <div class="trade-filter-popup-box">
+            <div class="trade-filter-popup-header">
+              <span class="trade-filter-popup-title">Filter</span>
+              <button type="button" class="trade-filter-popup-close" id="trade-filter-popup-close" title="Close">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-2.146 2.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="trade-filter-popup-body">
+              <!-- Protocols -->
+              <div class="trade-filter-section">
+                <div class="trade-filter-section-head">
+                  <span class="trade-filter-section-title">Protocols</span>
+                  <button type="button" class="trade-filter-select-all" id="trade-filter-protocols-select-all">Select All</button>
+                </div>
+                <div class="trade-filter-protocols-grid" id="trade-filter-protocols-grid">
+                  <button type="button" class="trade-filter-protocol-tag active" data-protocol="pump">Pump</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="mayhem">Mayhem</button>
+                  <button type="button" class="trade-filter-protocol-tag active" data-protocol="moonit">Moon.it</button>
+                  <button type="button" class="trade-filter-protocol-tag active" data-protocol="launchlab">Launchlab</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="bonkfun">Bonkfun</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="bonkers">Bonkers</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="meteora-dbc">Meteora DBC</button>
+                  <button type="button" class="trade-filter-protocol-tag active" data-protocol="believe">Believe</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="moonshot">Moonshot</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="bags">Bags</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="jupiter-studio">Jupiter Studio</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="surge">Surge</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="soar">$ Soar</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="boop">Boop</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="sugar">Sugar</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="heaven">Heaven</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="tokenmill">Tokenmill</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="wavebreak">Wavebreak</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="pump-amm">Pump AMM</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="raydium-amm">Raydium AMM</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="raydium-clmm">Raydium CLMM</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="raydium-v3">Raydium V3</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="orca">Orca</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="meteora-amm">Meteora AMM</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="meteora-amm-v2">Meteora AMM V2</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="meteora-dlmm">Meteora DLMM</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="vertigo">Vertigo</button>
+                  <button type="button" class="trade-filter-protocol-tag" data-protocol="fluxbeam">Fluxbeam</button>
+                </div>
+              </div>
+              <!-- Ticker / Name -->
+              <div class="trade-filter-section">
+                <span class="trade-filter-section-title">Ticker / Name</span>
+                <input type="text" class="trade-filter-ticker-input" id="trade-filter-ticker-input" placeholder="Enter keywords separated by comma (ticker1, ticker2, ...)" />
+              </div>
+              <!-- Audit / Metrics -->
+              <div class="trade-filter-section">
+                <div class="trade-filter-audit-tabs" role="tablist">
+                  <button type="button" class="trade-filter-audit-tab active" data-audit-tab="audit" role="tab">Audit</button>
+                  <button type="button" class="trade-filter-audit-tab" data-audit-tab="metrics" role="tab">Metrics</button>
+                </div>
+              </div>
+              <!-- Socials -->
+              <div class="trade-filter-section">
+                <span class="trade-filter-section-title">Socials</span>
+                <div class="trade-filter-socials-list">
+                  <label class="trade-filter-social-item">
+                    <input type="checkbox" name="social" value="at-least-one" id="trade-filter-social-one" />
+                    <span>With at least 1 social</span>
+                  </label>
+                  <label class="trade-filter-social-item">
+                    <input type="checkbox" name="social" value="dexscreener-paid" id="trade-filter-social-dexscreener" />
+                    <span>Dexscreener Paid</span>
+                  </label>
+                  <label class="trade-filter-social-item">
+                    <input type="checkbox" name="social" value="livestream" id="trade-filter-social-livestream" />
+                    <span>Livestream</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="trade-filter-popup-footer">
+              <button type="button" class="trade-filter-reset-btn" id="trade-filter-reset-btn">Reset</button>
+              <button type="button" class="trade-filter-apply-btn" id="trade-filter-apply-btn">Apply</button>
+            </div>
+          </div>
         </div>
       </div>
+      </div>
+      <!-- end main-panes-wrapper -->
 
-    <!-- Sticky Footer CTA -->
+    </div>
+    <!-- end scroll-content -->
+
+    <!-- Sticky Footer CTA: fixed at bottom of panel -->
     <div class="sticky-footer">
       <button class="post-btn post-btn-x" id="post-x-btn" title="Post on X">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -840,6 +1130,131 @@
       </button>
     </div>
 
+  </div>
+
+  <!-- Account View (Sign X / profile) -->
+  <div id="account-view" class="account-view" style="display: none;">
+    <div class="account-header">
+      <button type="button" id="account-back-btn" class="back-btn" title="Back">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+      </button>
+      <h1 class="account-title">Account</h1>
+    </div>
+    <div class="account-content">
+      <div class="account-info-card">
+        <div class="account-info-avatar" id="account-info-avatar">?</div>
+        <div class="account-info-body">
+          <div class="account-info-name" id="account-info-name">Guest</div>
+          <div class="account-info-handle" id="account-info-handle">@username</div>
+          <div class="account-info-meta">Member since —</div>
+        </div>
+      </div>
+      <div class="account-tabs" role="tablist">
+        <button type="button" class="account-tab active" data-account-tab="profile" role="tab">Profile</button>
+        <button type="button" class="account-tab" data-account-tab="history" role="tab">History</button>
+        <button type="button" class="account-tab" data-account-tab="flex" role="tab">Flex</button>
+      </div>
+      <div class="account-tab-panels">
+        <div class="account-tab-pane active" id="account-pane-profile" data-account-pane="profile">
+          <div class="account-section">
+            <h3 class="account-section-title">Profile</h3>
+            <div class="account-profile-fields">
+              <div class="account-field">
+                <span class="account-field-label">X (Twitter) handle</span>
+                <span class="account-field-value" id="account-profile-handle">—</span>
+              </div>
+              <div class="account-field">
+                <span class="account-field-label">Subscription</span>
+                <span class="account-field-value">Free Plan</span>
+              </div>
+            </div>
+          </div>
+          <div class="account-section">
+            <h3 class="account-section-title">Verified wallets</h3>
+            <ul class="account-wallet-list" id="account-wallet-list">
+              <li class="account-wallet-item">
+                <span class="account-wallet-address" title="Click to copy">7xKX...b2H9</span>
+                <span class="account-wallet-badge">Verified</span>
+              </li>
+              <li class="account-wallet-item">
+                <span class="account-wallet-address" title="Click to copy">9mNp...4cL1</span>
+                <span class="account-wallet-badge">Verified</span>
+              </li>
+              <li class="account-wallet-item account-wallet-empty" id="account-wallet-empty">No verified wallets yet.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="account-tab-pane" id="account-pane-history" data-account-pane="history">
+          <div class="account-section">
+            <h3 class="account-section-title">KOL send history</h3>
+            <p class="account-section-desc">Where you sent KOL: Public, Discord, VIP, or Telegram</p>
+            <ul class="account-history-list" id="account-history-list">
+              <li class="account-history-item">
+                <span class="account-history-dest account-history-dest-public">Public</span>
+                <div class="account-history-body">
+                  <div class="account-history-detail">
+                    <span class="account-history-name">Pump King</span>
+                    <span class="account-history-mcap">MCAP $45.2K</span>
+                    <span class="account-history-ca" title="Click to copy">CA 7xKXtg...b2H9</span>
+                  </div>
+                  <span class="account-history-time">2h ago</span>
+                </div>
+              </li>
+              <li class="account-history-item">
+                <span class="account-history-dest account-history-dest-discord">Discord</span>
+                <div class="account-history-body">
+                  <div class="account-history-detail">
+                    <span class="account-history-name">Moon Shot</span>
+                    <span class="account-history-mcap">MCAP $12.1K</span>
+                    <span class="account-history-ca" title="Click to copy">CA 9mNp4c...4cL1</span>
+                  </div>
+                  <span class="account-history-time">5h ago</span>
+                </div>
+              </li>
+              <li class="account-history-item">
+                <span class="account-history-dest account-history-dest-vip">VIP</span>
+                <div class="account-history-body">
+                  <div class="account-history-detail">
+                    <span class="account-history-name">Axiom Alpha</span>
+                    <span class="account-history-mcap">MCAP $8.5K</span>
+                    <span class="account-history-ca" title="Click to copy">CA 3fRt2...k9Lp</span>
+                  </div>
+                  <span class="account-history-time">1d ago</span>
+                </div>
+              </li>
+              <li class="account-history-item">
+                <span class="account-history-dest account-history-dest-telegram">Telegram</span>
+                <div class="account-history-body">
+                  <div class="account-history-detail">
+                    <span class="account-history-name">Pump Degen</span>
+                    <span class="account-history-mcap">MCAP $5.8K</span>
+                    <span class="account-history-ca" title="Click to copy">CA 2hYwq...m3Nx</span>
+                  </div>
+                  <span class="account-history-time">2d ago</span>
+                </div>
+              </li>
+              <li class="account-history-item">
+                <span class="account-history-dest account-history-dest-public">Public</span>
+                <div class="account-history-body">
+                  <div class="account-history-detail">
+                    <span class="account-history-name">Launch Lab</span>
+                    <span class="account-history-mcap">MCAP $22K</span>
+                    <span class="account-history-ca" title="Click to copy">CA 5nBv8...p1Qr</span>
+                  </div>
+                  <span class="account-history-time">3d ago</span>
+                </div>
+              </li>
+              <li class="account-history-item account-history-empty" id="account-history-empty">No history yet. Send KOL to see entries here.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="account-tab-pane" id="account-pane-flex" data-account-pane="flex">
+          <div class="account-soon">Soon</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Settings View -->
