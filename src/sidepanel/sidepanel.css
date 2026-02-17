@@ -468,6 +468,148 @@ body {
   color: var(--text-primary);
 }
 
+/* Dexscreener Banner */
+.dexscreener-banner-wrap {
+  width: 100%;
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.dexscreener-banner-img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  max-height: 120px;
+}
+
+/* DexPaid History - dApp style collapsible */
+.dexpaid-section {
+  margin: 0 0 8px 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(34, 211, 199, 0.06) 0%, rgba(75, 231, 132, 0.04) 100%);
+  border: 1px solid rgba(34, 211, 199, 0.12);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.dexpaid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.dexpaid-header:hover {
+  background: rgba(34, 211, 199, 0.05);
+}
+
+.dexpaid-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.dexpaid-icon {
+  color: var(--text-cyan);
+  flex-shrink: 0;
+}
+
+.dexpaid-header .chevron-icon {
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dexpaid-header.active .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.dexpaid-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.3s ease;
+  padding: 0 12px;
+}
+
+.dexpaid-content.expanded {
+  max-height: 400px;
+  padding: 0 12px 12px;
+  overflow-y: auto;
+}
+
+.dexpaid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dexpaid-item {
+  padding: 10px 12px;
+  background: rgba(15, 23, 34, 0.6);
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  font-size: 11px;
+}
+
+.dexpaid-item-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dexpaid-item-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  row-gap: 4px;
+}
+
+.dexpaid-type {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.dexpaid-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-success { background: rgba(75, 231, 132, 0.2); color: var(--text-green); }
+.badge-warning { background: rgba(251, 191, 36, 0.2); color: var(--text-yellow); }
+.badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--text-red); }
+.badge-muted { background: rgba(107, 114, 128, 0.2); color: var(--text-muted); }
+
+.dexpaid-boost-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.dexpaid-amount {
+  color: var(--text-cyan);
+  font-weight: 600;
+}
+
+.dexpaid-meta {
+  color: var(--text-muted);
+  font-size: 10px;
+  margin-left: auto;
+}
+
 /* Token Identity Card */
 .token-identity {
   display: flex;
@@ -483,20 +625,56 @@ body {
   flex-shrink: 0;
   border: 1px solid var(--card-border);
   position: relative;
+  overflow: hidden;
+}
+
+.token-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.exchange-logo-badge {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  bottom: 2px;
+  right: 2px;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.exchange-logo-badge img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  object-position: center;
 }
 
 .token-avatar::after {
   content: '';
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   background: var(--card-bg);
   border: 2px solid var(--card-border);
   border-radius: 50%;
-  bottom: -3px;
-  right: -3px;
+  bottom: 2px;
+  right: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 0;
 }
+
 
 .token-info {
   flex: 1;
@@ -506,17 +684,31 @@ body {
   min-width: 0;
 }
 
-.token-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.token-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .token-symbol {
-  display: none;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.token-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 .address-pill {
@@ -580,6 +772,36 @@ body {
   object-fit: cover;
 }
 
+/* Fake Launch Warning - below Dev Wallet, aligned with token icon left border */
+.fake-launch-warning {
+  margin-top: 6px;
+  margin-left: calc(-76px - 14px - 2px); /* align with avatar left border (width + gap + 2px avatar border) */
+  width: calc(100% + 76px + 14px + 2px);
+  padding: 6px 10px 6px calc(76px + 14px + 2px);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  animation: fake-launch-pulse 2s ease-in-out infinite;
+  box-sizing: border-box;
+}
+
+.fake-launch-text {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-red);
+}
+
+@keyframes fake-launch-pulse {
+  0%, 100% {
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    background: rgba(239, 68, 68, 0.22);
+    box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.25);
+  }
+}
+
 .address-pill span {
   flex: 1;
   overflow: hidden;
@@ -594,11 +816,11 @@ body {
   height: 12px;
 }
 
-/* Action Icons Bar */
+/* Action Icons Bar - Social links from tokenSocials */
 .action-icons-bar {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 0 4px 6px 4px;
 }
 
@@ -615,9 +837,23 @@ body {
   transition: all 0.2s;
 }
 
+.action-icon-btn.social-btn {
+  text-decoration: none;
+  min-width: 28px;
+  color: #4BE784;
+  border-color: rgba(75, 231, 132, 0.25);
+  background: rgba(75, 231, 132, 0.08);
+}
+
+.action-icon-btn.social-btn:hover {
+  color: #fff;
+  background: rgba(75, 231, 132, 0.25);
+  border-color: rgba(75, 231, 132, 0.5);
+}
+
 .action-icon-btn svg {
-  width: 9px;
-  height: 9px;
+  width: 14px;
+  height: 14px;
 }
 
 .action-icon-btn:hover {
@@ -778,6 +1014,124 @@ body {
 .timeframe-card .value {
   font-size: 10px;
   font-weight: 600;
+}
+
+/* Dev Info Row (above Bonding Curve) */
+.dev-info-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 0 0 8px 0;
+}
+
+.dev-info-card {
+  min-height: 36px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dev-info-card label {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.dev-info-card .value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* DevLock Section */
+.devlock-section {
+  margin: 0 0 8px 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(75, 231, 132, 0.06) 0%, rgba(34, 211, 199, 0.04) 100%);
+  border: 1px solid rgba(75, 231, 132, 0.15);
+  padding: 10px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.devlock-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.devlock-title::before {
+  content: '';
+  width: 4px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.devlock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.devlock-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(15, 23, 34, 0.5);
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+}
+
+.devlock-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.devlock-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.devlock-address {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.devlock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(75, 231, 132, 0.12);
+  border: 1px solid rgba(75, 231, 132, 0.25);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.devlock-btn:hover {
+  background: rgba(75, 231, 132, 0.2);
+  border-color: rgba(75, 231, 132, 0.4);
+  transform: translateY(-1px);
 }
 
 /* Bonding Curve - Simple */
@@ -968,9 +1322,68 @@ body {
   color: var(--text-red);
 }
 
+/* Rug Check Risks Notif */
+.rug-check-risks {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+}
+
+.rug-check-risks-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.rug-check-risks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rug-risk-item {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border-left: 3px solid;
+  font-size: 10px;
+}
+
+.rug-risk-item.risk-error {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: var(--text-red);
+}
+
+.rug-risk-item.risk-warn {
+  background: rgba(251, 146, 60, 0.08);
+  border-left-color: var(--text-orange);
+}
+
+.rug-risk-item.risk-info {
+  background: rgba(96, 165, 250, 0.08);
+  border-left-color: #60a5fa;
+}
+
+.rug-risk-name {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.rug-risk-desc {
+  display: block;
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
 /* Caption Section */
 .caption-section {
-  margin: 8px 4px 0 4px;
+  margin: 8px 4px 24px 4px;
 }
 
 .section-header {
@@ -2234,13 +2647,81 @@ body {
   }
 }
 
-/* Error State Styling */
+/* Reconnecting State Styling (user-friendly, no technical error shown) */
+.state-reconnecting .reconnect-content,
 .error-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  max-width: 280px;
   animation: fadeInUp 0.6s ease-out;
+}
+
+.reconnect-icon-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reconnect-icon-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(75, 231, 132, 0.06);
+  border: 1px solid rgba(75, 231, 132, 0.15);
+  animation: emptyPulse 2.5s ease-in-out infinite;
+}
+
+.reconnect-spinner {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-top-color: rgba(75, 231, 132, 0.5);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.reconnect-icon {
+  position: relative;
+  color: rgba(75, 231, 132, 0.4);
+  z-index: 1;
+}
+
+.reconnect-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.reconnect-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.reconnect-btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reconnect-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .refresh-btn,
@@ -2288,11 +2769,11 @@ body {
   }
   
   .token-name {
-    font-size: 14px;
+    font-size: 11px;
   }
   
   .token-symbol {
-    font-size: 11px;
+    font-size: 15px;
   }
   
   .action-icons-bar {
@@ -2358,6 +2839,12 @@ body {
     height: 38px;
     font-size: 13px;
   }
+
+  .fake-launch-warning {
+    margin-left: calc(-48px - 8px - 2px);
+    width: calc(100% + 48px + 8px + 2px);
+    padding-left: calc(48px + 8px + 2px);
+  }
 }
 
 /* Medium-small screens (321px - 400px) */
@@ -2382,9 +2869,19 @@ body {
     width: 56px !important;
     height: 56px !important;
   }
+
+  .fake-launch-warning {
+    margin-left: calc(-56px - 14px - 2px);
+    width: calc(100% + 56px + 14px + 2px);
+    padding-left: calc(56px + 14px + 2px);
+  }
   
   .token-name {
-    font-size: 15px;
+    font-size: 13px;
+  }
+  
+  .token-symbol {
+    font-size: 17px;
   }
   
   .action-icons-bar {
@@ -2466,13 +2963,19 @@ body {
     width: 80px !important;
     height: 80px !important;
   }
+
+  .fake-launch-warning {
+    margin-left: calc(-80px - 14px - 2px);
+    width: calc(100% + 80px + 14px + 2px);
+    padding-left: calc(80px + 14px + 2px);
+  }
   
   .token-name {
-    font-size: 18px;
+    font-size: 14px;
   }
   
   .token-symbol {
-    font-size: 14px;
+    font-size: 20px;
   }
   
   .action-icons-bar {
@@ -2601,6 +3104,189 @@ body {
 
 .tab-content.active {
   display: block;
+}
+
+/* Website Tab - Webview */
+.website-webview-wrap {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 220px);
+  min-height: 300px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: visible;
+  border: 1px solid var(--card-border);
+}
+
+.website-iframe-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+}
+
+.website-webview {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  border: none;
+  display: block;
+}
+
+.website-view-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #4BE784;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.website-view-btn:hover {
+  background: #3dd170;
+  transform: translateY(-1px);
+}
+
+.website-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 12px;
+  background: rgba(15, 23, 34, 0.5);
+}
+
+/* YouTube Tab - Thumbnail card */
+.youtube-embed-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.youtube-thumbnail-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+
+.youtube-thumbnail-card:hover {
+  opacity: 0.9;
+}
+
+.youtube-thumbnail-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.youtube-thumbnail-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.youtube-play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  pointer-events: none;
+}
+
+.youtube-play-icon {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.youtube-watch-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.youtube-thumbnail-card:hover .youtube-watch-label {
+  color: #ff4444;
+}
+
+.youtube-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 12px;
+  background: rgba(15, 23, 34, 0.5);
+}
+
+/* GitHub Tab - Repo Preview */
+.repo-preview-wrap {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 220px);
+  min-height: 300px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.repo-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.repo-preview iframe {
+  display: block;
+  width: 100%;
+  height: 700px;
+  min-height: 400px;
+  border: none;
+  border-radius: 16px;
+}
+
+.github-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 12px;
+  background: rgba(15, 23, 34, 0.5);
 }
 
 /* Tweet Composer Styles */
@@ -3182,6 +3868,45 @@ body {
   margin: 8px 0 0 0 !important;
   word-break: break-word !important;
   padding: 0 !important;
+}
+
+/* Twitter Profile Loading Skeleton */
+#twitter-profile-card.twitter-profile-loading .profile-image,
+#twitter-profile-card.twitter-profile-loading .profile-name,
+#twitter-profile-card.twitter-profile-loading .profile-handle,
+#twitter-profile-card.twitter-profile-loading .profile-bio,
+#twitter-profile-card.twitter-profile-loading .stat-number {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 100%);
+  background-size: 200% 100%;
+  animation: twitter-profile-shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+#twitter-profile-card.twitter-profile-loading .profile-image {
+  min-height: 48px;
+  min-width: 48px;
+}
+#twitter-profile-card.twitter-profile-loading .profile-name {
+  height: 14px;
+  width: 100px;
+  color: transparent !important;
+}
+#twitter-profile-card.twitter-profile-loading .profile-handle {
+  height: 12px;
+  width: 70px;
+  color: transparent !important;
+}
+#twitter-profile-card.twitter-profile-loading .profile-bio {
+  height: 28px;
+  color: transparent !important;
+}
+#twitter-profile-card.twitter-profile-loading .stat-number {
+  height: 12px;
+  width: 28px;
+  color: transparent !important;
+}
+@keyframes twitter-profile-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Profile Tab Container - no card */

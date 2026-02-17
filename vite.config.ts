@@ -1,8 +1,10 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -62,4 +64,9 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  define: {
+    'import.meta.env.BASE_URL': JSON.stringify(env.BASE_URL || env.VITE_BASE_URL || 'http://localhost:4000/api'),
+    'import.meta.env.API_KEY': JSON.stringify(env.API_KEY || env.VITE_API_KEY || ''),
+  },
+};
 });

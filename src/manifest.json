@@ -11,6 +11,10 @@
     "sidePanel",
     "webRequest"
   ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: https: blob:; frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be https://www.youtube-nocookie.com https://youtube-nocookie.com https://github1s.com https://*.github1s.com"
+  },
   
   "host_permissions": [
     "https://gmgn.ai/*",
@@ -25,7 +29,12 @@
     "https://api.mainnet-beta.solana.com/*",
     "https://solana-api.projectserum.com/*",
     "https://rpc.ankr.com/*",
-    "https://mainnet.helius-rpc.com/*"
+    "https://mainnet.helius-rpc.com/*",
+    "http://localhost:*/*",
+    "https://localhost:*/*",
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "https://youtu.be/*"
   ],
   
   "background": {

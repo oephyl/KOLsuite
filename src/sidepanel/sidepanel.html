@@ -39,12 +39,21 @@
 
       <!-- KOL Tab Content (current page) -->
       <div id="main-kol-pane" class="main-tab-pane active">
+      <!-- Dexscreener Banner (shown when dexscreenerListed=true) -->
+      <div class="dexscreener-banner-wrap" id="dexscreener-banner-wrap" style="display: none;">
+        <img id="dexscreener-banner-img" src="" alt="Dexscreener" class="dexscreener-banner-img" referrerpolicy="no-referrer" loading="eager">
+      </div>
       <!-- Token Identity Card -->
       <div class="token-identity" id="token-identity">
-        <div class="token-avatar" style="width: 76px !important; height: 76px !important; border-radius: 14px !important;"></div>
+        <div class="token-avatar" style="width: 76px !important; height: 76px !important; border-radius: 14px !important;">
+          <img id="token-logo-img" src="" alt="" class="token-logo-img">
+          <span class="exchange-logo-badge" id="exchange-logo-wrap" style="display: none;"><img id="exchange-logo" src="" alt="" title=""></span>
+        </div>
         <div class="token-info">
-          <h2 class="token-name" id="token-name-header">Token Name</h2>
-          <div class="token-symbol" id="token-symbol">$SYMBOL</div>
+          <div class="token-title-row">
+            <span class="token-symbol" id="token-symbol">$SYMBOL</span>
+            <h2 class="token-name" id="token-name-header">Token Name</h2>
+          </div>
           <div class="address-pill" id="address-pill" title="Click to copy">
             <span id="token-mint-short">Loading...</span>
             <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
@@ -56,72 +65,48 @@
             <span id="wallet-dev-short" class="wallet-dev-address">Exam...PLE</span>
             <div class="wallet-dev-logo" id="wallet-dev-logo"></div>
           </div>
+          <div class="fake-launch-warning" id="fake-launch-warning" style="display: none;">
+            <span class="fake-launch-text" id="fake-launch-text"></span>
+          </div>
         </div>
       </div>
 
-      <!-- Action Icons Bar -->
-      <div class="action-icons-bar">
-        <button class="action-icon-btn cyan" title="Users">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
-            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Search">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Edit">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Radar">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path d="M8 13A5 5 0 1 1 8 3a5 5 0 0 1 0 10zm0 1A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"/>
-            <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
-            <path d="M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn green" title="Zap">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Chart">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M1.5 14.5A.5.5 0 0 1 1 14V2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-.5zm1-.5V2h12v12H2z"/>
-            <path d="M4 12h2V8H4v4zm3 0h2V4H7v8zm3 0h2V6h-2v6z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Link">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
-            <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z"/>
-          </svg>
-        </button>
-        <button class="action-icon-btn" title="Star">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-          </svg>
-        </button>
+      <!-- Social Action Icons Bar (from tokenSocials) -->
+      <div class="action-icons-bar" id="social-action-bar">
+        <a id="social-twitter-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="Twitter" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a id="social-telegram-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="Telegram" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+        <a id="social-instagram-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="Instagram" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a id="social-tiktok-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="TikTok" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+        </a>
+        <a id="social-youtube-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="YouTube" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a id="social-website-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="Website" style="display:none;">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </a>
       </div>
 
       <!-- Tab Navigation -->
       <div class="tab-navigation">
         <button class="tab-btn active" id="details-tab-btn" data-tab="details">Details</button>
         <button class="tab-btn" id="tweet-tab-btn" data-tab="tweet">Tweet</button>
+        <button class="tab-btn" id="github-tab-btn" data-tab="github">GitHub</button>
+        <button class="tab-btn" id="youtube-tab-btn" data-tab="youtube">YouTube</button>
       </div>
 
       <!-- Tab Content Container -->
       <div class="tab-content-container">
         
         <!-- Details Tab Content -->
-        <div class="details-container" style="overflow: hidden; max-height: 100vh; position: relative;">
-        <div class="tab-content active" id="details-tab-content" style="overflow: hidden; position: relative; z-index: 10;">
+        <div class="details-container">
+        <div class="tab-content active" id="details-tab-content" style="position: relative; z-index: 10;">
           <!-- Details Only - No Twitter Content -->
           
       <!-- Stats Grid -->
@@ -133,7 +118,7 @@
           <span class="value" id="stat-price">$0.00</span>
         </div>
         <div class="stat-card row1-col">
-          <label>Fees Paid</label>
+          <label>Fees USD</label>
           <span class="value green" id="stat-fees">0.0000</span>
         </div>
         <div class="stat-card row1-col">
@@ -163,22 +148,22 @@
           <span class="value" id="stat-liquidity">$0.00K</span>
         </div>
 
-        <!-- Row 3: 4 columns (Bundled, Remaining, Sniped, Remaining) -->
+        <!-- Row 3: 4 columns (Bundled, Pro Trader, Sniped, Smart Trader) -->
         <div class="stat-card mini">
           <label>Bundled</label>
           <span class="value orange" id="metric-bundled">0.0%</span>
         </div>
         <div class="stat-card mini">
-          <label>Remaining</label>
-          <span class="value orange" id="metric-remaining1">100%</span>
+          <label>Pro Trader</label>
+          <span class="value orange" id="metric-proTrader">0</span>
         </div>
         <div class="stat-card mini">
           <label>Sniped</label>
           <span class="value orange" id="metric-sniped">0.0%</span>
         </div>
         <div class="stat-card mini">
-          <label>Remaining</label>
-          <span class="value orange" id="metric-remaining2">100%</span>
+          <label>Smart Trader</label>
+          <span class="value orange" id="metric-smartTrader">0</span>
         </div>
 
         <!-- Row 4: 4 columns (Dev H., Insiders, Top 10 H., Holders) -->
@@ -198,6 +183,32 @@
           <label>Holders</label>
           <span class="value green" id="metric-holders">0</span>
         </div>
+      </div>
+
+      <!-- Dev Info Row (above Bonding Curve) -->
+      <div class="dev-info-row">
+        <div class="dev-info-card">
+          <label>Dev Token</label>
+          <span class="value" id="dev-tokens-count">0</span>
+        </div>
+        <div class="dev-info-card">
+          <label>Dev Migration</label>
+          <span class="value" id="dev-migrations-count">0</span>
+        </div>
+        <div class="dev-info-card">
+          <label>Organic Buy</label>
+          <span class="value" id="organic-buys-24h">0</span>
+        </div>
+        <div class="dev-info-card">
+          <label>Organic Sell</label>
+          <span class="value" id="organic-sells-24h">0</span>
+        </div>
+      </div>
+
+      <!-- DevLock Section (shown when lockers exist) -->
+      <div class="devlock-section" id="devlock-section" style="display: none;">
+        <h3 class="devlock-title">DevLock</h3>
+        <div class="devlock-list" id="devlock-list"></div>
       </div>
 
       <!-- Bonding Curve Card -->
@@ -241,6 +252,28 @@
             <label>Honeypot</label>
             <span class="value green" id="rug-honeypot">No</span>
           </div>
+        </div>
+        <!-- RUG CHECK Risks Notif -->
+        <div class="rug-check-risks" id="rug-check-risks" style="display: none;"> 
+          <div class="rug-check-risks-list" id="rug-check-risks-list"></div>
+        </div>
+      </div>
+
+      <!-- DexPaid History Section (Collapsible, shown when dexPaidData) -->
+      <div class="dexpaid-section" id="dexpaid-section" style="display: none;">
+        <div class="dexpaid-header" id="dexpaid-toggle">
+          <div class="dexpaid-title">
+            <svg class="dexpaid-icon" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+            </svg>
+            <span>DexPaid History</span>
+          </div>
+          <svg class="chevron-icon" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+        <div class="dexpaid-content" id="dexpaid-content">
+          <div class="dexpaid-list" id="dexpaid-list"></div>
         </div>
       </div>
 
@@ -495,36 +528,34 @@
             <div class="tweet-tab-content" id="profile-content" style="display: none;">
               <div class="profile-section">
                 <!-- Profile Card - Horizontal Layout -->
-                <div class="profile-card">
+                <div class="profile-card" id="twitter-profile-card">
                   <div class="profile-main">
                     <div class="profile-avatar">
-                      <img src="https://i.pravatar.cc/60?img=1" alt="Profile" class="profile-image">
-                      <div class="verified-badge">
+                      <img id="twitter-profile-avatar" src="" alt="Profile" class="profile-image">
+                      <div class="verified-badge" id="twitter-profile-verified-badge" style="display: none;">
                         <svg width="12" height="12" fill="#4BE784" viewBox="0 0 24 24">
                           <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42L10 12.82l8.29-8.29 1.42 1.41-9.17 9.26z"/>
                         </svg>
                       </div>
                     </div>
                     <div class="profile-info">
-                      <div class="profile-name">Crypto Analyst</div>
-                      <div class="profile-handle">@cryptoanalyst</div>
+                      <div class="profile-name" id="twitter-profile-name">—</div>
+                      <div class="profile-handle" id="twitter-profile-handle">@—</div>
                     </div>
                     <div class="profile-stats-inline">
                       <div class="stat-item">
-                        <span class="stat-number">12K</span>
-                        <span class="stat-label">Followes</span>
+                        <span class="stat-number" id="twitter-profile-followers">—</span>
+                        <span class="stat-label">Followers</span>
                       </div>
                       <div class="stat-item">
-                        <span class="stat-number">1K</span>
+                        <span class="stat-number" id="twitter-profile-following">—</span>
                         <span class="stat-label">Following</span>
                       </div>
                     </div>
                   </div>
                   
                   <!-- Profile Bio -->
-                  <div class="profile-bio">
-                    Solana ecosystem explorer • On-chain analyst • Early investor
-                  </div>
+                  <div class="profile-bio" id="twitter-profile-bio">—</div>
                 </div>
 
                 <!-- Tab Container -->
@@ -735,7 +766,33 @@
         </div> <!-- End Twitter Feed -->
         </div> <!-- End Tweet Tab Content -->
         </div> <!-- End Tweet Container -->
-        
+
+        <!-- GitHub Tab Content -->
+        <div class="tab-content" id="github-tab-content">
+          <div class="repo-preview-wrap">
+            <div class="repo-preview">
+              <iframe id="github-repo-iframe" src="" height="700" width="100%" style="border-radius:16px;border:none;" title="GitHub Repo"></iframe>
+            </div>
+            <div class="github-empty" id="github-empty">No GitHub repository available</div>
+          </div>
+        </div>
+
+        <!-- YouTube Tab Content - Thumbnail card (opens YouTube in new tab) -->
+        <div class="tab-content" id="youtube-tab-content">
+          <div class="youtube-embed-wrap">
+            <a id="youtube-thumbnail-link" href="#" target="_blank" rel="noopener noreferrer" class="youtube-thumbnail-card" style="display:none;">
+              <div class="youtube-thumbnail-wrap">
+                <img id="youtube-thumbnail-img" src="" alt="YouTube" class="youtube-thumbnail-img" referrerpolicy="no-referrer" loading="lazy">
+                <div class="youtube-play-overlay">
+                  <svg viewBox="0 0 68 48" class="youtube-play-icon"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.58 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.46 0 24 0 24s.06 10.54 1.58 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.42-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.54 68 24 68 24s-.06-10.54-1.58-16.26z" fill="#f00"/><path d="M45 24L27 14v20" fill="#fff"/></svg>
+                </div>
+              </div>
+              <span class="youtube-watch-label">If video doesn't play, watch on YouTube</span>
+            </a>
+            <div class="youtube-empty" id="youtube-empty">No YouTube video available</div>
+          </div>
+        </div>
+
       </div> <!-- End Tab Content Container -->
 
         <!-- Post Preview -->
@@ -993,11 +1050,19 @@
     </div>
   </div>
 
-  <!-- Error State -->
-  <div id="error-state" class="state" style="display: none;">
-    <div class="error-content">
-      <p id="error-message">âŒ Error loading token</p>
-      <button id="retry-btn" class="retry-btn">ðŸ”„ Retry</button>
+  <!-- Reconnecting State (user-friendly) -->
+  <div id="error-state" class="state state-reconnecting" style="display: none;">
+    <div class="reconnect-content">
+      <div class="reconnect-icon-wrap">
+        <div class="reconnect-icon-bg"></div>
+        <div class="reconnect-spinner"></div>
+        <svg class="reconnect-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="reconnect-title">Connecting...</h2>
+      <p id="error-message" class="reconnect-subtitle">Taking a moment to load. We'll have your data ready shortly.</p>
+      <button id="retry-btn" class="reconnect-btn">Refresh</button>
     </div>
   </div>
 

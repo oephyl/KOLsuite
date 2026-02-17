@@ -25,6 +25,15 @@ export class AxiomAdapter implements TokenAdapter {
       const urlObj = new URL(url);
       const pathParts = urlObj.pathname.split('/').filter((p) => p);
 
+      // Pattern: /meme/{mint} (axiom.trade meme token pages)
+      const memeIndex = pathParts.indexOf('meme');
+      if (memeIndex !== -1 && pathParts.length > memeIndex + 1) {
+        const potentialMint = pathParts[memeIndex + 1];
+        if (isLikelySolanaAddress(potentialMint)) {
+          return potentialMint;
+        }
+      }
+
       // Pattern: /token/{mint}
       const tokenIndex = pathParts.indexOf('token');
       if (tokenIndex !== -1 && pathParts.length > tokenIndex + 1) {

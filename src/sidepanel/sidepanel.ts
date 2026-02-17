@@ -2,14 +2,31 @@
  * KOLsuite Side Panel Script
  */
 
-console.log('[KOLsuite] ======================================');
-console.log('[KOLsuite] SIDEPANEL SCRIPT LOADED!');
-console.log('[KOLsuite] ======================================');
+import { buildRugcheckBadges } from './rugcheckBadgeAdapter'; 
+
+interface TwitterProfileData {
+  id: string;
+  username: string;
+  name: string;
+  bio: string;
+  pinnedTweetIds: string[];
+  verified: boolean;
+  avatar: string;
+  banner: string;
+  isBlueVerified: boolean;
+  followerCount: number;
+  followingCount: number;
+}
 
 class SidePanelManager {
   private currentState: 'loading' | 'main' | 'empty' | 'error' = 'loading';
   private tokenData: any = null;
   private lastTokenMint: string | null = null;
+  private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
+  private twitterProfileData: TwitterProfileData | null = null;
+  private twitterRefreshIntervalId: ReturnType<typeof setInterval> | null = null;
+  private lastTwitterUsername: string | null = null;
+  private isTweetTabActive = false;
 
   constructor() {
     console.log('[KOLsuite] SidePanelManager constructor called!');
@@ -83,6 +100,9 @@ class SidePanelManager {
     // Summary toggle
     document.getElementById('summary-toggle')?.addEventListener('click', () => this.toggleSummary());
 
+    // DexPaid History toggle
+    document.getElementById('dexpaid-toggle')?.addEventListener('click', () => this.toggleDexPaid());
+
     // Back button in settings
     document.getElementById('back-btn')?.addEventListener('click', () => this.closeSettings());
 
@@ -95,6 +115,14 @@ class SidePanelManager {
     document.getElementById('tweet-tab-btn')?.addEventListener('click', () => {
       console.log('[KOLsuite] Tweet tab clicked');
       this.switchTab('tweet');
+    });
+
+    document.getElementById('github-tab-btn')?.addEventListener('click', () => {
+      this.switchTab('github');
+    });
+
+    document.getElementById('youtube-tab-btn')?.addEventListener('click', () => {
+      this.switchTab('youtube');
     });
 
     // KeyCode toggle
@@ -983,6 +1011,10 @@ class SidePanelManager {
       document.body.classList.add('tab-details');
     } else if (tabName === 'tweet') {
       document.body.classList.add('tab-tweets');
+    } else if (tabName === 'github') {
+      document.body.classList.add('tab-github');
+    } else if (tabName === 'youtube') {
+      document.body.classList.add('tab-youtube');
     }
     
     // Remove active class from all tabs and contents
@@ -1006,10 +1038,19 @@ class SidePanelManager {
     if (activeContent) {
       activeContent.classList.add('active');
       console.log('[KOLsuite] Activated content:', `${tabName}-tab-content`);
-      
-      // Load profile data only when tweet tab is activated
+
       if (tabName === 'tweet') {
+        this.isTweetTabActive = true;
         this.loadProfileData();
+        this.loadTwitterProfileOnTab();
+      } else {
+        this.isTweetTabActive = false;
+        this.stopTwitterRefresh();
+      }
+      if (tabName === 'github') {
+        this.loadGitHubWebview();
+      } else if (tabName === 'youtube') {
+        this.loadYouTubeWebview();
       }
     } else {
       console.error('[KOLsuite] Content not found:', `${tabName}-tab-content`);
@@ -2015,10 +2056,131 @@ Early opportunity! DYOR 🔍
     });
   }
 
+  /** Extract Twitter/X username from URL e.g. https://x.com/alonzocooks/xxx/xxx → alonzocooks */
+  private extractTwitterUsername(twitterUrl: string): string | null {
+    if (!twitterUrl || typeof twitterUrl !== 'string') return null;
+    const u = twitterUrl.trim();
+    const m = u.match(/(?:twitter\.com|x\.com)\/([^/?#]+)/i);
+    return m ? m[1].toLowerCase() : null;
+  }
+
+  private stopTwitterRefresh(): void {
+    if (this.twitterRefreshIntervalId) {
+      clearInterval(this.twitterRefreshIntervalId);
+      this.twitterRefreshIntervalId = null;
+    }
+  }
+
+  private loadTwitterProfileOnTab(): void {
+    if (!this.lastTwitterUsername) return;
+    this.fetchAndStoreTwitterProfile(this.lastTwitterUsername);
+    this.stopTwitterRefresh();
+    this.twitterRefreshIntervalId = setInterval(() => {
+      if (this.isTweetTabActive && this.lastTwitterUsername) {
+        this.fetchAndStoreTwitterProfile(this.lastTwitterUsername!, false);
+      }
+    }, 60000);
+  }
+
+  private async fetchAndStoreTwitterProfile(twitterUsername: string, showPlaceholder = true): Promise<void> {
+    if (showPlaceholder) this.showTwitterProfilePlaceholder(true);
+    const baseUrl = ((import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) || 'http://localhost:4000/api';
+    const apiKey = (import.meta as { env?: { API_KEY?: string } }).env?.API_KEY || '';
+    const apiUrl = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (apiKey) (headers as Record<string, string>)['x-api-key'] = apiKey;
+    const endpoint = `${apiUrl.replace(/\/$/, '')}/twitter/getByUsername/${encodeURIComponent(twitterUsername)}/dev`;
+    const maxRetries = 3;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const res = await this.fetchWith502Retry(endpoint, headers);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const d = json?.data;
+        if (!d || typeof d !== 'object') throw new Error('Invalid response');
+        const bioRaw = d.bio ?? d.description ?? d.legacy?.description ?? '';
+        this.twitterProfileData = {
+          id: String(d.id ?? ''),
+          username: String(d.username ?? ''),
+          name: String(d.name ?? ''),
+          bio: String(bioRaw),
+          pinnedTweetIds: Array.isArray(d.pinnedTweetIds) ? d.pinnedTweetIds.map(String) : [],
+          verified: !!d.verified,
+          avatar: String(d.avatar ?? ''),
+          banner: String(d.banner ?? ''),
+          isBlueVerified: !!d.isBlueVerified,
+          followerCount: Number(d.followerCount) || 0,
+          followingCount: Number(d.followingCount) || 0,
+        };
+        this.updateTwitterProfileContent();
+        return;
+      } catch (e) {
+        if (attempt === maxRetries - 1) {
+          this.twitterProfileData = null;
+          this.updateTwitterProfileContent();
+        } else {
+          await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+        }
+      }
+    }
+  }
+
+  private showTwitterProfilePlaceholder(loading: boolean): void {
+    const card = document.getElementById('twitter-profile-card');
+    if (card) {
+      if (loading) card.classList.add('twitter-profile-loading');
+      else card.classList.remove('twitter-profile-loading');
+    }
+  }
+
+  private updateTwitterProfileContent(): void {
+    this.showTwitterProfilePlaceholder(false);
+    const avatar = document.getElementById('twitter-profile-avatar') as HTMLImageElement;
+    const verifiedBadge = document.getElementById('twitter-profile-verified-badge');
+    const nameEl = document.getElementById('twitter-profile-name');
+    const handleEl = document.getElementById('twitter-profile-handle');
+    const followersEl = document.getElementById('twitter-profile-followers');
+    const followingEl = document.getElementById('twitter-profile-following');
+    const bioEl = document.getElementById('twitter-profile-bio');
+
+    const p = this.twitterProfileData;
+    if (!p) {
+      if (avatar) avatar.src = '';
+      if (verifiedBadge) verifiedBadge.style.display = 'none';
+      if (nameEl) nameEl.textContent = '—';
+      if (handleEl) handleEl.textContent = '@—';
+      if (followersEl) followersEl.textContent = '—';
+      if (followingEl) followingEl.textContent = '—';
+      if (bioEl) bioEl.textContent = '—';
+      return;
+    }
+    if (avatar) {
+      avatar.src = p.avatar || '';
+      avatar.referrerPolicy = 'no-referrer';
+      avatar.onerror = () => { avatar.src = ''; };
+    }
+    if (verifiedBadge) verifiedBadge.style.display = p.isBlueVerified ? '' : 'none';
+    if (nameEl) nameEl.textContent = p.name || '—';
+    if (handleEl) handleEl.textContent = p.username ? `@${p.username}` : '@—';
+    if (followersEl) followersEl.textContent = p.followerCount >= 1e6 ? `${(p.followerCount / 1e6).toFixed(1)}M` : p.followerCount >= 1e3 ? `${(p.followerCount / 1e3).toFixed(1)}K` : String(p.followerCount);
+    if (followingEl) followingEl.textContent = p.followingCount >= 1e6 ? `${(p.followingCount / 1e6).toFixed(1)}M` : p.followingCount >= 1e3 ? `${(p.followingCount / 1e3).toFixed(1)}K` : String(p.followingCount);
+    if (bioEl) bioEl.textContent = p.bio || '—';
+  }
+
   private async loadTokenData(): Promise<void> {
-    console.log('[TokenPeek Sidepanel] loadTokenData() called');
-    
+    this.stopBackgroundRefresh();
+    this.stopTwitterRefresh();
+    this.twitterProfileData = null;
+    this.updateTwitterProfileContent();
     this.showState('loading');
+    // Bersihkan banner image supaya tidak tampil token sebelumnya
+    const dexscreenerBannerWrap = document.getElementById('dexscreener-banner-wrap');
+    const dexscreenerBannerImg = document.getElementById('dexscreener-banner-img') as HTMLImageElement;
+    if (dexscreenerBannerWrap && dexscreenerBannerImg) {
+      dexscreenerBannerImg.src = '';
+      dexscreenerBannerImg.removeAttribute('alt');
+      dexscreenerBannerWrap.style.display = 'none';
+    }
 
     try {
       const tab = await new Promise<chrome.tabs.Tab>((resolve, reject) => {
@@ -2068,10 +2230,10 @@ Early opportunity! DYOR 🔍
         }
       }
 
-      // Try extracting from axiom.trade URL pattern: /meme/{address}?chain=sol
-      if (!mint && tab.url?.includes('axiom.trade')) {
-        const axiomMatch = tab.url.match(/\/meme\/([A-Za-z0-9]{32,44})/);
-        if (axiomMatch && axiomMatch[1] && tab.url.includes('chain=sol')) {
+      // Try extracting from axiom.trade URL pattern: /meme/{address} (path or hash)
+      if (!mint && tab.url?.includes('axiom')) {
+        const axiomMatch = tab.url.match(/\/meme\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
+        if (axiomMatch?.[1]) {
           mint = axiomMatch[1].trim();
           console.log('[TokenPeek Sidepanel] ✅ Extracted mint from axiom.trade URL:', mint);
         }
@@ -2088,42 +2250,477 @@ Early opportunity! DYOR 🔍
 
       if (!mint || mint.length < 5) {
         console.log('[TokenPeek Sidepanel] ❌ No valid mint');
+        this.stopBackgroundRefresh();
         this.showState('empty');
         return;
       }
 
-      console.log('[TokenPeek Sidepanel] ✅ Mint valid, displaying...');
+      console.log('[TokenPeek Sidepanel] ✅ Mint valid, fetching token data...');
 
-      // Create basic token object
+      // Fetch token data from API
+      const baseUrl = ((import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) || 'http://localhost:4000/api';
+      const apiKey = (import.meta as { env?: { API_KEY?: string } }).env?.API_KEY || '';
+      const apiUrl = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+      const tokenEndpoint = `${apiUrl.replace(/\/$/, '')}/token/${mint}/dev`;
+      const securityEndpoint = `${apiUrl.replace(/\/$/, '')}/tokenSecurity/${mint}/dev`;
+
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['x-api-key'] = apiKey;
+
+      // 1. Fetch /api/token first
+      const tokenResponse = await this.fetchWith502Retry(tokenEndpoint, headers);
+      if (!tokenResponse.ok) {
+        throw new Error(`API error: ${tokenResponse.status} ${tokenResponse.statusText}`);
+      }
+      const apiData = await tokenResponse.json();
+      const td = apiData?.tokenDetails;
+      if (!td) {
+        throw new Error('Invalid API response: missing tokenDetails');
+      }
+
+      // 2. Fetch /api/tokenSocials (wajib - selalu dipanggil agar twitter dll tersedia)
+      let socialsData: { twitter?: string; website?: string; github?: string; telegram?: string; instagram?: string; tiktok?: string; youtube?: string; dexBanner?: string } = {};
+      try {
+        const socialsRes = await this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenSocials/${mint}/dev`, headers);
+        if (socialsRes.ok) {
+          const socialsJson = await socialsRes.json();
+          const pick = (v: any) => (v && typeof v === 'string' ? String(v).trim() : '') || '';
+          let raw: any = socialsJson?.socials ?? socialsJson?.data ?? socialsJson?.result ?? socialsJson;
+          if (Array.isArray(raw) && raw.length > 0) {
+            const item = raw.find((e: any) => e?.id === mint) ?? raw[0];
+            raw = item;
+          } else if (raw && typeof raw === 'object' && raw.socials && typeof raw.socials === 'object') {
+            raw = raw.socials;
+          } else if (!raw || typeof raw !== 'object') {
+            raw = {};
+          }
+          const tw = pick(raw.twitter) || pick(raw.x) || pick(raw.communities);
+          if (tw) socialsData.twitter = tw;
+          if (pick(raw.website)) socialsData.website = pick(raw.website);
+          if (pick(raw.github)) socialsData.github = pick(raw.github);
+          if (pick(raw.telegram)) socialsData.telegram = pick(raw.telegram);
+          if (pick(raw.instagram)) socialsData.instagram = pick(raw.instagram);
+          if (pick(raw.tiktok)) socialsData.tiktok = pick(raw.tiktok);
+          if (pick(raw.youtube)) socialsData.youtube = pick(raw.youtube);
+          if (pick(raw.dexBanner)) socialsData.dexBanner = pick(raw.dexBanner);
+          if (!tw && Array.isArray(socialsJson)) {
+            const twitterEntry = socialsJson.find((e: any) => e?.type === 'twitter' || e?.type === 'x' || e?.type === 'communities');
+            const url = pick(twitterEntry?.url) || pick(twitterEntry?.value) || pick(twitterEntry?.link);
+            if (url) socialsData.twitter = url;
+          }
+        }
+      } catch { /* ignore */ }
+
+      // 3. Fetch other endpoints (security, dexPaid - wajib)
+      const [securityResponse, dexPaidResponse] = await Promise.all([
+        this.fetchWith502Retry(securityEndpoint, headers).catch(() => null),
+        this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenDexPaid/${mint}/dev`, headers).catch(() => null),
+      ]);
+
+      let rugcheckBadges: ReturnType<typeof buildRugcheckBadges> | null = null;
+      let rugcheckSummary: { score?: number; score_normalised?: number; risks?: Array<{ name: string; description: string; level: string }> } | null = null;
+      let lockers: Array<{ address: string; name: string }> = [];
+      if (securityResponse?.ok) {
+        try {
+          const securityData = await securityResponse.json();
+          rugcheckBadges = buildRugcheckBadges(securityData);
+          lockers = this.extractLockersFromSecurity(securityData);
+          const rs = securityData?.rugcheckSummary;
+          if (rs) {
+            rugcheckSummary = {
+              score: rs.score,
+              score_normalised: rs.score_normalised,
+              risks: Array.isArray(rs.risks) ? rs.risks.map((r: any) => ({
+                name: r?.name ?? '',
+                description: r?.description ?? '',
+                level: r?.level ?? 'info',
+              })) : [],
+            };
+          }
+        } catch {
+          rugcheckBadges = null;
+        }
+      }
+
+      let dexPaidData: { orders?: Array<{ type: string; status: string; paymentTimestamp: number }>; boosts?: Array<{ amount: number; paymentTimestamp: number }> } | null = null;
+      if (dexPaidResponse?.ok) {
+        try {
+          const dexPaidJson = await dexPaidResponse.json();
+          if (dexPaidJson?.dexPaidData) dexPaidData = dexPaidJson.dexPaidData;
+        } catch {
+          dexPaidData = null;
+        }
+      }
+
+      // Helper to format USD values
+      const formatUSD = (val: number | undefined): string => {
+        if (val == null || isNaN(val)) return '$0.00';
+        if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+        if (val >= 1e3) return `$${(val / 1e3).toFixed(2)}K`;
+        if (val >= 1) return `$${val.toFixed(2)}`;
+        if (val >= 0.0001) return `$${val.toFixed(6)}`;
+        return `$${val.toExponential(2)}`;
+      };
+      // Price format: $0.0₄178 (subscript = zeros after 0.0, then significant digits)
+      const formatPriceWithSubscript = (val: number | undefined): string => {
+        if (val == null || isNaN(val) || val <= 0) return '$0.00';
+        if (val >= 0.01) {
+          if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+          if (val >= 1e3) return `$${(val / 1e3).toFixed(2)}K`;
+          if (val >= 1) return `$${val.toFixed(2)}`;
+          return `$${val.toFixed(4)}`;
+        }
+        const str = val.toFixed(20);
+        const afterZero = str.slice(2); // after "0."
+        let zeros = 0;
+        for (let i = 0; i < afterZero.length && afterZero[i] === '0'; i++) zeros++;
+        const sig = afterZero.slice(zeros).replace(/0+$/, '').slice(0, 4) || '0';
+        const sub = '₀₁₂₃₄₅₆₇₈₉';
+        const subChar = zeros <= 9 ? sub[zeros] : String(zeros);
+        return `$0.0${subChar}${sig}`;
+      };
+      const formatPercent = (val: number | undefined): string => {
+        if (val == null || isNaN(val)) return '0%';
+        return `${val.toFixed(1)}%`;
+      };
+
+      const bundled = td.bundlersHoldingsPercentage ?? 0;
+      const sniped = td.snipersHoldingsPercentage ?? 0;
+      const prev = this.tokenData;
+      const sameMint = prev?.mint === mint;
+
+      let twitter = (td.socials?.twitter?.trim() || socialsData.twitter || '').trim();
+      let website = (td.socials?.website?.trim() || socialsData.website || '').trim();
+      let github = (td.socials?.github?.trim() || socialsData.github || '').trim();
+      let telegram = (td.socials?.telegram?.trim() || socialsData.telegram || '').trim();
+      let instagram = (td.socials?.instagram?.trim() || socialsData.instagram || '').trim();
+      let tiktok = (td.socials?.tiktok?.trim() || socialsData.tiktok || '').trim();
+      let youtube = (td.socials?.youtube?.trim() || socialsData.youtube || '').trim();
+
+      if (website && /^https?:\/\/(www\.)?github\.com\//i.test(website)) {
+        if (!github) github = website;
+        website = '';
+      }
+      if (website && /(youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/)/i.test(website)) {
+        if (!youtube) youtube = website;
+        website = '';
+      }
+      if (github && !github.startsWith('http')) {
+        github = `https://github.com/${github.replace(/^\/*/, '')}`;
+      }
+
+      // Map tokenDetails to basicToken (mint unchanged)
       const basicToken = {
         mint: mint,
-        name: 'Sample Token',
-        symbol: 'SMPL',
-        price: '$0.00',
-        volume24h: '$0.00K',
-        liquidity: '$0.00K',
-        fees: '0.0000',
-        audit: '0/10',
-        change5m: '-0.0%',
-        change1h: '-0.0%',
-        change6h: '-0.0%',
-        change1d: '-0.0%',
-        bundled: '0.0%',
-        remaining1: '100%',
-        sniped: '0.0%',
-        remaining2: '100%',
-        dev: '0%',
-        insiders: '0%',
-        top10: '0.0%'
+        name: td.name ?? 'Unknown',
+        symbol: (td.symbol ?? '??').trim(),
+        price: formatPriceWithSubscript(td.priceUSD),
+        volume24h: formatUSD(td.volume24hUSD),
+        liquidity: formatUSD(td.liquidityUSD),
+        fees: formatUSD(td.feesPaid24hUSD),
+        audit: rugcheckSummary?.score != null && rugcheckSummary?.score_normalised != null
+          ? `${rugcheckSummary.score}/${rugcheckSummary.score_normalised}`
+          : '0/10',
+        rugcheckSummary,
+        mcap: formatUSD(td.marketCapUSD),
+        buys: String(td.buys24h ?? 0),
+        fdv: formatUSD(td.marketCapDilutedUSD),
+        change5m: formatPercent(td.priceChange5minPercentage),
+        change1h: formatPercent(td.priceChange1hPercentage),
+        change6h: formatPercent(td.priceChange6hPercentage),
+        change1d: formatPercent(td.priceChange24hPercentage),
+        change24h: formatPercent(td.priceChange24hPercentage),
+        bundled: formatPercent(bundled),
+        proTrader: String(td.proTradersCount ?? 0),
+        sniped: formatPercent(sniped),
+        smartTrader: String(td.smartTradersCount ?? 0),
+        dev: formatPercent(td.devHoldingsPercentage),
+        insiders: formatPercent(td.insidersHoldingsPercentage),
+        top10: formatPercent(td.top10HoldingsPercentage),
+        holders: String(td.holdersCount ?? 0),
+        devWallet: td.deployer ?? '',
+        logo: td.logo ?? '',
+        exchange: {
+          name: td.exchange?.name ?? '',
+          logo: td.exchange?.logo ?? '',
+        },
+        source: td.source ?? null,
+        bondingPercentage: td.bondingPercentage ?? 0,
+        bonded: td.bonded ?? false,
+        rugcheckBadges,
+        dexscreenerListed: (sameMint && prev?.dexscreenerListed === true) ? true : (td.dexscreenerListed ?? false),
+        dexscreenerHeader: (sameMint && prev?.dexscreenerHeader) ? prev.dexscreenerHeader : (td.dexscreenerHeader ?? null),
+        dexscreenerBoosted: td.dexscreenerBoosted ?? false,
+        dexscreenerBoostedDate: td.dexscreenerBoostedDate ?? null,
+        dexscreenerBoostedAmount: td.dexscreenerBoostedAmount ?? 0,
+        deployerMigrationsCount: td.deployerMigrationsCount ?? 0,
+        deployerTokensCount: td.deployerTokensCount ?? 0,
+        organicBuys24h: td.organicBuys24h ?? 0,
+        organicSells24h: td.organicSells24h ?? 0,
+        dexPaidData,
+        website,
+        twitter,
+        github,
+        telegram,
+        instagram,
+        tiktok,
+        youtube,
+        dexBanner: socialsData.dexBanner || null,
+        lockers,
       };
 
       this.tokenData = basicToken;
       this.displayToken(basicToken);
       this.showState('main');
-      
+      this.startBackgroundRefresh(mint);
+
+      const twitterUsername = this.extractTwitterUsername(twitter);
+      if (twitterUsername) {
+        this.lastTwitterUsername = twitterUsername;
+        if (this.isTweetTabActive) this.loadTwitterProfileOnTab();
+      } else {
+        this.lastTwitterUsername = null;
+        this.twitterProfileData = null;
+        this.updateTwitterProfileContent();
+      }
+
     } catch (error) {
       console.error('[TokenPeek Sidepanel] Error loading token:', error);
-      this.showState('error', error instanceof Error ? error.message : 'Failed to load token');
+      this.stopBackgroundRefresh();
+      this.showState('error', 'Taking a moment to load. Please try again.');
+    }
+  }
+
+  private async fetchWith502Retry(endpoint: string, headers: HeadersInit, maxRetries = 3): Promise<Response> {
+    let lastResponse: Response | null = null;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      lastResponse = await fetch(endpoint, { headers });
+      if (lastResponse.status !== 502) {
+        return lastResponse;
+      }
+      if (attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+    return lastResponse!;
+  }
+
+  private stopBackgroundRefresh(): void {
+    if (this.refreshIntervalId) {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    }
+  }
+
+  private startBackgroundRefresh(mint: string): void {
+    this.stopBackgroundRefresh();
+    this.refreshIntervalId = setInterval(() => {
+      this.refreshTokenDataSilent(mint);
+    }, 1500);
+  }
+
+  private async refreshTokenDataSilent(mint: string): Promise<void> {
+    if (this.currentState !== 'main') return;
+    try {
+      const baseUrl = ((import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) || 'http://localhost:4000/api';
+      const apiKey = (import.meta as { env?: { API_KEY?: string } }).env?.API_KEY || '';
+      const apiUrl = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+      const endpoint = `${apiUrl.replace(/\/$/, '')}/token/${mint}/dev`;
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['x-api-key'] = apiKey;
+
+      const response = await this.fetchWith502Retry(endpoint, headers);
+      if (!response.ok) return;
+
+      const apiData = await response.json();
+      const td = apiData?.tokenDetails;
+      if (!td) return;
+
+      const prev = this.tokenData;
+      let lockers = prev?.lockers ?? [];
+
+      // 2. Fetch tokenSocials (wajib - selalu dipanggil agar twitter dll tersedia)
+      let socialsFromApi: Record<string, string> = {};
+      try {
+        const socialsRes = await this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenSocials/${mint}/dev`, headers);
+        if (socialsRes.ok) {
+          const sj = await socialsRes.json();
+          const pick = (v: any) => (v && typeof v === 'string' ? String(v).trim() : '') || '';
+          let raw: any = sj?.socials ?? sj?.data ?? sj?.result ?? sj;
+          if (Array.isArray(raw) && raw.length > 0) {
+            const item = raw.find((e: any) => e?.id === mint) ?? raw[0];
+            raw = item;
+          } else if (raw && typeof raw === 'object' && raw.socials && typeof raw.socials === 'object') {
+            raw = raw.socials;
+          } else if (!raw || typeof raw !== 'object') {
+            raw = {};
+          }
+          const tw = pick(raw.twitter) || pick(raw.x) || pick(raw.communities);
+          if (tw) socialsFromApi.twitter = tw;
+          if (pick(raw.website)) socialsFromApi.website = pick(raw.website);
+          if (pick(raw.github)) socialsFromApi.github = pick(raw.github);
+          if (pick(raw.telegram)) socialsFromApi.telegram = pick(raw.telegram);
+          if (pick(raw.instagram)) socialsFromApi.instagram = pick(raw.instagram);
+          if (pick(raw.tiktok)) socialsFromApi.tiktok = pick(raw.tiktok);
+          if (pick(raw.youtube)) socialsFromApi.youtube = pick(raw.youtube);
+          if (pick(raw.dexBanner)) socialsFromApi.dexBanner = pick(raw.dexBanner);
+          if (!tw && Array.isArray(sj)) {
+            const twitterEntry = sj.find((e: any) => e?.type === 'twitter' || e?.type === 'x' || e?.type === 'communities');
+            const url = pick(twitterEntry?.url) || pick(twitterEntry?.value) || pick(twitterEntry?.link);
+            if (url) socialsFromApi.twitter = url;
+          }
+        }
+      } catch { /* ignore */ }
+
+      // 3. Fetch other endpoints (security, dexPaid)
+      try {
+        const secRes = await this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenSecurity/${mint}/dev`, headers);
+        if (secRes.ok) {
+          const secData = await secRes.json();
+          const extracted = this.extractLockersFromSecurity(secData);
+          if (extracted.length > 0) lockers = extracted;
+        }
+      } catch { /* keep prev lockers */ }
+
+      let refreshTwitter = (td.socials?.twitter?.trim() || socialsFromApi.twitter || prev?.twitter || '').trim();
+      let refreshWebsite = (td.socials?.website?.trim() || socialsFromApi.website || prev?.website || '').trim();
+      let refreshGithub = (td.socials?.github?.trim() || socialsFromApi.github || prev?.github || '').trim();
+      let refreshTelegram = (td.socials?.telegram?.trim() || socialsFromApi.telegram || prev?.telegram || '').trim();
+      let refreshInstagram = (td.socials?.instagram?.trim() || socialsFromApi.instagram || prev?.instagram || '').trim();
+      let refreshTiktok = (td.socials?.tiktok?.trim() || socialsFromApi.tiktok || prev?.tiktok || '').trim();
+      let refreshYoutube = (td.socials?.youtube?.trim() || socialsFromApi.youtube || prev?.youtube || '').trim();
+      let refreshDexBanner = (socialsFromApi.dexBanner || prev?.dexBanner || '').trim() || null;
+      if (refreshWebsite && /^https?:\/\/(www\.)?github\.com\//i.test(refreshWebsite)) {
+        if (!refreshGithub) refreshGithub = refreshWebsite;
+        refreshWebsite = '';
+      }
+      if (refreshWebsite && /(youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/)/i.test(refreshWebsite)) {
+        if (!refreshYoutube) refreshYoutube = refreshWebsite;
+        refreshWebsite = '';
+      }
+      if (refreshGithub && !refreshGithub.startsWith('http')) {
+        refreshGithub = `https://github.com/${refreshGithub.replace(/^\/*/, '')}`;
+      }
+
+      let dexPaidData = prev?.dexPaidData ?? null;
+      try {
+        const dexPaidEndpoint = `${apiUrl.replace(/\/$/, '')}/tokenDexPaid/${mint}/dev`;
+        const dexPaidRes = await this.fetchWith502Retry(dexPaidEndpoint, headers);
+        if (dexPaidRes.ok) {
+          const dexPaidJson = await dexPaidRes.json();
+          if (dexPaidJson?.dexPaidData) dexPaidData = dexPaidJson.dexPaidData;
+        }
+      } catch {
+        // keep prev dexPaidData
+      }
+
+      const formatUSD = (val: number | undefined): string => {
+        if (val == null || isNaN(val)) return '$0.00';
+        if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+        if (val >= 1e3) return `$${(val / 1e3).toFixed(2)}K`;
+        if (val >= 1) return `$${val.toFixed(2)}`;
+        if (val >= 0.0001) return `$${val.toFixed(6)}`;
+        return `$${val.toExponential(2)}`;
+      };
+      const formatPercent = (val: number | undefined): string => {
+        if (val == null || isNaN(val)) return '0%';
+        return `${val.toFixed(1)}%`;
+      };
+      const formatPriceWithSubscript = (val: number | undefined): string => {
+        if (val == null || isNaN(val) || val <= 0) return '$0.00';
+        if (val >= 0.01) {
+          if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+          if (val >= 1e3) return `$${(val / 1e3).toFixed(2)}K`;
+          if (val >= 1) return `$${val.toFixed(2)}`;
+          return `$${val.toFixed(4)}`;
+        }
+        const str = val.toFixed(20);
+        const afterZero = str.slice(2);
+        let zeros = 0;
+        for (let i = 0; i < afterZero.length && afterZero[i] === '0'; i++) zeros++;
+        const sig = afterZero.slice(zeros).replace(/0+$/, '').slice(0, 4) || '0';
+        const sub = '₀₁₂₃₄₅₆₇₈₉';
+        const subChar = zeros <= 9 ? sub[zeros] : String(zeros);
+        return `$0.0${subChar}${sig}`;
+      };
+      const bundled = td.bundlersHoldingsPercentage ?? 0;
+      const sniped = td.snipersHoldingsPercentage ?? 0;
+
+      const basicToken = {
+        mint,
+        name: td.name ?? prev?.name ?? 'Unknown',
+        symbol: (td.symbol ?? prev?.symbol ?? '??').trim(),
+        price: formatPriceWithSubscript(td.priceUSD),
+        volume24h: formatUSD(td.volume24hUSD),
+        liquidity: formatUSD(td.liquidityUSD),
+        fees: formatUSD(td.totalFeesPaidUSD ?? td.feesPaid24hUSD),
+        audit: (() => {
+          const rs = prev?.rugcheckSummary;
+          return rs?.score != null && rs?.score_normalised != null
+            ? `${rs.score}/${rs.score_normalised}`
+            : '0/10';
+        })(),
+        rugcheckSummary: prev?.rugcheckSummary ?? null,
+        mcap: formatUSD(td.marketCapUSD),
+        buys: String(td.buys24h ?? 0),
+        fdv: formatUSD(td.marketCapDilutedUSD),
+        change5m: formatPercent(td.priceChange5minPercentage),
+        change1h: formatPercent(td.priceChange1hPercentage),
+        change6h: formatPercent(td.priceChange6hPercentage),
+        change1d: formatPercent(td.priceChange24hPercentage),
+        change24h: formatPercent(td.priceChange24hPercentage),
+        bundled: formatPercent(bundled),
+        proTrader: String(td.proTradersCount ?? 0),
+        sniped: formatPercent(sniped),
+        smartTrader: String(td.smartTradersCount ?? 0),
+        dev: formatPercent(td.devHoldingsPercentage),
+        insiders: formatPercent(td.insidersHoldingsPercentage),
+        top10: formatPercent(td.top10HoldingsPercentage),
+        holders: String(td.holdersCount ?? 0),
+        devWallet: td.deployer ?? prev?.devWallet ?? '',
+        logo: td.logo ?? prev?.logo ?? '',
+        exchange: {
+          name: td.exchange?.name ?? prev?.exchange?.name ?? '',
+          logo: td.exchange?.logo ?? prev?.exchange?.logo ?? '',
+        },
+        source: td.source ?? prev?.source ?? null,
+        bondingPercentage: td.bondingPercentage ?? 0,
+        bonded: td.bonded ?? false,
+        rugcheckBadges: prev?.rugcheckBadges ?? null,
+        dexscreenerListed: prev?.dexscreenerListed === true ? true : (td.dexscreenerListed ?? false),
+        dexscreenerHeader: prev?.dexscreenerHeader || td.dexscreenerHeader || null,
+        dexscreenerBoosted: td.dexscreenerBoosted ?? prev?.dexscreenerBoosted ?? false,
+        dexscreenerBoostedDate: td.dexscreenerBoostedDate ?? prev?.dexscreenerBoostedDate ?? null,
+        dexscreenerBoostedAmount: td.dexscreenerBoostedAmount ?? prev?.dexscreenerBoostedAmount ?? 0,
+        deployerMigrationsCount: td.deployerMigrationsCount ?? prev?.deployerMigrationsCount ?? 0,
+        deployerTokensCount: td.deployerTokensCount ?? prev?.deployerTokensCount ?? 0,
+        organicBuys24h: td.organicBuys24h ?? prev?.organicBuys24h ?? 0,
+        organicSells24h: td.organicSells24h ?? prev?.organicSells24h ?? 0,
+        dexPaidData,
+        website: refreshWebsite,
+        twitter: refreshTwitter,
+        github: refreshGithub,
+        telegram: refreshTelegram,
+        instagram: refreshInstagram,
+        tiktok: refreshTiktok,
+        youtube: refreshYoutube,
+        dexBanner: refreshDexBanner || null,
+        lockers,
+      };
+
+      this.tokenData = basicToken;
+      this.displayToken(basicToken);
+
+      const newUsername = this.extractTwitterUsername(refreshTwitter);
+      if (newUsername && newUsername !== this.lastTwitterUsername) {
+        this.lastTwitterUsername = newUsername;
+        if (this.isTweetTabActive) {
+          this.fetchAndStoreTwitterProfile(newUsername, false);
+          if (!this.twitterRefreshIntervalId) this.loadTwitterProfileOnTab();
+        }
+      }
+    } catch {
+      // Silent fail - no user feedback for background refresh
     }
   }
 
@@ -2159,13 +2756,58 @@ Early opportunity! DYOR 🔍
     // Trigger auto-call if enabled
     this.sendAutoTokenCall(tokenInfo);
     
+    // Token Logo (avatar) - from basicToken.logo
+    const tokenLogoImg = document.getElementById('token-logo-img') as HTMLImageElement;
+    if (tokenLogoImg) {
+      if (tokenInfo.logo) {
+        tokenLogoImg.src = tokenInfo.logo;
+        tokenLogoImg.alt = name;
+        tokenLogoImg.style.display = '';
+        tokenLogoImg.onerror = () => { tokenLogoImg.style.display = 'none'; };
+      } else {
+        tokenLogoImg.src = '';
+        tokenLogoImg.style.display = 'none';
+      }
+    }
+
     // Token Name
     const nameEl = document.getElementById('token-name-header');
     if (nameEl) nameEl.textContent = name;
+
+    const exchangeLogoWrap = document.getElementById('exchange-logo-wrap');
+    const exchangeLogo = document.getElementById('exchange-logo') as HTMLImageElement;
+    if (exchangeLogoWrap && exchangeLogo && tokenInfo.exchange?.logo) {
+      exchangeLogo.src = tokenInfo.exchange.logo;
+      exchangeLogo.alt = tokenInfo.exchange.name || 'Exchange';
+      exchangeLogo.title = tokenInfo.exchange.name || '';
+      exchangeLogoWrap.style.display = '';
+    } else if (exchangeLogoWrap) {
+      exchangeLogoWrap.style.display = 'none';
+    }
+
+    // Dex Banner: prioritas dexBanner dari tokenSocials, fallback dexscreenerHeader
+    const dexscreenerBannerWrap = document.getElementById('dexscreener-banner-wrap');
+    const dexscreenerBannerImg = document.getElementById('dexscreener-banner-img') as HTMLImageElement;
+    if (dexscreenerBannerWrap && dexscreenerBannerImg) {
+      const imgUrl = tokenInfo.dexBanner || (tokenInfo.dexscreenerListed && tokenInfo.dexscreenerHeader ? tokenInfo.dexscreenerHeader : null);
+      const showBanner = !!imgUrl;
+      if (showBanner && imgUrl) {
+        dexscreenerBannerImg.referrerPolicy = 'no-referrer';
+        dexscreenerBannerImg.src = imgUrl;
+        dexscreenerBannerImg.alt = 'Banner';
+        dexscreenerBannerWrap.style.display = '';
+        dexscreenerBannerImg.onerror = () => {
+          dexscreenerBannerImg.src = '';
+          dexscreenerBannerWrap.style.display = 'none';
+        };
+      } else {
+        dexscreenerBannerWrap.style.display = 'none';
+      }
+    }
     
     // Token Symbol
     const symbolEl = document.getElementById('token-symbol');
-    if (symbolEl) symbolEl.textContent = `$${symbol}`;
+    if (symbolEl) symbolEl.textContent = `${symbol}`;
     
     // Address Pill
     const mintEl = document.getElementById('token-mint-short');
@@ -2186,7 +2828,10 @@ Early opportunity! DYOR 🔍
         walletDevEl.removeAttribute('data-full-address');
       }
     }
-    
+
+    // Fake launch warning (when source is null)
+    this.updateFakeLaunchWarning(tokenInfo);
+
     // Stats
     this.updateElement('stat-price', tokenInfo.price);
     this.updateElement('stat-fees', tokenInfo.fees);
@@ -2200,18 +2845,77 @@ Early opportunity! DYOR 🔍
     // Timeframes
     // Metrics Row 3 (Bundled, etc.)
     this.updateElement('metric-bundled', tokenInfo.bundled);
-    this.updateElement('metric-remaining1', tokenInfo.remaining1);
+    this.updateElement('metric-proTrader', tokenInfo.proTrader);
     this.updateElement('metric-sniped', tokenInfo.sniped);
-    this.updateElement('metric-remaining2', tokenInfo.remaining2);
+    this.updateElement('metric-smartTrader', tokenInfo.smartTrader);
     
     // Metrics Row 5
     this.updateElement('metric-dev', tokenInfo.dev);
     this.updateElement('metric-insiders', tokenInfo.insiders);
     this.updateElement('metric-top10', tokenInfo.top10);
+    this.updateElement('metric-holders', tokenInfo.holders ?? '0');
     
+    // Dev Token / Dev Migration
+    this.updateElement('dev-tokens-count', tokenInfo.deployerTokensCount ?? '0');
+    this.updateElement('dev-migrations-count', tokenInfo.deployerMigrationsCount ?? '0');
+    this.updateElement('organic-buys-24h', tokenInfo.organicBuys24h ?? '0');
+    this.updateElement('organic-sells-24h', tokenInfo.organicSells24h ?? '0');
+
+    // DevLock
+    this.updateDevLock(tokenInfo.lockers);
+
     // Bonding Curve
     this.updateBondingCurve(tokenInfo);
-    
+
+    // Rug Check
+    this.updateRugCheck(tokenInfo.rugcheckBadges);
+    this.updateRugCheckRisks(tokenInfo.rugcheckSummary?.risks);
+
+    // DexPaid History
+    this.updateDexPaidHistory(tokenInfo.dexPaidData);
+
+    // Tweet tab - hide when twitter is null or empty
+    const tweetTabBtn = document.getElementById('tweet-tab-btn');
+    if (tweetTabBtn) {
+      const hasTwitter = !!tokenInfo.twitter?.trim();
+      tweetTabBtn.style.display = hasTwitter ? '' : 'none';
+      if (!hasTwitter) {
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (activeTab?.getAttribute('data-tab') === 'tweet') {
+          this.switchTab('details');
+        }
+      }
+    }
+
+    // GitHub tab - show when github URL exists
+    const githubTabBtn = document.getElementById('github-tab-btn');
+    if (githubTabBtn) {
+      const hasGithub = !!tokenInfo.github?.trim() && /github\.com/i.test(tokenInfo.github);
+      githubTabBtn.style.display = hasGithub ? '' : 'none';
+      if (!hasGithub) {
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (activeTab?.getAttribute('data-tab') === 'github') {
+          this.switchTab('details');
+        }
+      }
+    }
+
+    // YouTube tab - show when youtube URL exists (from youtube field or website detected as youtube)
+    const youtubeTabBtn = document.getElementById('youtube-tab-btn');
+    if (youtubeTabBtn) {
+      const hasYoutube = !!this.getYouTubeVideoId(tokenInfo.youtube?.trim() || '');
+      youtubeTabBtn.style.display = hasYoutube ? '' : 'none';
+      if (!hasYoutube) {
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (activeTab?.getAttribute('data-tab') === 'youtube') {
+          this.switchTab('details');
+        }
+      }
+    }
+
+    // Social action bar - show icons for available links from tokenSocials
+    this.updateSocialActionBar(tokenInfo);
+
     // Summary
     this.updateSummary(tokenInfo);
     
@@ -2221,6 +2925,33 @@ Early opportunity! DYOR 🔍
     console.log('[TokenPeek Sidepanel] ✅ Token displayed!');
   }
   
+  private updateSocialActionBar(tokenInfo: any): void {
+    const setSocialBtn = (id: string, url: string | undefined) => {
+      const btn = document.getElementById(id) as HTMLAnchorElement;
+      if (!btn) return;
+      const u = url?.trim();
+      const hasUrl = !!u && (u.startsWith('http://') || u.startsWith('https://'));
+      if (hasUrl && u) {
+        btn.href = u;
+        btn.style.display = 'flex';
+      } else {
+        btn.href = '#';
+        btn.style.display = 'none';
+      }
+    };
+    setSocialBtn('social-twitter-btn', tokenInfo.twitter);
+    setSocialBtn('social-telegram-btn', tokenInfo.telegram);
+    setSocialBtn('social-instagram-btn', tokenInfo.instagram);
+    setSocialBtn('social-tiktok-btn', tokenInfo.tiktok);
+    const youtubeUrl = tokenInfo.youtube?.trim();
+    const youtubeVideoId = this.getYouTubeVideoId(youtubeUrl || '');
+    setSocialBtn('social-youtube-btn', youtubeVideoId ? `https://www.youtube.com/watch?v=${youtubeVideoId}` : undefined);
+    const websiteUrl = tokenInfo.website?.trim();
+    const isSocialSite = websiteUrl && /(twitter\.com|x\.com|instagram\.com|youtube\.com|youtu\.be|tiktok\.com)/i.test(websiteUrl);
+    const hasTiktok = !!tokenInfo.tiktok?.trim() && (tokenInfo.tiktok.startsWith('http://') || tokenInfo.tiktok.startsWith('https://'));
+    setSocialBtn('social-website-btn', websiteUrl && !isSocialSite && !hasTiktok ? websiteUrl : undefined);
+  }
+
   private updateElement(id: string, value: any): void {
     const el = document.getElementById(id);
     if (el && value !== undefined && value !== null) {
@@ -2228,26 +2959,73 @@ Early opportunity! DYOR 🔍
     }
   }
 
+  private updateRugCheck(badges: ReturnType<typeof buildRugcheckBadges> | null): void {
+    const defaults = {
+      risk: { text: '—', color: 'orange' as const },
+      liqLock: { text: '—', color: 'orange' as const },
+      mintAuth: { text: '—', color: 'orange' as const },
+      honeypot: { text: '—', color: 'orange' as const },
+    };
+    const b = badges ?? defaults;
+
+    const setBadge = (id: string, badge: { text: string; color: string }) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = badge.text;
+        el.classList.remove('green', 'orange', 'red');
+        el.classList.add(badge.color);
+      }
+    };
+
+    setBadge('rug-risk', b.risk);
+    setBadge('rug-liquidity', b.liqLock);
+    setBadge('rug-mint', b.mintAuth);
+    setBadge('rug-honeypot', b.honeypot);
+  }
+
+  private updateRugCheckRisks(risks: Array<{ name: string; description: string; level: string }> | undefined): void {
+    const wrap = document.getElementById('rug-check-risks');
+    const list = document.getElementById('rug-check-risks-list');
+    if (!wrap || !list) return;
+
+    if (!risks?.length) {
+      wrap.style.display = 'none';
+      list.innerHTML = '';
+      return;
+    }
+
+    list.innerHTML = '';
+    for (const r of risks) {
+      if (!r.name && !r.description) continue;
+      const levelClass = r.level === 'error' ? 'risk-error' : r.level === 'warn' ? 'risk-warn' : 'risk-info';
+      const div = document.createElement('div');
+      div.className = `rug-risk-item ${levelClass}`;
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'rug-risk-name';
+      nameSpan.textContent = r.name;
+      const descSpan = document.createElement('span');
+      descSpan.className = 'rug-risk-desc';
+      descSpan.textContent = r.description;
+      div.appendChild(nameSpan);
+      div.appendChild(descSpan);
+      list.appendChild(div);
+    }
+    wrap.style.display = '';
+  }
+
   private updateBondingCurve(tokenInfo: any): void {
-    // Calculate bonding curve progress (example: based on market cap or liquidity)
-    const current = tokenInfo.mcap ? parseFloat(tokenInfo.mcap.replace(/[^0-9.]/g, '')) : 0;
-    const target = 100; // Target in K (e.g., $100K)
-    const percentage = Math.min((current / target) * 100, 100);
-    
-    // Update percentage display
+    const percentage = tokenInfo.bonded
+      ? 100
+      : Math.min(Math.max(tokenInfo.bondingPercentage ?? 0, 0), 100);
     const percentageEl = document.getElementById('bonding-percentage');
     if (percentageEl) {
       percentageEl.textContent = `${percentage.toFixed(1)}%`;
     }
-    
-    // Update progress bar
     const progressBar = document.getElementById('bonding-progress-fill');
     if (progressBar) {
       (progressBar as HTMLElement).style.width = `${percentage}%`;
     }
-    
-    // Update current and target values
-    this.updateElement('bonding-current', tokenInfo.mcap || '$0.00K');
+    this.updateElement('bonding-current', `${percentage.toFixed(1)}%` || '$0.00K');
     this.updateElement('bonding-target', '$100K');
   }
 
@@ -2259,6 +3037,211 @@ Early opportunity! DYOR 🔍
       header.classList.toggle('active');
       content.classList.toggle('expanded');
     }
+  }
+
+  private extractLockersFromSecurity(securityData: any): Array<{ address: string; name: string }> {
+    const ka = securityData?.knownAccounts ?? securityData?.known_accounts ?? securityData?.result?.knownAccounts ?? securityData?.tokenSecurity?.knownAccounts ?? securityData?.data?.knownAccounts ?? securityData?.rugcheck?.knownAccounts;
+    if (!ka) return [];
+    if (Array.isArray(ka)) {
+      return ka
+        .filter((v: any) => String(v?.type ?? '').toUpperCase() === 'LOCKER')
+        .map((v: any) => ({ address: v?.address ?? v?.pubkey ?? '', name: v?.name ?? 'Locker' }))
+        .filter((l) => l.address);
+    }
+    if (typeof ka === 'object') {
+      return Object.entries(ka)
+        .filter(([, v]: [string, any]) => String(v?.type ?? '').toUpperCase() === 'LOCKER')
+        .map(([addr, v]: [string, any]) => ({ address: addr, name: v?.name ?? 'Locker' }));
+    }
+    return [];
+  }
+
+  private updateFakeLaunchWarning(tokenInfo: any): void {
+    const wrap = document.getElementById('fake-launch-warning');
+    const textEl = document.getElementById('fake-launch-text');
+    if (!wrap || !textEl) return;
+
+    const source = tokenInfo.source;
+    const exchangeName = tokenInfo.exchange?.name?.trim() || 'Unknown';
+
+    if (source == null) {
+      textEl.textContent = `Fake Launch From Launchpads : ${exchangeName}`;
+      wrap.style.display = '';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+
+  private updateDevLock(lockers: Array<{ address: string; name: string }> | undefined): void {
+    const section = document.getElementById('devlock-section');
+    const listEl = document.getElementById('devlock-list');
+    if (!section || !listEl) return;
+
+    const hasLockers = Array.isArray(lockers) && lockers.length > 0;
+    if (hasLockers) {
+      console.log('[KOLsuite] DevLock: showing', lockers.length, 'locker(s)');
+    }
+    if (!hasLockers) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = '';
+    const items = lockers.map((l) => {
+      const shortAddr = `${l.address.slice(0, 6)}...${l.address.slice(-6)}`;
+      const solscanUrl = `https://solscan.io/account/${l.address}`;
+      return `
+        <div class="devlock-item">
+          <div class="devlock-info">
+            <span class="devlock-name">${l.name || 'Locker'}</span>
+            <span class="devlock-address" title="${l.address}">${shortAddr}</span>
+          </div>
+          <a href="${solscanUrl}" target="_blank" rel="noopener noreferrer" class="devlock-btn">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+            View on Solscan
+          </a>
+        </div>
+      `;
+    });
+    listEl.innerHTML = items.join('');
+  }
+
+  private loadGitHubWebview(): void {
+    const iframe = document.getElementById('github-repo-iframe') as HTMLIFrameElement;
+    const emptyEl = document.getElementById('github-empty');
+    const githubUrl = this.tokenData?.github?.trim();
+    const match = githubUrl?.match(/github\.com\/([^/]+\/[^/?]+)/i);
+    const hasRepo = !!match?.[1];
+
+    if (iframe && emptyEl) {
+      if (hasRepo) {
+        const github1sUrl = `https://github1s.com/${match[1]}`;
+        iframe.src = github1sUrl;
+        iframe.style.display = 'block';
+        emptyEl.style.display = 'none';
+      } else {
+        iframe.src = 'about:blank';
+        iframe.style.display = 'none';
+        emptyEl.style.display = 'flex';
+      }
+    }
+  }
+
+  private getYouTubeVideoId(url: string): string | null {
+    if (!url?.trim()) return null;
+    const youtuBe = url.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\?.*)?$/i);
+    if (youtuBe) return youtuBe[1];
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})(?:\?.*)?/i);
+    return ytMatch ? ytMatch[1] : null;
+  }
+
+  private loadYouTubeWebview(): void {
+    const thumbnailLink = document.getElementById('youtube-thumbnail-link') as HTMLAnchorElement;
+    const thumbnailImg = document.getElementById('youtube-thumbnail-img') as HTMLImageElement;
+    const emptyEl = document.getElementById('youtube-empty');
+    const youtubeUrl = this.tokenData?.youtube?.trim() || '';
+    const videoId = this.getYouTubeVideoId(youtubeUrl);
+
+    if (thumbnailLink && thumbnailImg && emptyEl) {
+      if (videoId) {
+        const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        const thumbUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        const thumbFallback = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+        thumbnailLink.href = watchUrl;
+        thumbnailImg.src = thumbUrl;
+        thumbnailImg.onerror = () => { thumbnailImg.src = thumbFallback; };
+        thumbnailLink.style.display = 'flex';
+        emptyEl.style.display = 'none';
+      } else {
+        thumbnailLink.style.display = 'none';
+        thumbnailImg.src = '';
+        emptyEl.style.display = 'flex';
+      }
+    }
+  }
+
+  private toggleDexPaid(): void {
+    const header = document.getElementById('dexpaid-toggle');
+    const content = document.getElementById('dexpaid-content');
+    
+    if (header && content) {
+      header.classList.toggle('active');
+      content.classList.toggle('expanded');
+    }
+  }
+
+  private formatPaymentTimestamp(ts: number): string {
+    try {
+      const d = new Date(ts);
+      return d.toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'short', timeStyle: 'short' }) + ' UTC';
+    } catch {
+      return '—';
+    }
+  }
+
+  private updateDexPaidHistory(dexPaidData: { orders?: Array<{ type?: string; status?: string; paymentTimestamp?: number }>; boosts?: Array<{ amount?: number; paymentTimestamp?: number }> } | null): void {
+    const section = document.getElementById('dexpaid-section');
+    const listEl = document.getElementById('dexpaid-list');
+    if (!section || !listEl) return;
+
+    const hasData = dexPaidData && (
+      (Array.isArray(dexPaidData.orders) && dexPaidData.orders.length > 0) ||
+      (Array.isArray(dexPaidData.boosts) && dexPaidData.boosts.length > 0)
+    );
+
+    if (!hasData) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = '';
+    const header = document.getElementById('dexpaid-toggle');
+    const content = document.getElementById('dexpaid-content');
+    if (header && content) {
+      header.classList.add('active');
+      content.classList.add('expanded');
+    }
+    const items: string[] = [];
+    let idx = 1;
+
+    const orders = dexPaidData.orders ?? [];
+    for (const o of orders) {
+      const rawType = o.type ?? 'order';
+      const type = rawType ? rawType.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim() : 'Order';
+      const status = (o.status ?? '').toLowerCase();
+      const statusClass = status === 'approved' ? 'badge-success' : status === 'pending' ? 'badge-warning' : status === 'rejected' ? 'badge-danger' : 'badge-muted';
+      const paymentAt = o.paymentTimestamp != null ? this.formatPaymentTimestamp(o.paymentTimestamp) : '—';
+      items.push(`
+        <div class="dexpaid-item dexpaid-order">
+          <div class="dexpaid-item-label">${idx}. Order</div>
+          <div class="dexpaid-item-body">
+            <span class="dexpaid-type">${type}</span>
+            <span class="dexpaid-badge ${statusClass}">${o.status ?? '—'}</span>
+            <span class="dexpaid-meta">${paymentAt}</span>
+          </div>
+        </div>
+      `);
+      idx++;
+    }
+
+    const boosts = dexPaidData.boosts ?? [];
+    for (const b of boosts) {
+      const amount = b.amount != null ? `$${b.amount}` : '—';
+      const boostAt = b.paymentTimestamp != null ? this.formatPaymentTimestamp(b.paymentTimestamp) : '—';
+      items.push(`
+        <div class="dexpaid-item dexpaid-boost">
+          <div class="dexpaid-item-label">${idx}. Booster</div>
+          <div class="dexpaid-item-body">
+            <span class="dexpaid-boost-icon" title="Boost">⚡</span>
+            <span class="dexpaid-amount">${amount}</span>
+            <span class="dexpaid-meta">${boostAt}</span>
+          </div>
+        </div>
+      `);
+      idx++;
+    }
+
+    listEl.innerHTML = items.join('');
   }
 
   private updateSummary(tokenInfo: any): void {

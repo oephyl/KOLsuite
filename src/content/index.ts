@@ -30,6 +30,15 @@ function extractTokenFromPage(): any {
     }
   }
 
+  // Try axiom.trade pattern: /meme/{address} (with optional ?chain=sol)
+  if (!mint && hostname.includes('axiom')) {
+    const axiomMatch = url.match(/\/meme\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
+    if (axiomMatch && axiomMatch[1]) {
+      mint = axiomMatch[1].trim();
+      console.log('[TokenPeek] Found token from axiom.trade /meme/ path:', mint);
+    }
+  }
+
   // Validate mint is a Solana address (base58: 1-9, A-Z, a-z excluding I, O, i, l, o)
   if (mint && mint.length >= 32 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(mint)) {
     console.log('[TokenPeek] ✅ Valid token extracted:', mint);
