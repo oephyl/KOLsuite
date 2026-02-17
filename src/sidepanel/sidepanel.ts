@@ -22,6 +22,7 @@ class SidePanelManager {
     this.setupEventListeners();
     this.setupMainTabListeners();
     this.setupTradeTabListeners();
+    this.setupTradeFilterPopup();
     this.loadTokenData();
     this.setupTabListeners();
     this.loadSubscriptionLimit();
@@ -59,10 +60,21 @@ class SidePanelManager {
   private setupTradeTabListeners(): void {
     const list = document.getElementById('trade-mode-list');
     const searchInput = document.getElementById('trade-mode-search') as HTMLInputElement | null;
+    const callsPane = document.getElementById('trade-mode-calls-pane');
+    const trendingPane = document.getElementById('trade-mode-trending-pane');
+
     document.querySelectorAll('.trade-mode-tabs [data-trade-tab]').forEach(btn => {
       btn.addEventListener('click', () => {
+        const tab = (btn as HTMLElement).getAttribute('data-trade-tab') || 'public';
         document.querySelectorAll('.trade-mode-tabs .main-tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        if (tab === 'trending') {
+          callsPane?.classList.remove('active');
+          trendingPane?.classList.add('active');
+        } else {
+          trendingPane?.classList.remove('active');
+          callsPane?.classList.add('active');
+        }
       });
     });
     searchInput?.addEventListener('input', () => {
@@ -71,6 +83,79 @@ class SidePanelManager {
         const text = (card.textContent || '').toLowerCase();
         (card as HTMLElement).style.display = q === '' || text.includes(q) ? '' : 'none';
       });
+    });
+  }
+
+  private setupTradeFilterPopup(): void {
+    const popup = document.getElementById('trade-filter-popup') as HTMLElement | null;
+    const filterBtn = document.getElementById('trade-mode-filter-btn');
+    const backdrop = document.getElementById('trade-filter-popup-backdrop');
+    const closeBtn = document.getElementById('trade-filter-popup-close');
+    const resetBtn = document.getElementById('trade-filter-reset-btn');
+    const applyBtn = document.getElementById('trade-filter-apply-btn');
+    const selectAllBtn = document.getElementById('trade-filter-protocols-select-all');
+    const protocolsGrid = document.getElementById('trade-filter-protocols-grid');
+    const tickerInput = document.getElementById('trade-filter-ticker-input') as HTMLInputElement | null;
+    const defaultProtocols = new Set(['pump', 'moonit', 'launchlab', 'believe']);
+
+    const show = (): void => {
+      if (popup) popup.style.display = 'flex';
+    };
+    const hide = (): void => {
+      if (popup) popup.style.display = 'none';
+    };
+
+    const getProtocolTags = (): HTMLElement[] =>
+      Array.from(document.querySelectorAll<HTMLElement>('.trade-filter-protocol-tag'));
+    const getAuditTabs = (): HTMLElement[] =>
+      Array.from(document.querySelectorAll<HTMLElement>('.trade-filter-audit-tab'));
+    const getSocialCheckboxes = (): HTMLInputElement[] =>
+      Array.from(document.querySelectorAll<HTMLInputElement>('.trade-filter-popup input[name="social"]'));
+
+    protocolsGrid?.addEventListener('click', (e) => {
+      const tag = (e.target as HTMLElement).closest('.trade-filter-protocol-tag');
+      if (tag) tag.classList.toggle('active');
+    });
+
+    selectAllBtn?.addEventListener('click', () => {
+      const tags = getProtocolTags();
+      const allActive = tags.every((t) => t.classList.contains('active'));
+      tags.forEach((t) => t.classList.toggle('active', !allActive));
+      if (selectAllBtn) selectAllBtn.textContent = allActive ? 'Select All' : 'Deselect All';
+    });
+
+    getAuditTabs().forEach((tab) => {
+      tab.addEventListener('click', () => {
+        getAuditTabs().forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    filterBtn?.addEventListener('click', show);
+    backdrop?.addEventListener('click', hide);
+    closeBtn?.addEventListener('click', hide);
+
+    applyBtn?.addEventListener('click', () => {
+      const protocols = getProtocolTags()
+        .filter((t) => t.classList.contains('active'))
+        .map((t) => t.getAttribute('data-protocol') || '');
+      const ticker = (tickerInput?.value || '').trim();
+      const auditTab = document.querySelector('.trade-filter-audit-tab.active')?.getAttribute('data-audit-tab') || 'audit';
+      const socials = getSocialCheckboxes().filter((cb) => cb.checked).map((cb) => cb.value);
+      console.log('[KOLsuite] Trade filter apply:', { protocols, ticker, auditTab, socials });
+      hide();
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      getProtocolTags().forEach((t) => {
+        t.classList.toggle('active', defaultProtocols.has(t.getAttribute('data-protocol') || ''));
+      });
+      if (tickerInput) tickerInput.value = '';
+      getAuditTabs().forEach((t) => {
+        t.classList.toggle('active', t.getAttribute('data-audit-tab') === 'audit');
+      });
+      getSocialCheckboxes().forEach((cb) => { cb.checked = false; });
+      if (selectAllBtn) selectAllBtn.textContent = 'Select All';
     });
   }
 
@@ -98,6 +183,11 @@ class SidePanelManager {
   private setupEventListeners(): void {
     // Settings button
     document.getElementById('settings-btn')?.addEventListener('click', () => this.openSettings());
+
+    document.getElementById('sign-in-x-btn')?.addEventListener('click', () => this.openAccount());
+    document.getElementById('user-profile')?.addEventListener('click', () => this.openAccount());
+    document.getElementById('account-back-btn')?.addEventListener('click', () => this.closeAccount());
+    this.setupAccountTabs();
 
     // Summary toggle
     document.getElementById('summary-toggle')?.addEventListener('click', () => this.toggleSummary());
@@ -316,6 +406,48 @@ class SidePanelManager {
     } else {
       this.showState(this.currentState);
     }
+  }
+
+  private openAccount(): void {
+    const mainPanel = document.querySelector('.side-panel-container') as HTMLElement;
+    const accountView = document.getElementById('account-view');
+    if (mainPanel) mainPanel.style.display = 'none';
+    if (accountView) accountView.style.display = 'flex';
+    this.populateAccountInfo();
+  }
+
+  private closeAccount(): void {
+    const accountView = document.getElementById('account-view');
+    if (accountView) accountView.style.display = 'none';
+    const mainPanel = document.querySelector('.side-panel-container') as HTMLElement;
+    if (mainPanel) mainPanel.style.display = 'flex';
+  }
+
+  private populateAccountInfo(): void {
+    chrome.storage.local.get(['xUsername'], (items) => {
+      const handle = items.xUsername || '@username';
+      const nameEl = document.getElementById('account-info-name');
+      const handleEl = document.getElementById('account-info-handle');
+      const profileHandleEl = document.getElementById('account-profile-handle');
+      const avatarEl = document.getElementById('account-info-avatar');
+      if (nameEl) nameEl.textContent = handle ? handle.replace('@', '') : 'Guest';
+      if (handleEl) handleEl.textContent = handle;
+      if (profileHandleEl) profileHandleEl.textContent = handle;
+      if (avatarEl) avatarEl.textContent = handle ? (handle.charAt(1) || '?').toUpperCase() : '?';
+    });
+  }
+
+  private setupAccountTabs(): void {
+    document.querySelectorAll('.account-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = (btn as HTMLElement).getAttribute('data-account-tab') || 'profile';
+        document.querySelectorAll('.account-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.account-tab-pane').forEach(pane => {
+          pane.classList.toggle('active', (pane as HTMLElement).getAttribute('data-account-pane') === tab);
+        });
+      });
+    });
   }
 
   private saveKeyCode(): void {
@@ -2234,7 +2366,7 @@ Early opportunity! DYOR 🔍
     // Summary
     this.updateSummary(tokenInfo);
     
-    // Auto-fill caption from template (sesuai setting template, ganti token = caption ikut ganti)
+    // Auto-fill caption from template (per template setting; caption updates when token changes)
     this.fillCaptionFromTemplate(tokenInfo);
     
     console.log('[TokenPeek Sidepanel] ✅ Token displayed!');
@@ -2488,7 +2620,7 @@ Early opportunity! DYOR 🔍
     ];
   }
 
-  /** Discord message components: satu baris tombol link Buy (Trojan, Axiom, GMGN, Padre) */
+  /** Discord message components: one row of Buy link buttons (Trojan, Axiom, GMGN, Padre) */
   private buildDiscordBuyButtons(tokenData?: any): { type: number; components: { type: number; style: number; label: string; url: string }[] }[] | undefined {
     const mint = tokenData?.mint;
     const links = this.getTokenBuyLinks(mint);
@@ -2504,7 +2636,7 @@ Early opportunity! DYOR 🔍
     }];
   }
 
-  /** Build embed field value: link markdown [Label](url) untuk fallback jika tombol tidak muncul */
+  /** Build embed field value: link markdown [Label](url) for fallback when button does not appear */
   private getBuyLinksMarkdown(mint: string): string {
     const links = this.getTokenBuyLinks(mint);
     return links.map(({ label, url }) => `[${label}](${url})`).join(' • ');
@@ -2638,7 +2770,7 @@ Early opportunity! DYOR 🔍
     if (!previewCard || !previewText) return;
     
     previewText.textContent = text.trim().length > 0 ? text : 'Your caption will appear here...';
-    previewCard.style.display = 'none'; /* Preview post tidak ditampilkan saat generate */
+    previewCard.style.display = 'none'; /* Preview post is not shown during generate */
   }
 
   private switchProfileTab(tabName: string): void {
