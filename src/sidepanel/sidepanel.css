@@ -1764,19 +1764,20 @@ body {
   margin: 0;
 }
 
-/* Sticky Footer — tema gelap, selaras dengan panel */
+/* Sticky Footer: X, Telegram, Discord — fixed at bottom of panel */
 .sticky-footer {
-  position: sticky;
-  bottom: 0;
-  min-height: 52px;
-  padding: 8px 10px 10px;
+  flex-shrink: 0;
+  height: 56px;
+  padding: 0 10px;
   background: var(--bg-gradient-from);
   border-top: 1px solid var(--card-border);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   z-index: 10;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .post-btn {
@@ -2561,8 +2562,8 @@ body {
   }
   
   .sticky-footer {
-    height: 55px;
-    padding: 8px;
+    height: 56px;
+    padding: 0 8px;
   }
   
   .post-btn {
@@ -2634,8 +2635,8 @@ body {
   }
   
   .sticky-footer {
-    height: 60px;
-    padding: 10px;
+    height: 56px;
+    padding: 0 10px;
   }
   
   .post-btn {
@@ -2728,8 +2729,8 @@ body {
   }
   
   .sticky-footer {
-    height: 70px;
-    padding: 12px 16px;
+    height: 56px;
+    padding: 0 16px;
   }
   
   .post-btn {
