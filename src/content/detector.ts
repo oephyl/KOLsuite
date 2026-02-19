@@ -8,11 +8,15 @@ import { TrojanAdapter } from './adapters/trojan';
 import { AxiomAdapter } from './adapters/axiom';
 import { PadreAdapter } from './adapters/padre';
 import { NeoBullAdapter } from './adapters/neobull';
+import { PumpFunAdapter } from './adapters/pumpfun';
+import { TelemetryAdapter } from './adapters/telemetry';
 import { TokenDetectionResult } from '../shared/types';
 
 export class TokenDetector {
   private adapters: TokenAdapter[] = [];
   private lastDetectedMint: string | null = null;
+  /** When the user navigates to another site, reset so we don't reuse old mint */
+  private lastOrigin: string | null = null;
   private observer: MutationObserver | null = null;
   private pollInterval: NodeJS.Timeout | null = null;
   private callbacks: Array<(result: TokenDetectionResult) => void> = [];
@@ -24,6 +28,8 @@ export class TokenDetector {
       new AxiomAdapter(),
       new PadreAdapter(),
       new NeoBullAdapter(),
+      new PumpFunAdapter(),
+      new TelemetryAdapter(),
     ];
   }
 
@@ -83,6 +89,19 @@ export class TokenDetector {
    * Manual token detection trigger
    */
   detectToken(): void {
+    const currentUrl = window.location.href;
+    let currentOrigin = '';
+    try {
+      currentOrigin = new URL(currentUrl).origin;
+    } catch {
+      currentOrigin = currentUrl;
+    }
+    if (this.lastOrigin !== null && currentOrigin !== this.lastOrigin) {
+      this.lastDetectedMint = null;
+      console.log('[TokenPeek] Website changed, cleared mint cache.', this.lastOrigin, '→', currentOrigin);
+    }
+    this.lastOrigin = currentOrigin;
+
     const result = this.performDetection();
     
     // Only notify if mint changed

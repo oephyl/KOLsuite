@@ -48,7 +48,7 @@
       <!-- Token Identity Card -->
       <div class="token-identity" id="token-identity">
         <div class="token-avatar" style="width: 76px !important; height: 76px !important; border-radius: 14px !important;">
-          <img id="token-logo-img" src="" alt="" class="token-logo-img">
+          <img id="token-logo-img" src="" alt="" class="token-logo-img" referrerpolicy="no-referrer" loading="eager">
           <span class="exchange-logo-badge" id="exchange-logo-wrap" style="display: none;"><img id="exchange-logo" src="" alt="" title=""></span>
         </div>
         <div class="token-info">
@@ -64,6 +64,7 @@
             </svg>
           </div>
           <div class="wallet-dev-row" id="wallet-dev-row" title="Click to copy">
+            <img id="wallet-dev-icon" src="" alt="Dev" class="wallet-dev-icon">
             <span id="wallet-dev-short" class="wallet-dev-address">Exam...PLE</span>
             <div class="wallet-dev-logo" id="wallet-dev-logo"></div>
           </div>
@@ -93,6 +94,40 @@
         <a id="social-website-btn" href="#" target="_blank" rel="noopener noreferrer" class="action-icon-btn social-btn" title="Website" style="display:none;">
           <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         </a>
+        <div id="social-pumplive-wrap" class="pumplive-wrap" style="display:none;">
+          <span id="social-pumplive-btn" class="action-icon-btn social-pumplive-pill" title="Live">
+            <img id="social-pumplive-icon" src="" alt="" class="pumplive-pill-icon" style="display:none;">
+            <span id="social-pumplive-label">Pumpfun LIVE</span>
+          </span>
+          <div id="social-pumplive-popup" class="pumplive-popup" style="display:none;">
+            <div class="pumplive-popup-inner">
+              <img id="pumplive-popup-header-img" src="" alt="" class="pumplive-popup-header-img" referrerpolicy="no-referrer" loading="eager" style="display:none;">
+              <div class="pumplive-popup-header">
+                <img id="pumplive-popup-thumb" src="" alt="" class="pumplive-popup-thumb" referrerpolicy="no-referrer" loading="eager">
+                <div class="pumplive-popup-meta">
+                  <div class="pumplive-popup-name" id="pumplive-popup-name">—</div>
+                  <div class="pumplive-popup-symbol-row">
+                    <span class="pumplive-popup-symbol" id="pumplive-popup-symbol">—</span>
+                    <button type="button" class="pumplive-popup-copy" id="pumplive-popup-copy" title="Copy">📋</button>
+                  </div>
+                  <div class="pumplive-popup-time" id="pumplive-popup-time">—</div>
+                  <div class="pumplive-popup-replies">Replies: <span id="pumplive-popup-replies">0</span></div>
+                </div>
+              </div>
+              <a id="pumplive-popup-open-btn" href="#" target="_blank" rel="noopener noreferrer" class="pumplive-popup-btn">Open in Pumpfun</a>
+            </div>
+          </div>
+        </div>
+        <span id="social-cto-btn" class="action-icon-btn social-btn" title="Community Takeover" style="display:none;">
+          <img id="social-cto-icon-img" src="" alt="Community Takeover" class="social-cto-icon-img">
+        </span>
+        <span id="social-dexpaid-btn" class="action-icon-btn social-btn" title="DexPaid" style="display:none;">
+          <img id="social-dexpaid-icon-img" src="" alt="DexPaid" class="social-dexpaid-icon-img">
+        </span>
+        <span id="social-boost-btn" class="action-icon-btn social-btn" title="Boost" style="display:none;">
+          <svg class="social-boost-icon" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/></svg>
+          <span id="social-boost-amount">0</span>
+        </span>
       </div>
 
       <!-- Tab Navigation -->
@@ -194,15 +229,15 @@
           <span class="value" id="dev-tokens-count">0</span>
         </div>
         <div class="dev-info-card">
-          <label>Dev Migration</label>
+          <label>Dev.Migrate</label>
           <span class="value" id="dev-migrations-count">0</span>
         </div>
         <div class="dev-info-card">
-          <label>Organic Buy</label>
+          <label>Org.Buy</label>
           <span class="value" id="organic-buys-24h">0</span>
         </div>
         <div class="dev-info-card">
-          <label>Organic Sell</label>
+          <label>Org.Sell</label>
           <span class="value" id="organic-sells-24h">0</span>
         </div>
       </div>
@@ -255,10 +290,15 @@
             <span class="value green" id="rug-honeypot">No</span>
           </div>
         </div>
+        <!-- Unlocked Liquidity Alert -->
+        <div class="rug-unlocked-alert" id="rug-unlocked-alert" style="display: none;">
+          <span class="rug-unlocked-icon">⚠</span>
+          <span class="rug-unlocked-text">Be careful! Dev may remove liquidity.</span>
+        </div>
         <!-- RUG CHECK Risks Notif -->
         <div class="rug-check-risks" id="rug-check-risks" style="display: none;"> 
           <div class="rug-check-risks-list" id="rug-check-risks-list"></div>
-        </div>
+        </div> 
       </div>
 
       <!-- DexPaid History Section (Collapsible, shown when dexPaidData) -->
@@ -938,6 +978,22 @@
           </div>
           <!-- Trending tab: top 3 podium + list -->
           <div class="trade-mode-pane-content trade-trending-pane" id="trade-mode-trending-pane" data-trade-pane="trending">
+            <div class="trade-trending-skeleton" id="trade-trending-skeleton" style="display: none;">
+              <div class="trade-trending-skeleton-podium">
+                <div class="trade-trending-skeleton-card"></div>
+                <div class="trade-trending-skeleton-card trade-trending-skeleton-card-first"></div>
+                <div class="trade-trending-skeleton-card"></div>
+              </div>
+              <div class="trade-trending-skeleton-list-label"></div>
+              <div class="trade-trending-skeleton-list">
+                <div class="trade-trending-skeleton-row"></div>
+                <div class="trade-trending-skeleton-row"></div>
+                <div class="trade-trending-skeleton-row"></div>
+                <div class="trade-trending-skeleton-row"></div>
+                <div class="trade-trending-skeleton-row"></div>
+              </div>
+            </div>
+            <div class="trade-trending-content" id="trade-trending-content">
             <div class="trade-trending-podium">
               <article class="trade-trending-podium-card" data-rank="2">
                 <span class="trade-trending-rank">2</span>
@@ -945,6 +1001,10 @@
                 <div class="trade-trending-podium-title">TOKEN TWO</div>
                 <div class="trade-trending-podium-meta">$TWO · pump</div>
                 <div class="trade-trending-podium-stat">MC $12.5K</div>
+                <div class="trade-trending-podium-holders">
+                  <img src="" alt="Holders" class="trade-trending-holder-icon">
+                  <span class="trade-trending-podium-holders-value">—</span>
+                </div>
                 <button type="button" class="trade-trending-podium-btn">Trade</button>
               </article>
               <article class="trade-trending-podium-card trade-trending-podium-first" data-rank="1">
@@ -953,6 +1013,10 @@
                 <div class="trade-trending-podium-title">TOP TRENDING</div>
                 <div class="trade-trending-podium-meta">$TOP · pump</div>
                 <div class="trade-trending-podium-stat">MC $45K</div>
+                <div class="trade-trending-podium-holders">
+                  <img src="" alt="Holders" class="trade-trending-holder-icon">
+                  <span class="trade-trending-podium-holders-value">—</span>
+                </div>
                 <button type="button" class="trade-trending-podium-btn">Trade</button>
               </article>
               <article class="trade-trending-podium-card" data-rank="3">
@@ -961,6 +1025,10 @@
                 <div class="trade-trending-podium-title">THIRD TOKEN</div>
                 <div class="trade-trending-podium-meta">$THIRD · moonshot</div>
                 <div class="trade-trending-podium-stat">MC $8.2K</div>
+                <div class="trade-trending-podium-holders">
+                  <img src="" alt="Holders" class="trade-trending-holder-icon">
+                  <span class="trade-trending-podium-holders-value">—</span>
+                </div>
                 <button type="button" class="trade-trending-podium-btn">Trade</button>
               </article>
             </div>
@@ -1014,6 +1082,7 @@
                   </div>
                 </div>
               </article>
+            </div>
             </div>
           </div>
         </div>
