@@ -344,6 +344,7 @@ body {
 
 .trade-mode-pane-content.active {
   display: flex;
+  flex-direction: column;
 }
 
 .trade-mode-search-wrap {
@@ -374,7 +375,9 @@ body {
 
 .trade-mode-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -388,6 +391,64 @@ body {
 .trade-mode-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 2px;
+}
+
+/* Trending tab: skeleton */
+.trade-trending-skeleton {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding-top: 14px;
+}
+.trade-trending-skeleton-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.trade-trending-skeleton-card {
+  flex: 1;
+  max-width: 110px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  animation: trade-trending-skeleton-pulse 1.2s ease-in-out infinite;
+}
+.trade-trending-skeleton-card-first {
+  height: 132px;
+  transform: translateY(-6px);
+}
+.trade-trending-skeleton-list-label {
+  height: 14px;
+  width: 80px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  animation: trade-trending-skeleton-pulse 1.2s ease-in-out infinite;
+}
+.trade-trending-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+}
+.trade-trending-skeleton-row {
+  height: 52px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  animation: trade-trending-skeleton-pulse 1.2s ease-in-out infinite;
+}
+.trade-trending-skeleton-row:nth-child(2) { animation-delay: 0.15s; }
+.trade-trending-skeleton-row:nth-child(3) { animation-delay: 0.3s; }
+.trade-trending-skeleton-row:nth-child(4) { animation-delay: 0.45s; }
+.trade-trending-skeleton-row:nth-child(5) { animation-delay: 0.6s; }
+@keyframes trade-trending-skeleton-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* Trending tab: podium (top 3) + list */
@@ -462,6 +523,13 @@ body {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 6px;
+  overflow: hidden;
+}
+.trade-trending-podium-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .trade-trending-podium-first .trade-trending-podium-avatar {
@@ -481,6 +549,17 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.trade-trending-exchange-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .trade-trending-podium-meta {
@@ -492,7 +571,34 @@ body {
 .trade-trending-podium-stat {
   font-size: 10px;
   color: var(--accent-green, #4be784);
+  margin-bottom: 4px;
+}
+
+.trade-trending-podium-holders {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   margin-bottom: 6px;
+  font-size: 9px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.trade-trending-holder-icon {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.trade-trending-dexpaid-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-left: 6px;
+  filter: brightness(0) saturate(100%) invert(76%) sepia(42%) saturate(654%) hue-rotate(91deg);
 }
 
 .trade-trending-podium-btn {
@@ -512,6 +618,16 @@ body {
   filter: brightness(1.1);
 }
 
+/* Wrapper for podium + list so list can scroll */
+#trade-trending-content.trade-trending-content,
+.trade-trending-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .trade-trending-list-label {
   font-size: 11px;
   font-weight: 600;
@@ -523,7 +639,9 @@ body {
 
 .trade-trending-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -884,6 +1002,22 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  overflow: hidden;
+}
+.trade-call-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.trade-call-title-row .trade-trending-exchange-icon {
+  margin-left: 4px;
+}
+
+.trade-call-title-row .trade-call-stat-title-row {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--accent-green, #4be784);
 }
 
 .trade-call-info {
@@ -907,18 +1041,18 @@ body {
 }
 
 .trade-call-star {
-  color: var(--text-muted);
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
 .trade-call-subtitle {
   font-size: 10px;
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 .trade-call-meta {
   font-size: 10px;
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 .trade-call-stats {
@@ -933,11 +1067,36 @@ body {
   align-items: center;
   gap: 3px;
   font-size: 10px;
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 .trade-call-stat svg {
   opacity: 0.8;
+}
+
+.trade-call-holders {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.trade-call-holders .trade-trending-holder-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.trade-call-holders .trade-trending-dexpaid-icon {
+  margin-left: 6px;
+}
+
+.trade-call-holders .trade-call-age {
+  font-size: 9px;
+  color: var(--text-primary);
+  margin-left: 6px;
+  opacity: 0.9;
 }
 
 .trade-call-right {
@@ -1159,6 +1318,7 @@ body {
 
 /* Dexscreener Banner */
 .dexscreener-banner-wrap {
+  position: relative;
   width: 100%;
   margin: 0 0 8px 0;
   overflow: hidden;
@@ -1170,6 +1330,33 @@ body {
   display: block;
   object-fit: cover;
   max-height: 120px;
+}
+
+.social-dexpaid-icon-img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(88%) sepia(42%) saturate(1000%) hue-rotate(84deg) brightness(103%) contrast(95%);
+}
+
+.social-cto-icon-img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(88%) sepia(42%) saturate(1000%) hue-rotate(84deg) brightness(103%) contrast(95%);
+}
+
+.social-boost-icon {
+  color: #fbbf24;
+}
+#social-boost-btn {
+  color: #fbbf24;
+  padding: 0 6px;
+  gap: 3px;
+}
+#social-boost-amount {
+  font-size: 10px;
+  font-weight: 700;
 }
 
 /* DexPaid History - dApp style collapsible */
@@ -1299,7 +1486,22 @@ body {
   margin-left: auto;
 }
 
-/* Token Identity Card */
+/* Token Identity Card - overlap banner Twitter-style */
+#main-kol-pane.banner-visible .token-identity {
+  margin-top: -32px;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 10px;
+  padding: 12px 12px 10px 10px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
 .token-identity {
   display: flex;
   gap: 14px;
@@ -1384,7 +1586,7 @@ body {
 .token-symbol {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -1392,7 +1594,7 @@ body {
 .token-name {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1411,7 +1613,7 @@ body {
   gap: 5px;
   font-family: 'Courier New', monospace;
   font-size: 10px;
-  color: var(--text-muted);
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s;
   max-width: 100%;
@@ -1431,10 +1633,17 @@ body {
   max-width: 100%;
 }
 
+.wallet-dev-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
 .wallet-dev-address {
   font-family: 'Courier New', monospace;
   font-size: 10px;
-  color: var(--text-muted);
+  color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1443,7 +1652,7 @@ body {
 }
 
 .wallet-dev-row:hover .wallet-dev-address {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .wallet-dev-logo {
@@ -1578,6 +1787,140 @@ body {
   0% { box-shadow: 0 0 0 0 rgba(75, 231, 132, 0.4); }
   70% { box-shadow: 0 0 0 4px rgba(75, 231, 132, 0); }
   100% { box-shadow: 0 0 0 0 rgba(75, 231, 132, 0); }
+}
+
+/* PumpLive LIVE pill (green) */
+.social-pumplive-pill {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--text-green);
+  color: #0a0e14;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: default;
+  border: none;
+  min-width: auto;
+}
+.social-pumplive-pill:hover {
+  background: var(--primary-hover);
+  color: #0a0e14;
+}
+
+.pumplive-pill-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Wrapper for pill + popup so popup positions above pill */
+.pumplive-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* PumpLive hover popup */
+.pumplive-popup {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  pointer-events: none;
+}
+.pumplive-popup-inner {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.pumplive-popup-header-img {
+  display: block;
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 11px 11px 0 0;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.04);
+}
+.pumplive-popup-header {
+  padding: 12px 12px 10px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.pumplive-popup-thumb {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(251, 191, 36, 0.5);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+}
+.pumplive-popup-meta {
+  flex: 1;
+  min-width: 0;
+}
+.pumplive-popup-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.pumplive-popup-symbol-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.pumplive-popup-copy {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 12px;
+}
+.pumplive-popup-copy:hover {
+  color: var(--text-primary);
+}
+.pumplive-popup-time,
+.pumplive-popup-replies {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.pumplive-popup-btn {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 0 12px 12px;
+  padding: 8px 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.pumplive-popup-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .action-icon-btn:active {
@@ -2032,6 +2375,40 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Rug Unlocked Liquidity Alert */
+.rug-unlocked-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  animation: rug-unlocked-pulse 2s ease-in-out infinite;
+}
+.rug-unlocked-icon {
+  font-size: 14px;
+  color: var(--text-red);
+  flex-shrink: 0;
+}
+.rug-unlocked-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+@keyframes rug-unlocked-pulse {
+  0%, 100% {
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    background: rgba(239, 68, 68, 0.22);
+    box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.25);
+  }
 }
 
 .rug-risk-item {

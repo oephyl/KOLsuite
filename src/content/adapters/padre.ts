@@ -1,8 +1,7 @@
 
 /**
  * Padre adapter for token detection
- * Example URL patterns (adjust based on actual site structure):
- * - https://padre.<domain>/token/[mint]
+ * URL pattern: https://trade.padre.gg/trade/solana/{tokenAddress}
  */
 import {
   TokenAdapter,
@@ -24,8 +23,14 @@ export class PadreAdapter implements TokenAdapter {
     try {
       const urlObj = new URL(url);
       const pathParts = urlObj.pathname.split('/').filter((p) => p);
-
-      // Pattern: /token/{mint}
+      // Pattern: /trade/solana/{mint}
+      const solanaIndex = pathParts.indexOf('solana');
+      if (solanaIndex !== -1 && pathParts.length > solanaIndex + 1) {
+        const potentialMint = pathParts[solanaIndex + 1];
+        if (isLikelySolanaAddress(potentialMint)) {
+          return potentialMint;
+        }
+      }
       const tokenIndex = pathParts.indexOf('token');
       if (tokenIndex !== -1 && pathParts.length > tokenIndex + 1) {
         const potentialMint = pathParts[tokenIndex + 1];
@@ -33,14 +38,11 @@ export class PadreAdapter implements TokenAdapter {
           return potentialMint;
         }
       }
-
-      // Check all path segments
       for (const part of pathParts) {
         if (isLikelySolanaAddress(part)) {
           return part;
         }
       }
-
       return null;
     } catch {
       return null;

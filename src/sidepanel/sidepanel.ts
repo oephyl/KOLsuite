@@ -18,11 +18,35 @@ interface TwitterProfileData {
   followingCount: number;
 }
 
+interface TrendingTokenItem {
+  chainId?: string;
+  tokenAddress: string;
+  poolAddress?: string | null;
+  name: string;
+  uniqueName?: string | null;
+  symbol: string;
+  decimals?: number;
+  logo?: string;
+  usdPrice?: number;
+  createdAt?: number | string;
+  marketCap?: number;
+  liquidityMaxUsd?: number;
+  holders?: number;
+  pricePercentChange?: { '1h'?: number; '4h'?: number; '12h'?: number; '24h'?: number };
+  totalVolume?: Record<string, number>;
+  transactions?: Record<string, number>;
+  exchange?: { name?: string; logo?: string };
+  source?: string;
+}
+
 class SidePanelManager {
   private currentState: 'loading' | 'main' | 'empty' | 'error' = 'loading';
   private tokenData: any = null;
   private lastTokenMint: string | null = null;
+  /** Origin of the tab we last loaded token from; clear state when tab switches to another site */
+  private lastTabOrigin: string | null = null;
   private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
+  private trendingRefreshIntervalId: ReturnType<typeof setInterval> | null = null;
   private twitterProfileData: TwitterProfileData | null = null;
   private twitterRefreshIntervalId: ReturnType<typeof setInterval> | null = null;
   private lastTwitterUsername: string | null = null;
@@ -88,7 +112,11 @@ class SidePanelManager {
         if (tab === 'trending') {
           callsPane?.classList.remove('active');
           trendingPane?.classList.add('active');
+          this.showTrendingSkeleton();
+          this.loadTrendingTokens(false);
+          this.startTrendingRefreshInterval();
         } else {
+          this.stopTrendingRefreshInterval();
           trendingPane?.classList.remove('active');
           callsPane?.classList.add('active');
         }
@@ -101,6 +129,354 @@ class SidePanelManager {
         (card as HTMLElement).style.display = q === '' || text.includes(q) ? '' : 'none';
       });
     });
+  }
+
+  private formatTrendingMC(val: number | undefined): string {
+    if (val == null || isNaN(val)) return 'MC $0';
+    if (val >= 1e9) return `MC $${(val / 1e9).toFixed(2)}B`;
+    if (val >= 1e6) return `MC $${(val / 1e6).toFixed(2)}M`;
+    if (val >= 1e3) return `MC $${(val / 1e3).toFixed(2)}K`;
+    return `MC $${val.toFixed(0)}`;
+  }
+
+  private formatTrendingHolders(val: number | undefined): string {
+    if (val == null || isNaN(val)) return '0';
+    if (val >= 1e9) return `${(val / 1e9).toFixed(2)}B`;
+    if (val >= 1e6) return `${(val / 1e6).toFixed(2)}M`;
+    if (val >= 1e3) return `${(val / 1e3).toFixed(2)}K`;
+    return String(val);
+  }
+
+  /** Parse createdAt (UTC), compare to now, return short age e.g. 2s, 5M, 6D */
+  private formatTrendingAge(createdAt: number | string | undefined): string {
+    if (createdAt == null) return '—';
+    let ts: number;
+    if (typeof createdAt === 'string') {
+      const parsed = Date.parse(createdAt);
+      if (isNaN(parsed)) return '—';
+      ts = parsed;
+    } else {
+      ts = createdAt >= 1e12 ? createdAt : createdAt * 1000;
+    }
+    const now = Date.now();
+    const diffMs = Math.max(0, now - ts);
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+    if (diffDay > 0) return `${diffDay}D`;
+    if (diffHour > 0) return `${diffHour}h`;
+    if (diffMin > 0) return `${diffMin}M`;
+    if (diffSec > 0) return `${diffSec}s`;
+    return '0s';
+  }
+
+  private async fetchTrendingDexPaidHasTokenProfile(tokenAddress: string): Promise<boolean> {
+    const baseUrl = ((import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) || 'http://localhost:4000/api';
+    const apiKey = (import.meta as { env?: { API_KEY?: string } }).env?.API_KEY || '';
+    const apiUrl = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (apiKey) (headers as Record<string, string>)['x-api-key'] = apiKey;
+    try {
+      const res = await this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenDexPaid/${encodeURIComponent(tokenAddress)}/dev`, headers);
+      if (!res.ok) return false;
+      const json = await res.json();
+      const orders = json?.dexPaidData?.orders ?? [];
+      if (!Array.isArray(orders)) return false;
+      return orders.some((o: any) => {
+        const type = String(o?.type ?? '').trim().toLowerCase();
+        const status = String(o?.status ?? '').trim().toLowerCase();
+        return type === 'tokenprofile' && status === 'approved';
+      });
+    } catch {
+      return false;
+    }
+  }
+
+  private appendTrendingDexPaidIcon(holdersContainer: Element): void {
+    if (typeof chrome === 'undefined' || !chrome.runtime?.getURL) return;
+    const existing = holdersContainer.querySelectorAll('.trade-trending-dexpaid-icon');
+    if (existing.length > 0) return;
+    const img = document.createElement('img');
+    img.src = chrome.runtime.getURL('img/dexpaid.svg');
+    img.alt = 'DexPaid';
+    img.className = 'trade-trending-dexpaid-icon';
+    img.title = 'DexPaid';
+    const ageEl = holdersContainer.querySelector('.trade-call-age');
+    if (ageEl) holdersContainer.insertBefore(img, ageEl);
+    else holdersContainer.appendChild(img);
+  }
+
+  private showTrendingSkeleton(): void {
+    const skeleton = document.getElementById('trade-trending-skeleton');
+    const content = document.getElementById('trade-trending-content');
+    if (skeleton) skeleton.style.display = 'flex';
+    if (content) content.style.display = 'none';
+  }
+
+  private hideTrendingSkeleton(): void {
+    const skeleton = document.getElementById('trade-trending-skeleton');
+    const content = document.getElementById('trade-trending-content');
+    if (skeleton) skeleton.style.display = 'none';
+    if (content) content.style.display = '';
+  }
+
+  private startTrendingRefreshInterval(): void {
+    this.stopTrendingRefreshInterval();
+    this.trendingRefreshIntervalId = setInterval(() => {
+      const pane = document.getElementById('trade-mode-trending-pane');
+      if (pane?.classList.contains('active')) this.loadTrendingTokens(true);
+      else this.stopTrendingRefreshInterval();
+    }, 60000);
+  }
+
+  private stopTrendingRefreshInterval(): void {
+    if (this.trendingRefreshIntervalId) {
+      clearInterval(this.trendingRefreshIntervalId);
+      this.trendingRefreshIntervalId = null;
+    }
+  }
+
+  private async loadTrendingTokens(background = false): Promise<void> {
+    const baseUrl = ((import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) || 'http://localhost:4000/api';
+    const apiKey = (import.meta as { env?: { API_KEY?: string } }).env?.API_KEY || '';
+    const apiUrl = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (apiKey) (headers as Record<string, string>)['x-api-key'] = apiKey;
+    const endpoint = `${apiUrl.replace(/\/$/, '')}/trendingToken/dev`;
+    try {
+      const res = await this.fetchWith502Retry(endpoint, headers);
+      if (!res.ok) {
+        if (!background) this.hideTrendingSkeleton();
+        return;
+      }
+      const items: Array<{
+        tokenAddress?: string;
+        poolAddress?: string | null;
+        name?: string;
+        symbol?: string;
+        logo?: string;
+        marketCap?: number;
+        holders?: number;
+        createdAt?: number | string;
+        exchange?: { name?: string; logo?: string };
+      }> = await res.json();
+      if (!Array.isArray(items)) {
+        if (!background) this.hideTrendingSkeleton();
+        return;
+      }
+
+      const podium = document.querySelector('#trade-mode-trending-pane .trade-trending-podium');
+      const listEl = document.getElementById('trade-trending-list');
+      if (!podium || !listEl) {
+        if (!background) this.hideTrendingSkeleton();
+        return;
+      }
+
+      const fillPodiumCard = (card: Element, item: (typeof items)[0], rank: number) => {
+        const rankEl = card.querySelector('.trade-trending-rank');
+        const avatarEl = card.querySelector('.trade-trending-podium-avatar');
+        const titleEl = card.querySelector('.trade-trending-podium-title');
+        const metaEl = card.querySelector('.trade-trending-podium-meta');
+        const statEl = card.querySelector('.trade-trending-podium-stat');
+        const holdersEl = card.querySelector('.trade-trending-podium-holders');
+        const holdersValEl = card.querySelector('.trade-trending-podium-holders-value');
+        const holderImgEl = card.querySelector('.trade-trending-holder-icon') as HTMLImageElement;
+        const btn = card.querySelector('.trade-trending-podium-btn') as HTMLButtonElement;
+        if (rankEl) rankEl.textContent = String(rank);
+        if (avatarEl) {
+          const logo = (item.logo || '').trim();
+          if (logo) {
+            avatarEl.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = logo;
+            img.alt = item.name || '';
+            img.referrerPolicy = 'no-referrer';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = 'inherit';
+            avatarEl.appendChild(img);
+          } else {
+            avatarEl.textContent = (item.symbol || item.name || '?').charAt(0).toUpperCase();
+          }
+        }
+        if (titleEl) {
+          titleEl.innerHTML = '';
+          const nameSpan = document.createElement('span');
+          nameSpan.textContent = item.name || '—';
+          nameSpan.style.overflow = 'hidden';
+          nameSpan.style.textOverflow = 'ellipsis';
+          nameSpan.style.whiteSpace = 'nowrap';
+          titleEl.appendChild(nameSpan);
+          const exLogo = (item.exchange?.logo || '').trim();
+          if (exLogo) {
+            const exImg = document.createElement('img');
+            exImg.src = exLogo;
+            exImg.alt = item.exchange?.name || '';
+            exImg.className = 'trade-trending-exchange-icon';
+            exImg.referrerPolicy = 'no-referrer';
+            titleEl.appendChild(exImg);
+          }
+        }
+        if (metaEl) metaEl.textContent = item.symbol || '—';
+        if (statEl) statEl.textContent = this.formatTrendingMC(item.marketCap);
+        if (holdersValEl) holdersValEl.textContent = this.formatTrendingHolders(item.holders);
+        if (holderImgEl && typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
+          holderImgEl.src = chrome.runtime.getURL('img/holder.svg');
+        }
+        if (holdersEl) holdersEl.querySelectorAll('.trade-trending-dexpaid-icon').forEach((el) => el.remove());
+        const mint = (item.tokenAddress || '').trim();
+        if (btn) {
+          btn.dataset.tokenAddress = mint;
+          const poolAddress = (item.poolAddress || '').trim() || null;
+          btn.onclick = () => {
+            if (mint) {
+              this.openTrendingTokenInCurrentTerminal(mint, poolAddress);
+              this.loadTokenData(mint);
+            }
+          };
+        }
+      };
+
+      const rank1Card = podium.querySelector('[data-rank="1"]');
+      const rank2Card = podium.querySelector('[data-rank="2"]');
+      const rank3Card = podium.querySelector('[data-rank="3"]');
+      if (items[0] && rank1Card) fillPodiumCard(rank1Card, items[0], 1);
+      if (items[1] && rank2Card) fillPodiumCard(rank2Card, items[1], 2);
+      if (items[2] && rank3Card) fillPodiumCard(rank3Card, items[2], 3);
+
+      listEl.innerHTML = '';
+      for (let i = 3; i < Math.min(items.length, 10); i++) {
+        const item = items[i];
+        const rank = i + 1;
+        const card = document.createElement('article');
+        card.className = 'trade-call-card';
+        const logo = (item.logo || '').trim();
+        const symbolOrName = (item.symbol || item.name || '?').charAt(0).toUpperCase();
+        const nameContent = item.name || '—';
+        const exLogo = (item.exchange?.logo || '').trim();
+        const mint = (item.tokenAddress || '').trim();
+
+        const label = document.createElement('div');
+        label.className = 'trade-call-label';
+        label.innerHTML = '<span class="trade-call-dot"></span><span>#' + rank + '</span>';
+        card.appendChild(label);
+
+        const body = document.createElement('div');
+        body.className = 'trade-call-body';
+        const left = document.createElement('div');
+        left.className = 'trade-call-left';
+        const avatarWrap = document.createElement('div');
+        avatarWrap.className = 'trade-call-avatar-wrap';
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'trade-call-avatar';
+        if (logo) {
+          const img = document.createElement('img');
+          img.src = logo;
+          img.alt = '';
+          img.referrerPolicy = 'no-referrer';
+          avatarDiv.appendChild(img);
+        } else {
+          avatarDiv.textContent = symbolOrName;
+        }
+        avatarWrap.appendChild(avatarDiv);
+        left.appendChild(avatarWrap);
+
+        const info = document.createElement('div');
+        info.className = 'trade-call-info';
+        const titleRow = document.createElement('div');
+        titleRow.className = 'trade-call-title-row';
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'trade-call-title';
+        titleSpan.textContent = nameContent;
+        titleRow.appendChild(titleSpan);
+        if (exLogo) {
+          const exImg = document.createElement('img');
+          exImg.className = 'trade-trending-exchange-icon';
+          exImg.src = exLogo;
+          exImg.alt = item.exchange?.name || '';
+          exImg.referrerPolicy = 'no-referrer';
+          titleRow.appendChild(exImg);
+        }
+        const statSpan = document.createElement('span');
+        statSpan.className = 'trade-call-stat trade-call-stat-title-row';
+        statSpan.textContent = this.formatTrendingMC(item.marketCap);
+        titleRow.appendChild(statSpan);
+        info.appendChild(titleRow);
+        const subtitle = document.createElement('div');
+        subtitle.className = 'trade-call-subtitle';
+        subtitle.textContent = item.symbol || '—';
+        info.appendChild(subtitle);
+        const holdersRow = document.createElement('div');
+        holdersRow.className = 'trade-call-holders';
+        const holderIcon = document.createElement('img');
+        holderIcon.className = 'trade-trending-holder-icon';
+        holderIcon.alt = 'Holders';
+        if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) holderIcon.src = chrome.runtime.getURL('img/holder.svg');
+        const holdersVal = document.createElement('span');
+        holdersVal.className = 'trade-call-holders-value';
+        holdersVal.textContent = this.formatTrendingHolders(item.holders);
+        const ageSpan = document.createElement('span');
+        ageSpan.className = 'trade-call-age';
+        ageSpan.textContent = this.formatTrendingAge(item.createdAt);
+        holdersRow.appendChild(holderIcon);
+        holdersRow.appendChild(holdersVal);
+        holdersRow.appendChild(ageSpan);
+        info.appendChild(holdersRow);
+        left.appendChild(info);
+        body.appendChild(left);
+
+        const right = document.createElement('div');
+        right.className = 'trade-call-right';
+        const tradeBtn = document.createElement('button');
+        tradeBtn.type = 'button';
+        tradeBtn.className = 'trade-call-action-btn';
+        tradeBtn.textContent = 'Trade';
+        const poolAddress = (item.poolAddress || '').trim() || null;
+        if (mint) {
+          tradeBtn.addEventListener('click', () => {
+            this.openTrendingTokenInCurrentTerminal(mint, poolAddress);
+            this.loadTokenData(mint);
+          });
+        }
+        right.appendChild(tradeBtn);
+        body.appendChild(right);
+        card.appendChild(body);
+        listEl.appendChild(card);
+      }
+
+      const maxIdx = Math.min(items.length, 10);
+      const dexPaidChecks = Array.from({ length: maxIdx }, (_, i) => {
+        const addr = (items[i].tokenAddress || '').trim();
+        if (!addr) return Promise.resolve(false);
+        return this.fetchTrendingDexPaidHasTokenProfile(addr);
+      });
+      Promise.all(dexPaidChecks).then((results) => {
+        const pane = document.getElementById('trade-mode-trending-pane');
+        const podium = pane?.querySelector('.trade-trending-podium');
+        const list = document.getElementById('trade-trending-list');
+        if (!pane || !podium || !list) return;
+        pane.querySelectorAll('.trade-trending-dexpaid-icon').forEach((el) => el.remove());
+        for (let i = 0; i < results.length; i++) {
+          if (!results[i]) continue;
+          if (i < 3) {
+            const card = podium.querySelector(`[data-rank="${i + 1}"]`);
+            const holders = card?.querySelector('.trade-trending-podium-holders');
+            if (holders) this.appendTrendingDexPaidIcon(holders);
+          } else {
+            const card = list.children[i - 3];
+            const holders = card?.querySelector('.trade-call-holders');
+            if (holders) this.appendTrendingDexPaidIcon(holders);
+          }
+        }
+      });
+
+      if (!background) this.hideTrendingSkeleton();
+    } catch (e) {
+      console.warn('[KOLsuite] loadTrendingTokens failed:', e);
+      if (!background) this.hideTrendingSkeleton();
+    }
   }
 
   private setupTradeFilterPopup(): void {
@@ -311,6 +687,10 @@ class SidePanelManager {
     // Address pill copy
     document.getElementById('address-pill')?.addEventListener('click', () => this.copyAddress());
     document.getElementById('wallet-dev-row')?.addEventListener('click', () => this.copyWalletDev());
+    const walletDevIcon = document.getElementById('wallet-dev-icon') as HTMLImageElement;
+    if (walletDevIcon && typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
+      walletDevIcon.src = chrome.runtime.getURL('img/devwallet.svg');
+    }
 
     // Retry/Refresh buttons
     document.getElementById('refresh-btn')?.addEventListener('click', () => this.loadTokenData());
@@ -2318,7 +2698,7 @@ Early opportunity! DYOR 🔍
     if (bioEl) bioEl.textContent = p.bio || '—';
   }
 
-  private async loadTokenData(): Promise<void> {
+  private async loadTokenData(mintOverride?: string): Promise<void> {
     this.stopBackgroundRefresh();
     this.stopTwitterRefresh();
     this.twitterProfileData = null;
@@ -2332,75 +2712,140 @@ Early opportunity! DYOR 🔍
       dexscreenerBannerImg.removeAttribute('alt');
       dexscreenerBannerWrap.style.display = 'none';
     }
+    document.getElementById('main-kol-pane')?.classList.remove('banner-visible');
+    const ctoBtn = document.getElementById('social-cto-btn');
+    if (ctoBtn) ctoBtn.style.display = 'none';
+    const dexpaidBtn = document.getElementById('social-dexpaid-btn');
+    if (dexpaidBtn) dexpaidBtn.style.display = 'none';
+    const dexpaidSection = document.getElementById('dexpaid-section');
+    const dexpaidList = document.getElementById('dexpaid-list');
+    const dexpaidToggle = document.getElementById('dexpaid-toggle');
+    const dexpaidContent = document.getElementById('dexpaid-content');
+    if (dexpaidSection) dexpaidSection.style.display = 'none';
+    if (dexpaidList) dexpaidList.innerHTML = '';
+    if (dexpaidToggle) dexpaidToggle.classList.remove('active');
+    if (dexpaidContent) dexpaidContent.classList.remove('expanded');
+    const boostBtn = document.getElementById('social-boost-btn');
+    if (boostBtn) boostBtn.style.display = 'none';
+    const pumpliveWrapClear = document.getElementById('social-pumplive-wrap');
+    if (pumpliveWrapClear) pumpliveWrapClear.style.display = 'none';
+    const pumplivePopupClear = document.getElementById('social-pumplive-popup');
+    if (pumplivePopupClear) pumplivePopupClear.style.display = 'none';
+    const unlockedAlert = document.getElementById('rug-unlocked-alert');
+    if (unlockedAlert) unlockedAlert.style.display = 'none';
 
     try {
-      const tab = await new Promise<chrome.tabs.Tab>((resolve, reject) => {
+      let mint: string | null = (mintOverride && mintOverride.trim()) || null;
+      if (mint) console.log('[TokenPeek Sidepanel] Using mint override:', mint);
+
+      if (!mint) {
+        const tab = await new Promise<chrome.tabs.Tab>((resolve, reject) => {
+          try {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+              if (chrome.runtime.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
+              }
+              if (!tabs || tabs.length === 0) reject(new Error('No active tab'));
+              else resolve(tabs[0]);
+            });
+          } catch (err) {
+            reject(err);
+          }
+        });
+        console.log('[TokenPeek Sidepanel] Tab URL:', tab.url);
+        const url = tab.url || '';
         try {
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            console.log('[TokenPeek] chrome.tabs.query result:', { tabs: tabs?.length, error: chrome.runtime.lastError });
-            
-            if (chrome.runtime.lastError) {
-              console.error('[TokenPeek] chrome.runtime.lastError:', chrome.runtime.lastError);
-              reject(new Error(chrome.runtime.lastError.message));
-              return;
+          const currentOrigin = url ? new URL(url).origin : '';
+          if (this.lastTabOrigin !== null && currentOrigin !== this.lastTabOrigin) {
+            const prevOrigin = this.lastTabOrigin;
+            this.tokenData = null;
+            this.lastTokenMint = null;
+            this.lastTabOrigin = null;
+            console.log('[TokenPeek Sidepanel] Website changed, cleared cache.', prevOrigin, '→', currentOrigin);
+          }
+          this.lastTabOrigin = currentOrigin || null;
+        } catch {
+          this.lastTabOrigin = null;
+        }
+        // Mapping per source (order matches supported token page URLs)
+        if (url.includes('gmgn.ai')) {
+          const m = url.match(/\/sol\/token\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
+          if (m?.[1]) mint = m[1].trim();
+        }
+        if (!mint && (url.includes('axiom.trade') || url.includes('axiom'))) {
+          try {
+            const u = new URL(url);
+            const parts = u.pathname.split('/').filter((p) => p);
+            const memeIdx = parts.indexOf('meme');
+            if (memeIdx !== -1 && parts.length > memeIdx + 1) {
+              const candidate = (parts[memeIdx + 1] || '').trim();
+              if (candidate.length >= 32 && candidate.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(candidate)) mint = candidate;
             }
-            
-            if (!tabs || tabs.length === 0) {
-              console.log('[TokenPeek] No tabs found');
-              reject(new Error('No active tab'));
-              return;
+            if (!mint) {
+              const m = url.match(/\/meme\/([^/?#]+)/);
+              const raw = m?.[1] ? decodeURIComponent(m[1]).trim() : '';
+              if (raw.length >= 32 && raw.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(raw)) mint = raw;
             }
-            
-            console.log('[TokenPeek] Tab found:', { url: tabs[0].url, id: tabs[0].id });
-            resolve(tabs[0]);
-          });
-        } catch (err) {
-          console.error('[TokenPeek] Exception in chrome.tabs.query:', err);
-          reject(err);
+          } catch {
+            const m = url.match(/\/meme\/([^/?#]+)/);
+            const raw = m?.[1] ? decodeURIComponent(m[1]).trim() : '';
+            if (raw.length >= 32 && raw.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(raw)) mint = raw;
+          }
         }
-      });
-
-      console.log('[TokenPeek Sidepanel] Tab URL:', tab.url);
-
-      // Extract mint from URL
-      let mint: string | null = null;
-      
-      // Try extracting from query parameter (?token=)
-      const tokenMatch = tab.url?.match(/[?&]token=([^&\s#]+)/);
-      if (tokenMatch && tokenMatch[1]) {
-        mint = decodeURIComponent(tokenMatch[1]).trim();
-        console.log('[TokenPeek Sidepanel] ✅ Extracted mint from query:', mint);
+        if (!mint && url.includes('trojan.com')) {
+          const m = url.match(/[?&]token=([^&\s#]+)/);
+          if (m?.[1]) mint = decodeURIComponent(m[1]).trim();
+        }
+        if (!mint && url.includes('pump.fun')) {
+          const m = url.match(/\/coin\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
+          if (m?.[1]) mint = m[1].trim();
+        }
+        if (!mint && url.includes('padre.gg')) {
+          try {
+            const u = new URL(url);
+            const parts = u.pathname.split('/').filter((p) => p);
+            const solanaIdx = parts.indexOf('solana');
+            if (solanaIdx !== -1 && parts.length > solanaIdx + 1) {
+              const candidate = (parts[solanaIdx + 1] || '').trim();
+              if (candidate.length >= 32 && candidate.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(candidate)) mint = candidate;
+            }
+            if (!mint) {
+              const m = url.match(/\/trade\/solana\/([^/?#]+)/);
+              const raw = m?.[1] ? decodeURIComponent(m[1]).trim() : '';
+              if (raw.length >= 32 && raw.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(raw)) mint = raw;
+            }
+          } catch {
+            const m = url.match(/\/trade\/solana\/([^/?#]+)/);
+            const raw = m?.[1] ? decodeURIComponent(m[1]).trim() : '';
+            if (raw.length >= 32 && raw.length <= 44 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(raw)) mint = raw;
+          }
+        }
+        if (!mint && url.includes('bullx.io')) {
+          const m = url.match(/[?&]address=([^&\s#]+)/);
+          if (m?.[1]) mint = decodeURIComponent(m[1]).trim();
+        }
+        if (!mint && url.includes('telemetry.io')) {
+          const m = url.match(/\/trading\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
+          if (m?.[1]) mint = m[1].trim();
+        }
+        // Fallback: generic ?token= for any other supported tab
+        if (!mint && /gmgn|axiom|trojan|pump\.fun|padre|bullx|telemetry/.test(url)) {
+          const m = url.match(/[?&]token=([^&\s#]+)/);
+          if (m?.[1]) mint = decodeURIComponent(m[1]).trim();
+        }
+        // Only accept Solana-style address (base58, 32–44 chars)
+        if (mint) {
+          const cleaned = mint.trim();
+          if (cleaned.length < 32 || cleaned.length > 44 || !/^[1-9A-HJ-NP-Za-km-z]+$/.test(cleaned)) mint = '';
+          else mint = cleaned;
+        }
       }
 
-      // Try extracting from gmgn.ai URL pattern: /sol/token/{address}
-      if (!mint && tab.url?.includes('gmgn.ai')) {
-        const gmgnMatch = tab.url.match(/\/sol\/token\/([A-Za-z0-9]{32,44})/);
-        if (gmgnMatch && gmgnMatch[1]) {
-          mint = gmgnMatch[1].trim();
-          console.log('[TokenPeek Sidepanel] ✅ Extracted mint from gmgn.ai URL:', mint);
-        }
-      }
-
-      // Try extracting from axiom.trade URL pattern: /meme/{address} (path or hash)
-      if (!mint && tab.url?.includes('axiom')) {
-        const axiomMatch = tab.url.match(/\/meme\/([1-9A-HJ-NP-Za-km-z]{32,44})/);
-        if (axiomMatch?.[1]) {
-          mint = axiomMatch[1].trim();
-          console.log('[TokenPeek Sidepanel] ✅ Extracted mint from axiom.trade URL:', mint);
-        }
-      }
-
-      // Try extracting from padre.gg URL pattern: /trade/solana/{address}
-      if (!mint && tab.url?.includes('padre.gg')) {
-        const padreMatch = tab.url.match(/\/trade\/solana\/([A-Za-z0-9]{32,44})/);
-        if (padreMatch && padreMatch[1]) {
-          mint = padreMatch[1].trim();
-          console.log('[TokenPeek Sidepanel] ✅ Extracted mint from padre.gg URL:', mint);
-        }
-      }
-
-      if (!mint || mint.length < 5) {
+      if (!mint || mint.length < 32) {
         console.log('[TokenPeek Sidepanel] ❌ No valid mint');
+        this.tokenData = null;
+        this.lastTokenMint = null;
         this.stopBackgroundRefresh();
         this.showState('empty');
         return;
@@ -2430,7 +2875,7 @@ Early opportunity! DYOR 🔍
       }
 
       // 2. Fetch /api/tokenSocials (wajib - selalu dipanggil agar twitter dll tersedia)
-      let socialsData: { twitter?: string; website?: string; github?: string; telegram?: string; instagram?: string; tiktok?: string; youtube?: string; dexBanner?: string } = {};
+      let socialsData: { twitter?: string; website?: string; github?: string; telegram?: string; instagram?: string; tiktok?: string; youtube?: string; dexBanner?: string; pumpLive?: { thumbnail?: string; startAt?: number; replyCount?: number } | null } = {};
       try {
         const socialsRes = await this.fetchWith502Retry(`${apiUrl.replace(/\/$/, '')}/tokenSocials/${mint}/dev`, headers);
         if (socialsRes.ok) {
@@ -2454,6 +2899,16 @@ Early opportunity! DYOR 🔍
           if (pick(raw.tiktok)) socialsData.tiktok = pick(raw.tiktok);
           if (pick(raw.youtube)) socialsData.youtube = pick(raw.youtube);
           if (pick(raw.dexBanner)) socialsData.dexBanner = pick(raw.dexBanner);
+          const pl = raw.pumpLive ?? raw.pumplive;
+          if (pl && typeof pl === 'object') {
+            socialsData.pumpLive = {
+              thumbnail: typeof pl.thumbnail === 'string' ? pl.thumbnail : undefined,
+              startAt: typeof pl.startAt === 'number' ? pl.startAt : undefined,
+              replyCount: typeof pl.replyCount === 'number' ? pl.replyCount : undefined,
+            };
+          } else {
+            socialsData.pumpLive = null;
+          }
           if (!tw && Array.isArray(socialsJson)) {
             const twitterEntry = socialsJson.find((e: any) => e?.type === 'twitter' || e?.type === 'x' || e?.type === 'communities');
             const url = pick(twitterEntry?.url) || pick(twitterEntry?.value) || pick(twitterEntry?.link);
@@ -2567,7 +3022,7 @@ Early opportunity! DYOR 🔍
         symbol: (td.symbol ?? '??').trim(),
         price: formatPriceWithSubscript(td.priceUSD),
         volume24h: formatUSD(td.volume24hUSD),
-        liquidity: formatUSD(td.liquidityUSD),
+        liquidity: formatUSD(td.liquidityMaxUSD),
         fees: formatUSD(td.feesPaid24hUSD),
         audit: rugcheckSummary?.score != null && rugcheckSummary?.score_normalised != null
           ? `${rugcheckSummary.score}/${rugcheckSummary.score_normalised}`
@@ -2590,7 +3045,7 @@ Early opportunity! DYOR 🔍
         top10: formatPercent(td.top10HoldingsPercentage),
         holders: String(td.holdersCount ?? 0),
         devWallet: td.deployer ?? '',
-        logo: td.logo ?? '',
+        logo: (td.logo ?? td.logoURI ?? td.logo_uri ?? td.image ?? td.uri ?? td.icon ?? '').trim() || '',
         exchange: {
           name: td.exchange?.name ?? '',
           logo: td.exchange?.logo ?? '',
@@ -2617,6 +3072,7 @@ Early opportunity! DYOR 🔍
         tiktok,
         youtube,
         dexBanner: socialsData.dexBanner || null,
+        pumpLive: socialsData.pumpLive ?? null,
         lockers,
       };
 
@@ -2689,6 +3145,7 @@ Early opportunity! DYOR 🔍
 
       const prev = this.tokenData;
       let lockers = prev?.lockers ?? [];
+      let refreshPumpLive: { thumbnail?: string; startAt?: number; replyCount?: number } | null = prev?.pumpLive ?? null;
 
       // 2. Fetch tokenSocials (wajib - selalu dipanggil agar twitter dll tersedia)
       let socialsFromApi: Record<string, string> = {};
@@ -2715,6 +3172,16 @@ Early opportunity! DYOR 🔍
           if (pick(raw.tiktok)) socialsFromApi.tiktok = pick(raw.tiktok);
           if (pick(raw.youtube)) socialsFromApi.youtube = pick(raw.youtube);
           if (pick(raw.dexBanner)) socialsFromApi.dexBanner = pick(raw.dexBanner);
+          const pl = raw.pumpLive ?? raw.pumplive;
+          if (pl && typeof pl === 'object') {
+            refreshPumpLive = {
+              thumbnail: typeof pl.thumbnail === 'string' ? pl.thumbnail : undefined,
+              startAt: typeof pl.startAt === 'number' ? pl.startAt : undefined,
+              replyCount: typeof pl.replyCount === 'number' ? pl.replyCount : undefined,
+            };
+          } else {
+            refreshPumpLive = null;
+          }
           if (!tw && Array.isArray(sj)) {
             const twitterEntry = sj.find((e: any) => e?.type === 'twitter' || e?.type === 'x' || e?.type === 'communities');
             const url = pick(twitterEntry?.url) || pick(twitterEntry?.value) || pick(twitterEntry?.link);
@@ -2803,7 +3270,7 @@ Early opportunity! DYOR 🔍
         symbol: (td.symbol ?? prev?.symbol ?? '??').trim(),
         price: formatPriceWithSubscript(td.priceUSD),
         volume24h: formatUSD(td.volume24hUSD),
-        liquidity: formatUSD(td.liquidityUSD),
+        liquidity: formatUSD(td.liquidityMaxUSD),
         fees: formatUSD(td.totalFeesPaidUSD ?? td.feesPaid24hUSD),
         audit: (() => {
           const rs = prev?.rugcheckSummary;
@@ -2829,7 +3296,7 @@ Early opportunity! DYOR 🔍
         top10: formatPercent(td.top10HoldingsPercentage),
         holders: String(td.holdersCount ?? 0),
         devWallet: td.deployer ?? prev?.devWallet ?? '',
-        logo: td.logo ?? prev?.logo ?? '',
+        logo: (String(td.logo ?? td.logoURI ?? td.logo_uri ?? td.image ?? td.uri ?? td.icon ?? '').trim()) || (prev?.logo ?? ''),
         exchange: {
           name: td.exchange?.name ?? prev?.exchange?.name ?? '',
           logo: td.exchange?.logo ?? prev?.exchange?.logo ?? '',
@@ -2856,6 +3323,7 @@ Early opportunity! DYOR 🔍
         tiktok: refreshTiktok,
         youtube: refreshYoutube,
         dexBanner: refreshDexBanner || null,
+        pumpLive: refreshPumpLive ?? null,
         lockers,
       };
 
@@ -2907,13 +3375,14 @@ Early opportunity! DYOR 🔍
     // Trigger auto-call if enabled
     this.sendAutoTokenCall(tokenInfo);
     
-    // Token Logo (avatar) - from basicToken.logo
+    // Token Logo (avatar) - from basicToken.logo; supports PNG, JPG, GIF (including animated)
     const tokenLogoImg = document.getElementById('token-logo-img') as HTMLImageElement;
     if (tokenLogoImg) {
       if (tokenInfo.logo) {
         tokenLogoImg.src = tokenInfo.logo;
         tokenLogoImg.alt = name;
         tokenLogoImg.style.display = '';
+        tokenLogoImg.referrerPolicy = 'no-referrer';
         tokenLogoImg.onerror = () => { tokenLogoImg.style.display = 'none'; };
       } else {
         tokenLogoImg.src = '';
@@ -2942,17 +3411,21 @@ Early opportunity! DYOR 🔍
     if (dexscreenerBannerWrap && dexscreenerBannerImg) {
       const imgUrl = tokenInfo.dexBanner || (tokenInfo.dexscreenerListed && tokenInfo.dexscreenerHeader ? tokenInfo.dexscreenerHeader : null);
       const showBanner = !!imgUrl;
+      const mainKolPane = document.getElementById('main-kol-pane');
       if (showBanner && imgUrl) {
         dexscreenerBannerImg.referrerPolicy = 'no-referrer';
         dexscreenerBannerImg.src = imgUrl;
         dexscreenerBannerImg.alt = 'Banner';
         dexscreenerBannerWrap.style.display = '';
+        mainKolPane?.classList.add('banner-visible');
         dexscreenerBannerImg.onerror = () => {
           dexscreenerBannerImg.src = '';
           dexscreenerBannerWrap.style.display = 'none';
+          mainKolPane?.classList.remove('banner-visible');
         };
       } else {
         dexscreenerBannerWrap.style.display = 'none';
+        mainKolPane?.classList.remove('banner-visible');
       }
     }
     
@@ -3101,6 +3574,168 @@ Early opportunity! DYOR 🔍
     const isSocialSite = websiteUrl && /(twitter\.com|x\.com|instagram\.com|youtube\.com|youtu\.be|tiktok\.com)/i.test(websiteUrl);
     const hasTiktok = !!tokenInfo.tiktok?.trim() && (tokenInfo.tiktok.startsWith('http://') || tokenInfo.tiktok.startsWith('https://'));
     setSocialBtn('social-website-btn', websiteUrl && !isSocialSite && !hasTiktok ? websiteUrl : undefined);
+    const showBanner = !!(tokenInfo.dexBanner || (tokenInfo.dexscreenerListed && tokenInfo.dexscreenerHeader));
+    const orders = tokenInfo.dexPaidData?.orders ?? [];
+    const hasCommunityTakeover = Array.isArray(orders) && orders.some((o: any) => {
+      const t = String(o?.type ?? '').toLowerCase().replace(/[\s_-]+/g, ' ');
+      return t.includes('community') && t.includes('takeover');
+    });
+    const ctoBtn = document.getElementById('social-cto-btn');
+    const ctoImg = document.getElementById('social-cto-icon-img') as HTMLImageElement;
+    if (ctoBtn && ctoImg) {
+      if (hasCommunityTakeover) {
+        ctoImg.src = chrome.runtime.getURL('img/cto.svg');
+        ctoBtn.style.display = 'flex';
+      } else {
+        ctoBtn.style.display = 'none';
+      }
+    }
+    const dexpaidBtn = document.getElementById('social-dexpaid-btn');
+    const dexpaidImg = document.getElementById('social-dexpaid-icon-img') as HTMLImageElement;
+    if (dexpaidBtn && dexpaidImg) {
+      if (showBanner) {
+        dexpaidImg.src = chrome.runtime.getURL('img/dexpaid.svg');
+        dexpaidBtn.style.display = 'flex';
+      } else {
+        dexpaidBtn.style.display = 'none';
+      }
+    }
+    const boosts = tokenInfo.dexPaidData?.boosts ?? [];
+    const hasBoosts = Array.isArray(boosts) && boosts.length > 0;
+    const byDate: Record<string, { amount: number; ts: number }> = {};
+    for (const b of boosts) {
+      const ts = Number(b?.paymentTimestamp) || 0;
+      if (!ts) continue;
+      const key = this.getDateKey(ts);
+      if (!byDate[key]) byDate[key] = { amount: 0, ts };
+      byDate[key].amount += Number(b?.amount) || 0;
+      if (ts > byDate[key].ts) byDate[key].ts = ts;
+    }
+    const dates = Object.keys(byDate).sort().reverse();
+    const newestDateKey = dates[0];
+    const newestBoostAmount = newestDateKey ? byDate[newestDateKey]?.amount ?? 0 : 0;
+    const boostBtn = document.getElementById('social-boost-btn');
+    const boostAmountEl = document.getElementById('social-boost-amount');
+    if (boostBtn && boostAmountEl) {
+      if (hasBoosts && newestBoostAmount > 0) {
+        boostAmountEl.textContent = newestBoostAmount >= 1000 ? `${(newestBoostAmount / 1000).toFixed(1)}K` : `${newestBoostAmount}`;
+        boostBtn.style.display = 'flex';
+        boostBtn.title = `Boost: ${newestBoostAmount.toLocaleString()}`;
+      } else {
+        boostBtn.style.display = 'none';
+      }
+    }
+
+    const pumpLive = tokenInfo.pumpLive;
+    const pumpliveWrap = document.getElementById('social-pumplive-wrap');
+    const pumplivePill = document.getElementById('social-pumplive-btn');
+    const pumpliveLabel = document.getElementById('social-pumplive-label');
+    const pumplivePopup = document.getElementById('social-pumplive-popup');
+    if (pumpliveWrap && pumplivePill && pumpliveLabel && pumplivePopup) {
+      if (pumpLive && typeof pumpLive === 'object') {
+        pumpliveWrap.style.display = 'inline-flex';
+        const exchangeName = tokenInfo.exchange?.name || 'Pumpfun';
+        pumpliveLabel.textContent = `LIVE`;
+        const pumpliveIcon = document.getElementById('social-pumplive-icon') as HTMLImageElement;
+        if (pumpliveIcon && tokenInfo.exchange?.logo) {
+          pumpliveIcon.src = tokenInfo.exchange.logo;
+          pumpliveIcon.alt = exchangeName;
+          pumpliveIcon.style.display = 'inline-block';
+        } else if (pumpliveIcon) {
+          pumpliveIcon.style.display = 'none';
+        }
+        const thumbEl = document.getElementById('pumplive-popup-thumb') as HTMLImageElement;
+        const nameEl = document.getElementById('pumplive-popup-name');
+        const symbolEl = document.getElementById('pumplive-popup-symbol');
+        const timeEl = document.getElementById('pumplive-popup-time');
+        const repliesEl = document.getElementById('pumplive-popup-replies');
+        const openBtn = document.getElementById('pumplive-popup-open-btn') as HTMLAnchorElement;
+        const copyBtn = document.getElementById('pumplive-popup-copy');
+        const mint = (tokenInfo.mint || tokenInfo.address || '').trim();
+        const shortMint = mint.length > 10 ? `${mint.slice(0, 4)}...${mint.slice(-4)}` : mint;
+        if (thumbEl) {
+          const logoUrl = (tokenInfo.logo || tokenInfo.logo_uri || (this.tokenData && (this.tokenData.logo || this.tokenData.logo_uri)) || tokenInfo.image || pumpLive.thumbnail || '').trim();
+          if (logoUrl) {
+            thumbEl.src = logoUrl;
+            thumbEl.alt = tokenInfo.name || '';
+            thumbEl.style.display = '';
+            thumbEl.removeAttribute('srcset');
+            thumbEl.referrerPolicy = 'no-referrer';
+            thumbEl.onerror = () => {
+              const fallback = (pumpLive.thumbnail || '').trim();
+              if (fallback && thumbEl.src !== fallback) {
+                thumbEl.src = fallback;
+              } else {
+                thumbEl.style.display = 'none';
+              }
+            };
+          } else {
+            thumbEl.src = '';
+            thumbEl.style.display = 'none';
+          }
+        }
+        const headerImgEl = document.getElementById('pumplive-popup-header-img') as HTMLImageElement;
+        if (headerImgEl) {
+          const headerThumb = (pumpLive.thumbnail || '').trim();
+          if (headerThumb) {
+            headerImgEl.src = headerThumb;
+            headerImgEl.alt = tokenInfo.name || 'Live';
+            headerImgEl.style.display = 'block';
+            headerImgEl.referrerPolicy = 'no-referrer';
+          } else {
+            headerImgEl.src = '';
+            headerImgEl.style.display = 'none';
+          }
+        }
+        if (nameEl) nameEl.textContent = tokenInfo.name || '—';
+        if (symbolEl) symbolEl.textContent = shortMint || '—';
+        if (timeEl) timeEl.textContent = pumpLive.startAt != null ? this.formatElapsedTime(pumpLive.startAt) : '—';
+        if (repliesEl) repliesEl.textContent = String(pumpLive.replyCount ?? 0);
+        if (openBtn) {
+          openBtn.href = mint ? `https://pump.fun/coin/${mint}` : '#';
+        }
+        if (copyBtn) {
+          copyBtn.onclick = () => {
+            if (mint && navigator.clipboard) {
+              navigator.clipboard.writeText(mint).catch(() => {});
+            }
+          };
+        }
+        const pumpliveLogoUrl = (tokenInfo.logo || tokenInfo.logo_uri || (this.tokenData && (this.tokenData.logo || this.tokenData.logo_uri)) || tokenInfo.image || pumpLive.thumbnail || '').trim();
+        let pumpliveHideT: ReturnType<typeof setTimeout> | null = null;
+        const showPumplivePopup = () => {
+          if (pumpliveHideT) clearTimeout(pumpliveHideT);
+          pumpliveHideT = null;
+          pumplivePopup.style.display = 'block';
+          if (thumbEl && pumpliveLogoUrl) {
+            thumbEl.style.display = '';
+            thumbEl.src = pumpliveLogoUrl;
+          }
+          const headerThumb = (pumpLive.thumbnail || '').trim();
+          if (headerImgEl && headerThumb) {
+            headerImgEl.src = headerThumb;
+            headerImgEl.style.display = 'block';
+          }
+        };
+        const scheduleHidePumplivePopup = () => {
+          if (pumpliveHideT) clearTimeout(pumpliveHideT);
+          pumpliveHideT = setTimeout(() => {
+            pumplivePopup.style.display = 'none';
+            pumpliveHideT = null;
+          }, 150);
+        };
+        pumpliveWrap.onmouseenter = showPumplivePopup;
+        pumpliveWrap.onmouseleave = scheduleHidePumplivePopup;
+        const popupInner = pumplivePopup.querySelector('.pumplive-popup-inner');
+        if (popupInner) {
+          popupInner.addEventListener('mouseenter', showPumplivePopup);
+          popupInner.addEventListener('mouseleave', scheduleHidePumplivePopup);
+        }
+      } else {
+        pumpliveWrap.style.display = 'none';
+        pumplivePopup.style.display = 'none';
+      }
+    }
   }
 
   private updateElement(id: string, value: any): void {
@@ -3132,6 +3767,12 @@ Early opportunity! DYOR 🔍
     setBadge('rug-liquidity', b.liqLock);
     setBadge('rug-mint', b.mintAuth);
     setBadge('rug-honeypot', b.honeypot);
+    const unlockedAlert = document.getElementById('rug-unlocked-alert');
+    if (unlockedAlert) {
+      const liqText = (b.liqLock?.text ?? '').toLowerCase();
+      const showAlert = liqText === 'unlocked' || liqText === 'partial';
+      unlockedAlert.style.display = showAlert ? 'flex' : 'none';
+    }
   }
 
   private updateRugCheckRisks(risks: Array<{ name: string; description: string; level: string }> | undefined): void {
@@ -3321,10 +3962,39 @@ Early opportunity! DYOR 🔍
     }
   }
 
+  private getDateKey(ts: number): string {
+    try {
+      const d = new Date(ts);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch {
+      return String(ts);
+    }
+  }
+
+  private formatElapsedTime(startAt: number): string {
+    const ms = startAt < 1e12 ? startAt * 1000 : startAt;
+    const diff = Date.now() - ms;
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (days > 0) return `${days} d ago`;
+    if (hours > 0) return `${hours} h ago`;
+    if (mins > 0) return `${mins} m ago`;
+    return 'just now';
+  }
+
   private formatPaymentTimestamp(ts: number): string {
     try {
       const d = new Date(ts);
-      return d.toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'short', timeStyle: 'short' }) + ' UTC';
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${day}`;
+      const timeStr = d.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: 'numeric', minute: '2-digit', hour12: true });
+      return `${dateStr} ${timeStr} UTC`;
     } catch {
       return '—';
     }
@@ -3355,7 +4025,7 @@ Early opportunity! DYOR 🔍
     const items: string[] = [];
     let idx = 1;
 
-    const orders = dexPaidData.orders ?? [];
+    const orders = (dexPaidData.orders ?? []).sort((a, b) => (Number(b?.paymentTimestamp) || 0) - (Number(a?.paymentTimestamp) || 0));
     for (const o of orders) {
       const rawType = o.type ?? 'order';
       const type = rawType ? rawType.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim() : 'Order';
@@ -3375,9 +4045,9 @@ Early opportunity! DYOR 🔍
       idx++;
     }
 
-    const boosts = dexPaidData.boosts ?? [];
+    const boosts = (dexPaidData.boosts ?? []).sort((a, b) => (Number(b?.paymentTimestamp) || 0) - (Number(a?.paymentTimestamp) || 0));
     for (const b of boosts) {
-      const amount = b.amount != null ? `$${b.amount}` : '—';
+      const amount = b.amount != null ? `${b.amount}` : '—';
       const boostAt = b.paymentTimestamp != null ? this.formatPaymentTimestamp(b.paymentTimestamp) : '—';
       items.push(`
         <div class="dexpaid-item dexpaid-boost">
@@ -3592,15 +4262,54 @@ Early opportunity! DYOR 🔍
     });
   }
 
-  /** Build buy links for Solana token (Trojan, Axiom, GMGN, Padre) */
+  /** Build buy links for Solana token (URLs match supported platforms) */
   private getTokenBuyLinks(mint: string): { label: string; url: string }[] {
     if (!mint || mint.length < 32) return [];
     return [
-      { label: 'Buy Trojan', url: `https://trojan.com/token/${mint}` },
-      { label: 'Buy Axiom', url: `https://axiom.trade/meme/${mint}?chain=sol` },
-      { label: 'Buy GMGN', url: `https://gmgn.ai/sol/token/${mint}` },
-      { label: 'Buy Padre', url: `https://trade.padre.gg/trade/solana/${mint}` }
+      { label: 'GMGN', url: `https://gmgn.ai/sol/token/${mint}` },
+      { label: 'Axiom', url: `https://axiom.trade/meme/${mint}?chain=sol` },
+      { label: 'Trojan', url: `https://trojan.com/terminal?token=${mint}` },
+      { label: 'Pump', url: `https://pump.fun/coin/${mint}` },
+      { label: 'Padre', url: `https://trade.padre.gg/trade/solana/${mint}` },
+      { label: 'BullX', url: `https://neo.bullx.io/terminal?chainId=1399811149&address=${mint}` },
+      { label: 'Telemetry', url: `https://app.telemetry.io/trading/${mint}` },
     ];
+  }
+
+  /** Navigate the currently open tab to a URL (refresh page with new URL) */
+  private openBuyInCurrentTab(url: string): void {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (chrome.runtime.lastError || !tabs?.length || !tabs[0].id) {
+        this.showToast('Could not get active tab');
+        return;
+      }
+      chrome.tabs.update(tabs[0].id!, { url });
+    });
+  }
+
+  /** When user clicks Trade on trending: detect terminal from open tab and replace URL with token. */
+  private openTrendingTokenInCurrentTerminal(mint: string, poolAddress?: string | null): void {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (chrome.runtime.lastError || !tabs?.length) return;
+      const tabUrl = tabs[0]?.url;
+      const url = this.getBuyUrlForOpenTerminal(tabUrl, mint, poolAddress);
+      if (url && tabs[0]?.id) chrome.tabs.update(tabs[0].id, { url });
+    });
+  }
+
+  /** Detect which terminal is open from tab URL; return buy URL. Axiom/Padre use poolAddress when given. */
+  private getBuyUrlForOpenTerminal(tabUrl: string | undefined, mint: string, poolAddress?: string | null): string | null {
+    if (!mint || mint.length < 32) return null;
+    const url = (tabUrl || '').toLowerCase();
+    const pool = (poolAddress || '').trim() || mint;
+    if (url.includes('gmgn.ai')) return `https://gmgn.ai/sol/token/${mint}`;
+    if (url.includes('axiom.trade') || url.includes('axiom')) return `https://axiom.trade/meme/${pool}?chain=sol`;
+    if (url.includes('trojan.com')) return `https://trojan.com/terminal?token=${mint}`;
+    if (url.includes('pump.fun')) return `https://pump.fun/coin/${mint}`;
+    if (url.includes('padre.gg')) return `https://trade.padre.gg/trade/solana/${pool}`;
+    if (url.includes('bullx.io')) return `https://neo.bullx.io/terminal?chainId=1399811149&address=${mint}`;
+    if (url.includes('telemetry.io')) return `https://app.telemetry.io/trading/${mint}`;
+    return null;
   }
 
   /** Discord message components: one row of Buy link buttons (Trojan, Axiom, GMGN, Padre) */
