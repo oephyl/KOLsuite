@@ -30,7 +30,7 @@ interface TrendingTokenItem {
   usdPrice?: number;
   createdAt?: number | string;
   marketCap?: number;
-  liquidityUsd?: number;
+  liquidityMaxUsd?: number;
   holders?: number;
   pricePercentChange?: { '1h'?: number; '4h'?: number; '12h'?: number; '24h'?: number };
   totalVolume?: Record<string, number>;
@@ -3022,7 +3022,7 @@ Early opportunity! DYOR 🔍
         symbol: (td.symbol ?? '??').trim(),
         price: formatPriceWithSubscript(td.priceUSD),
         volume24h: formatUSD(td.volume24hUSD),
-        liquidity: formatUSD(td.liquidityUSD),
+        liquidity: formatUSD(td.liquidityMaxUSD),
         fees: formatUSD(td.feesPaid24hUSD),
         audit: rugcheckSummary?.score != null && rugcheckSummary?.score_normalised != null
           ? `${rugcheckSummary.score}/${rugcheckSummary.score_normalised}`
@@ -3270,7 +3270,7 @@ Early opportunity! DYOR 🔍
         symbol: (td.symbol ?? prev?.symbol ?? '??').trim(),
         price: formatPriceWithSubscript(td.priceUSD),
         volume24h: formatUSD(td.volume24hUSD),
-        liquidity: formatUSD(td.liquidityUSD),
+        liquidity: formatUSD(td.liquidityMaxUSD),
         fees: formatUSD(td.totalFeesPaidUSD ?? td.feesPaid24hUSD),
         audit: (() => {
           const rs = prev?.rugcheckSummary;
